@@ -1,0 +1,17 @@
+【单元素的枚举类型已经成为实现singleton的最佳方法。】
+singleton实现：
+1.公有静态成员
+public class Elvis{
+	public static final Elvis INSTANCE = new Elvis();
+	private Elvis(){...}
+}
+2.公有静态方法
+public class Elvis{
+	private static final Elvis INSTANCE = new Elvis();
+	private Elvis(){...}
+	public static Elvis getInstance(){return INSTANCE;}
+}
+3.枚举
+public enum Elvis{
+	INSTANCE;
+}
