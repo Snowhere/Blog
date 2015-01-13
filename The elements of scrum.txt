@@ -1,0 +1,68 @@
+虽然现在还只是遐想，但我想我能够弄钱先折腾个概念出来，随后再把它包装成一个好点子。——伍迪·艾伦
+
+敏捷宣言
+http://agilemanifesto.org/iso/zhchs/
+
+个体和互动 高于 流程和工具
+工作的软件 高于 详尽的文档
+客户合作 高于 合同谈判
+响应变化 高于 遵循计划
+Individuals and interactions over processes and tools
+Working software over comprehensive documentation
+Customer collaboration over contract negotiation
+Responding to change over following a plan
+
+面对很多人不同的理解与定义scrum。我们的回应是：这是个自由的国度。
+人们还是会试着告诫你什么是scrum，什么不是，你可别听他们的！
+
+角色:
+产品负责人
+	持有产品愿景
+	代表业务(the business)
+	代表客户
+	拥有产品列表
+	划定故事优先级
+	设立故事的接收标准
+	有空回答团队成员们的问题
+Scrum Master
+	scrum专家和谏言者
+	教练
+	障碍推土机(bulldozer)
+	引导者(facilitator)
+团队成员
+	负责交付用户故事
+	做所有的开发工作
+	自组织地交付用户故事
+	支配估算流程
+	支配"如何干活"的决策
+	避免"与我无关"
+
+Sprint周期
+	Sprint规划会议
+		"要做什么"story
+		"要怎么做"task
+	Scrum日会
+		已完成内容
+		期望完成内容
+		问题和障碍
+	故事时间
+	Sprint评审
+	回顾
+		准备阶段(set the stage)
+		收集数据(gather data)
+		洞察问题(generate insights)
+		确定方案(decide what to do)
+		结束(close)
+经验之谈:任何看起来超过半天的任务都应该被拆解成更小的任务。
+
+Scrum工件
+	产品列表(故事)
+	Sprint列表(to do list)
+	信息辐射器
+	燃尽图(burn down chart)
+	任务板
+
+用户故事
+	作为<某类用户>
+	我想<做某事>
+	从而<创造出某些价值>
