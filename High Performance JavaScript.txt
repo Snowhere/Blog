@@ -1,0 +1,4 @@
+高性能JavaScript
+虽然很薄的一本书，涵盖JavaScript这门语言的精髓。不适合初学者看。
+1.作用域scope chain
+2.dom编程
