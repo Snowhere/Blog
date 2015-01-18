@@ -1,0 +1,89 @@
+编写可维护的JavaScript
+我发现阅读有关JavaScript的书，见得最多的就是Yahoo，Yui这两个词，之前我听说过雅虎军规。现在感觉Yahoo和JavaScript似乎有很深的渊源。
+
+程序是写给人读的，只是偶尔让计算机执行一下。
+
+编程风格style guideline
+编码规范code convention
+
+理解null的最好的方式是将它当做对象的占位符placeholder
+
+变量声明提前意味着：在函数内部任意地方定义变量和在函数顶部定义变量是完全一样的。因此，一种流行的风格是将所有变量声明放在函数顶部而不是散落在个角落。
+
+由于强制类型转换的缘故，我们推荐不要使用==和!=，而是应当使用===和!==。用这些运算符作比较不会涉及强制类型转换。
+
+除了Ajax和JSON，禁止使用eval()
+
+原始包装类型String，Boolean和Number。原始包装类型的主要作用是让原始值具有对象般的行为。当调用原始类型的方法或域，JavaScript引擎创建一个新实例，紧跟着就被销毁了。
+var name = "Nocholas";name.author = true;console.log(name.author);//undefined
+第二句创建了一个新实例，第三句创建了另一个。
+
+构建软件设计的方法有两种:一种是把软件做得很简单以至于明显找不到缺陷，另一种是把它做得很复杂以至于找不到明显的缺陷。
+HTML用来定义页面的数据和语义。
+CSS用来给页面添加样式，创建视觉特性。
+JavaScript用来给页面添加行为，使其更具交互性。
+
+将JavaScript从CSS中抽离
+将CSS从JavaScript中抽离，className
+将JavaScript从HTML中抽离，addEventListener
+将HTML从JavaScript中抽离，模板
+
+避免使用全局变量。
+单全局变量：jquery的$。所创建的这个唯一全局对象名是独一无二的(不会和内置的API产生冲突)，并将你所有的功能代码都挂载到这个全局对象上。var MaintainableJS = {}
+命名空间
+var YourGlobal = {
+	namespace: function(ns){
+		var parts = ns.split("."),
+			object = this,
+			i,len;
+		for (i=0, len=parts.length; i<len;i++){
+			if(!object[parts[i]]){
+				object[parts[i]] = {};
+			}
+			object = object[parts[i]];
+		}
+		return object;
+	}
+};
+非破坏性的创建命名空间nondestructively。
+YourGlobal.namespace("Book.MaintainableJS");
+YourGlobal.Books.MaintainableJS.author = "Nicholas";
+
+当事件触发时，event对象会作为回调参数传入事件处理程序中。
+1.隔离应用逻辑:function(event)
+2.不要分发事件对象:function(arg)
+
+
+五种原始类型：字符串，数字，布尔值，null和undefined。
+引用类型：Object，Array，Date和Error
+-检测原始值 typeof 是一个运算符。typeof variable
+杜绝使用typeof检测null的类型，因为会返回object
+-检测引用类型 instanceof 是一个运算符。value instanceof constructor
+-检测函数，从技术上讲，函数是引用类型
+typeof 可以用于函数
+-检测数组,除了Array.isArray()函数之外的一种优雅的方法
+function isArray(value){
+	return Object.prototype.toString.call(value) === "[object Array]";
+}
+-检测属性 in 运算符。property in object
+
+
+将配置数据从代码中分离出来
+类似Java中的静态常量
+
+抛出错误
+在产品设计上，这是非常普遍的实践经验，而不仅仅是在代码编写方面的。汽车尚有碰撞力吸收区域，这些区域框架的设计旨在撞击发生时以可预测的方式崩塌。知道一个碰撞到来时这些框架将如何反应——特别是，哪些部分将失败——制造商将能保证乘客的安全。你的代码也可以用这种方式创建。
+throw new Error("text");
+6种错误继承Error:EvalError,RangeError,ReferenceError,SyntaxError,TypeError,URIError
+我们的目的不是防止错误，而是在错误发生时能更加容易地调试。
+
+
+JavaScrip独一无二之处在于任何东西都不是神圣不可侵犯的。默认情况下，你可以修改任何你可以触及的对象。
+如果你的代码没有创建这些对象，不要修改:原生对象(Object、Array等),DOM对象(例如:document),BOM对象(例如:window),类库的对象
+企业软件需要一致而可靠的执行环境使其方便维护，原则：不覆盖方法，不新增方法，不删除方法。
+
+门面实现一个特定接口，让一个对象看上去像另一个对象，就称作一个适配器。门面和适配器唯一的不同是前者创建新接口，后者实现已存在的接口。
+
+
+浏览器嗅探
+特性检测
