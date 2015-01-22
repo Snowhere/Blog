@@ -1,5 +1,15 @@
-【单元素的枚举类型已经成为实现singleton的最佳方法。】
-singleton实现：
+【创建和销毁对象】
+·考虑用静态工厂方法代替构造器
+提供静态工厂方法而不是公有的构造器
+静态工厂方法比构造器优势：有名称；不必每次调用创建新对象；返回任何子类型对象；创建参数化类型实例时，代码更简洁。
+Map<String,List<String>> m = new HashMap<String,List<String>>();
+类型推导type inference
+public static <K,V> HashMap<K,V> newInstance{
+	return new HashMap<K,V>();
+}
+缺点：类如果不含公有的或者受保护的构造器，就不能被子类化；与其他的静态方法实际上没有任何区别。
+·遇到多个构造器参数时要考虑用构建器
+·singleton实现：
 1.公有静态成员
 public class Elvis{
 	public static final Elvis INSTANCE = new Elvis();
@@ -18,3 +28,16 @@ public enum Elvis{
 这种方法在功能上与公有域方法相近，但是它更加简洁，无偿的提供了序列化机制，绝对防止多次实例化，即使是在面对复杂的序列化或者反射攻击的时候。虽然这种方法还没有广泛采用，但是单元素的枚举类型已经成为实现singleton的最佳方法。
 
 //TODO 深入了解一下enum
+
+
+·通过私有构造器强化不可实例化的能力
+public class Utility{
+	private Utility(){
+		throw new AssertionError();
+	}
+}
+
+·避免创建不必要的对象
+Map接口的keySet方法返回该Map对象的Set视图，其中包含该Map中所有的key。粗看起来，好像每次调用keySet都返回同样的Set实例,但是，对于一个给定的Map对象，实际上每次调用keySet都返回同样的Set实例。
+
+·消除过期的对象引用
