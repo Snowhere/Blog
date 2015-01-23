@@ -7,9 +7,10 @@ Map<String,List<String>> m = new HashMap<String,List<String>>();
 public static <K,V> HashMap<K,V> newInstance{
 	return new HashMap<K,V>();
 }
+Map<String,List<String>> m = HashMap.newInstance();
 缺点：类如果不含公有的或者受保护的构造器，就不能被子类化；与其他的静态方法实际上没有任何区别。
 ·遇到多个构造器参数时要考虑用构建器
-·singleton实现：
+·用私有构造器或者枚举类型强化Singleton属性：
 1.公有静态成员
 public class Elvis{
 	public static final Elvis INSTANCE = new Elvis();
@@ -41,3 +42,33 @@ public class Utility{
 Map接口的keySet方法返回该Map对象的Set视图，其中包含该Map中所有的key。粗看起来，好像每次调用keySet都返回同样的Set实例,但是，对于一个给定的Map对象，实际上每次调用keySet都返回同样的Set实例。
 
 ·消除过期的对象引用
+过期引用obsolete reference。这类问题的修复方法很简单：一旦对象引用已经过期，只需清空这些引用即可。比如Stack的pop方法
+public Object pop(){
+	Object result = elements[--size];
+	elements[size] = null;
+	return result;
+}
+·避免使用终结方法
+如果子类实现者覆盖了超类的终结方法，但是忘了手工调用超类的终结方法(或者有意选择不调用超类的终结方法)，那么超类的终结方法将永远也不会被调用到。
+
+
+【对于所有对象都通用的方法】
+Object的所有非final方法(equals，hashCode，toString，clone，finalize)都有明确的通用约定general contract，因为它们被设计成是要被覆盖override的。
+
+·equals
+equals方法实现了等价关系equivalence relation：自反性reflexive，对称性symmetric，传递性transitive，一致性consistent，非空性Non-nullity。
+面向对象语言中关于等价关系的一个基本问题：我们无法在扩展可实例化的类的同时，既增加新的值组件，同时又保留equals约定。
+里氏替换原则Liskov substitution principle认为，一个类型的任何重要属性也将适用于它的子类型，因此为该类型编写的任何方法，在它的子类型上也应该同样运行的很好。
+虽然没有一种令人满意的办法可以既扩展不可实例化的类，又增加值组件，但还是有一种不错的权宜之计workaround：复合优先于继承。
+Timestamp扩展了Date，并增加了nanos域。所以有一个免责声明，不要混合使用Date和Timestamp对象。
+实现高质量equals方法的诀窍：使用==操作符检查"参数是否为这个对象的引用"；使用instanceof操作符检查"参数是否为正确的类型";把参数转换成正确的类型;对于该类中的每个"关键significant"域，检查参数中的域是否与该对象中对应的域相匹配；问三个问题：是否对称，传递，一致。
+
+·覆盖equals时总要覆盖hashCode
+
+·始终要覆盖toString
+
+·谨慎地覆盖clone
+Cloneable接口的目的是作为对象的一个mixin接口mixin interface。遗憾的是，它并没有成功地达到这个目的，主要缺陷在于缺少一个clone方法。
+实际上，clone方法就是另一个构造器；你必须确保它不会伤害到原始的对象，并确保正确的创建被克隆对象的约束条件invariant
+
+·考虑实现Comparable接口
