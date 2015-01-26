@@ -1,0 +1,6 @@
+RESTful Web APIs(中文版)
+"hypermedia as the engine of application state"
+
+这便是我们为什么更改了本书书名的原因。"web service"这个词与SOAP耦合得过于紧密,当SOAP没落之时，将会带着"web service"一词一起日暮西山。这些日子，每个人都开始改为谈论API
+
+人类的web底层最核心的协议就是RFC 2616(HTTP标准)、HTML4的W3C规范以及ECMA-262(JavaScript的基础标准，也被成为ECMAScript)
