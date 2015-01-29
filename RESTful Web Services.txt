@@ -1,0 +1,13 @@
+RESTful Web Services中文版
+【前言】
+用作构建web服务的协议与标准有很多，他们大多是构筑在http之上的。这些标准被统称为WS-*标准栈。它们包括WS-Notification、WS-Security、WSDL及SOAP等。在本书中，我们用"大Web服务(Big Web Services)"来称呼这些技术，以较为礼貌的表达我们对它的鄙视。
+
+REST式架构意味着，方法信息(method information)都在HTTP方法(HTTP method)里；面向资源的架构(ROA)意味着，作用与信息(scoping information)都在URI里——二者结合起来是很强大的。
+
+一个REST式面向资源的服务为客户端可能的操作的每一则数据暴露一个URI；一个REST-RPC混合服务，为客户端可能进行的每一个操作暴露一个URI(比如获取数据用一个URI,删除数据用另一个URI)；一个RPC式服务，为每个处理远程调用的进程暴露一个URI，一般来说这样的URI只有一个，即服务的端点(endpoint)。
+
+ROA(Resource-Oriented Architecture)的特性:可寻址性(addressablity)、无状态性(statelessness)、连通性(connectedness)和统一接口(uniform interface)。
+
+任何事物，只要具有被引用的必要，它就是一个资源(resource)。
+
+Hypermedia as the engine of application state。这条公理的意思是:HTTP"会话"的当前状态不是作为资源状态(resource state)保存在服务器上的，而是被客户端作为应用状态(application state)来跟踪的。客户端应用状态在服务器提供的"超媒体(hypermedia)"(即超文本表示里的链接和表单)的指引下发生变迁。
