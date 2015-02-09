@@ -1,0 +1,28 @@
+The Well-Grounded Java Developer
+Java程序员修炼之道
+
+【欢迎进入Java7的世界！】
+Coin项目主要给Java7引入了6个新特性。
+1.switch语句中的String
+	在Java6及之前，case语句中的常量只能是byte、char、short、和int(也可以是对应的封装类型)或枚举常量。
+	Java7规范中增加了String，毕竟它也是常量类型。
+2.更强的数值文本表示法
+	数字常量(如integer)可以用二进制文本表示。int x = 0b1100110;
+	在整型常量中可以使用下划线来提高可读性。long a = 123_456_789L;
+3.改善后的异常处理
+	multicatch。	catch(ParseException | IOException e)
+	final重抛。catch(final Exception e){throw e;} 关键字final表明实际抛出的异常就是运行时遇到的异常(不会覆盖为Exception)
+4.try-with-resources(TWR)
+	try(OutputStream out = new FileOutputStream(file);
+			InputStream in = url.openStream()){
+		doSomething();
+	}
+	这段代码块中使用的资源在处理完成后会自动关闭。
+	要确保try-with-resources生效，正确的用法是为各个资源声明独立变量。
+	目前TWR特性依靠一个新定义的接口实现AutoCloseable。
+5.钻石语法
+	Map<Integer, Map<String, String>> lists = new HashMap<>();
+
+【新I/O】
+这个新API非常有用，尽管它不能帮你冲咖啡，但它的发展趋势可是在那儿摆着呢。
+I/O  -->  NIO(非阻塞I/O)  -->  NIO.2
