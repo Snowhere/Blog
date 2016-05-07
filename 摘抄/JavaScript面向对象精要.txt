@@ -1,0 +1,59 @@
+The principles of object-oriented javascript
+
+第一章 原始类型和引用类型
+    JavaScript中没有类，有类型。每个变量或者数据都有一个对应的原始类型或者引用类型
+
+    5种原始类型保存在变量对象中:string,number,boolean,null,undefined
+    除了null都可以用typeof来鉴别。typeof null =Object，null必须和null进行比较才能鉴别。
+    引用类型是JavaScript中最接近类的东西，对象就引用类型的实例。可以用new操作符或字面形式创建新对象。函数也是对象，可以用typeof鉴别。
+    在引用类型中，JavaScript提供内建类型：Array、Date、Error、Function、Object、RegExp
+    3种封装类型:String、Number、Boolean
+    当你对原始类型进行调用封装类型的方法时，JavaScript创建封装类型的临时实例，在临时实例上调用方法，但会在语句结束后销毁实例。
+
+第二章 函数
+    函数是对象。函数有独有一个[[call]]内部属性，这也是typeof判断为function的依据。
+    函数声明与函数表达式唯一的区别，声明会被JavaScript提升至上下文。
+    函数是对象，所以它能当做参数传递。
+    可以给函数传递任意数量的参数，全部保存在arguments属性中，类似数组，并不是数组的实例。函数的length属性表示定义时期望的参数个数。
+    根据传入的参数调用相同函数名的不同方法，叫做重载。JavaScript只能通过手动判断arguments对象模仿重载.
+    JavaScript所有的函数作用域内都有一个this对象代表调用该函数的对象。
+    函数是对象，对象有方法，函数也有，函数有3种方法改变this
+    call(指定的this值，参数)执行
+    apply(指定的this值，[参数])执行
+    bind(指定的this值，永久绑定的参数)创建新函数
+
+第三章 理解对象
+    2种创建对象的方式：{}和new Object()
+    对象的属性可以增加修改删除，属性和值就像哈希表的键值对。
+    for-in会遍历所以设置为可枚举的属性，包括原形属性。Object.keys()返回自由属性的数组。
+    属性有2种类型：数据属性和访问器属性。
+    两种类型都有[[Enumerable]]和[[Configurable]]特征
+    数据属性还具有[[Writable]]和[[Value]]特征
+    访问器属性则具有[[Get]]和[[Set]]特征
+    禁止修改对象
+    1.禁止扩展。无法添加新属性。Object.preventExtensions(对象)
+    2.封印。无法添加，无法删除，无法改变属性的类型。只能读写。Object.seal(对象)
+    3.冻结。无法添加，无法删除，无法改变属性的类型，无法写入。只读，相当于对象某个时间点上的快照。Object.freeze() 
+
+第四章 构造函数和原型对象
+    构造函数就是用new操作符调用的普通函数。
+    可以把原型对象看作是对象的基类。所有创建的对象实例共享该原型对象。
+    一个对象实例通过内部属性[[Prototype]]跟踪其原型对象。原型对象的[[constructor]]属性指向该函数。
+
+第五章 继承
+    Object.create(被设置为prototype的对象，属性描述)
+    当你定义一个函数时
+        function YourConstructor(){}
+    JavaScript引擎会做以下事情
+        YourConstructor.prototype=Object.create(Object.prototype,{
+            constructor:{
+                configurable:true,
+                enumerable:true,
+                value:YourConstructor,
+                writable:true
+            }
+        })；
+    访问父类方法，需要通过call()或apply()调用父类的原型对象的方法时传入子类的对象。
+
+第六章 对象模式
+    IIFE(立即函数表达)定义后立即调用并产生结果的函数表达，执行后立即被销毁。
