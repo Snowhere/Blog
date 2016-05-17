@@ -1,14 +1,15 @@
-java.lang.Object
+﻿java.lang.Object
 
 混沌开天地.万物始于Object
 来看这条注释@since   JDK1.0
 从Java这门语言诞生之初，Object类如同基石般在那里。
+public class Object
 12个方法
 1个private,2个protected,9个public
 7个native
 6个final
 下面我大概说一下这些方法，其中private和native以及final修饰的方法我就不说太多，这些关键字修饰的方法都是稳固的方法
-
+public class Object
 //这个就不说了
 private static native void registerNatives();
 static {
