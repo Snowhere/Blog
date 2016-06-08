@@ -1,0 +1,7 @@
+filter和interceptor
+
+说个最大的区别，filter是Java Web的概念。只有在Web开发中应用到，而interceptor在任何Java工程中都可以使用。
+filter是依赖于Servlet容器，没有Servlet容器就无法回调doFilter方法。在容器初始化时调用一次。
+interceptor基于Java本身的反射机制，过滤范围比filter小，但是可以访问action的上下文，值栈里的对象。可以被多次调用。
+
+个人理解，filter在外层，interceptor在内层。filter对url进行判断
