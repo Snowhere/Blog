@@ -1,0 +1,102 @@
+# 5种方式教你编写难于测试的代码
+
+有一次，我听到在一个讲座上主持人问听众如何故意编写难于测试的代码。在场的小伙伴都惊呆了，因为没有任何人会故意写这种糟糕的代码。我记得他们甚至给不出一个好的答案。
+
+当然，这个问题的目的不在于教大家如何写烂代码使同事欲哭无泪。而是为了了解什么样的代码难于测试，来避免这些严重的问题。这里给出我对上面那个问题的答案(当然这只是我的个人观点，每个人讨厌的都不尽相同。)
+
+## 1.用大量的静态域
+
+尤其是在不同类中共享静态的集合类，比如下面这个：
+```java
+public class Catalog {
+    private static List<Person> people = new ArrayList<>();
+    public void addPerson(Person person) {
+        if (Calendar.getInstance().get(Calendar.YEAR) - person.getYearOfBirth() < 18) {
+            throw new IllegalArgumentException("Only adults admitted.");
+        }
+        people.add(person);
+    }
+    public int getNrOfPeople() {
+        return people.size();
+    }
+}
+```
+现在我们测一测
+```java
+public class CatalogTest {
+    private final Catalog underTest = new Catalog();
+    @Test(expected=IllegalArgumentException.class)
+    public void addingAMinorShouldThrowException() {
+        assertEquals(0, underTest.getNrOfPeople()); // precondition
+        Person p = new Person(2015);
+        underTest.addPerson(p);
+    }
+    @Test
+    public void addingAnAdultShouldSucceed() {
+        assertEquals(0, underTest.getNrOfPeople()); // precondition, or is it?
+        Person p = new Person(1985);
+        underTest.addPerson(p);
+        assertEquals(1, underTest.getNrOfPeople());
+    }
+}
+```
+如果你运行这个两个测试，你会发现期待抛出异常的那个用例失败了。这有些让你怀疑人生了，但是JUnit可以自由安排用例执行顺序而不依赖于编写用例的顺序。在这段代码中第二个测试用例先运行，它检测集合是空的，然后成功注册了一个adult(成年人)。由于我们的集合是静态的，第一个测试用例检测到集合不是空的(我们在之前的测试用例已经放进去一个people了)，所以失败了。
+一旦我们删掉static关键字，两个测试用例都成功执行。在每个测试用例执行前，JUnit会将测试用例中的字段初始化(不仅仅是@Before注解方法中的字段)。现在我们有一个实例成员，而不是一个绑定在类上的静态people列表。这意味着每个测试用例运行前都会创建一个新的Catalog对象，包含一个新的列表。每次我们都有一个新的空people列表。
+当然，在这个例子中我们很容易发觉并解决这个问题，但想象一个庞大的系统中，有众多类操作的people列表。
+静态的可变集合(据我同事所说)就像一个垃圾桶，充斥着各种垃圾，真应该避免使用。
+
+## 2.声明众多final类
+一个类声明final就阻止了被mock。下面就是尝试用Mockito去mock一个final类会发生什么：
+```java
+org.mockito.exceptions.base.MockitoException: 
+Cannot mock/spy class <CLASS_NAME>
+Mockito cannot mock/spy following:
+  - final classes
+  - anonymous classes
+  - primitive types
+      at org.mockito.internal.runners.JUnit45AndHigherRunnerImpl...
+```
+一个类声明了final会有严重后果(比如它不能被继承和mock)，所以很有理由不这样做。
+等等，不要放弃治疗。面对一个final类，只需要一些其他努力。Powermock就可以mock这样的类，不过我觉得这个类库治标不治本。另一种方法是创建一个非fianl的包裹类，包裹住final类然后mock这个包裹类。 当然，前提是你能避免可能的签名改变(This, of course, only works if you can get away with possible signature changes.这句不太会翻译)。
+
+## 3.总是在方法中创建对象，尤其是在构造函数中。
+我认为这不需要过多解释。在方法或构造函数中创建对象让我们无法引入测试的复制品。将依赖关系完全硬编码，让我们无法mock，写不出真正的单元测试(排除一切外部依赖，在独立环境下对一个类快速测试)
+依赖应该被注入，主要通过构造函数。如果因为一些原因做不到这点，创建对象的工作应该放到一个protected的方法中，这样一来继承它的虚构类可以重写该方法。
+
+## 4.方法/测试的名字和内容永远不一致
+很多人认为长方法(long methods)是测试的头号公敌。尽管很多情况下是这样，但不绝对。想象一个聪明的实现代码很长的求平方根函数。它接受一个整型，返回一个浮点数。因为我们很清楚平方根怎么求，所以不需要关心代码实现的细节。我们把这个方法当做黑盒，来测一些显而易见的值(9,25,36)和一些不常见的值。
+然而，如果这个方法名叫log(数学里的log)，那么我们要写的测试就驴唇不对马嘴了。这简直是在浪费时间，所写的测试用例完全没有用。
+测试方法也同样。一旦测试失败，描述测试工作的测试名真的很有用了。比如测试名是throwsExceptionForNegativeNumbers，测试了一个正数并且没有任何异常，这对我们明白我们在测试什么很有帮助。
+
+## 5.从来不把流操作分成若干指令
+因为Java 8 的streams有流畅的接口，这并不意味着filter，map，flatMap和其他操作一个接着一个链式调用(或者嵌套调用)。
+让我们看个例子。每个football club(足球俱乐部)提供一个soccer players(足球运动员)的列表，返回25岁到30岁间的前锋球员。
+```java
+public Map<String, Integer> someMethodName(List<Player> players) {
+    return players.stream().filter(player -> {
+            int now = Calendar.getInstance().get(Calendar.YEAR);
+            return (now - player.getYearOfBirth() < 30) && (now - player.getYearOfBirth() > 25);
+        }).filter(player -> player.getPosition() == Position.ST)
+        .collect(Collectors.groupingBy(Player::getPlaysFor, Collectors.summingLong(Player::getValue)));
+}
+```
+这里的问题是很难知道什么样的数据应该通过这样的链式方法，所以要遍历所有可能的数据路由。很难指出我们要用什么样的players(运动员)列表作为输入 。
+一长串的操作虽然很吸引人，但可读性很差。一般来说，根据整洁代码规则，把它们拆分成代码块，提取成变量或方法是个好主意。
+经过一些提取，代码重构如下
+```java
+public Map<String, Integer> someMethodName(List<Player> players) {
+    Stream<Player> playersInAgeRange = players.stream().filter(isPlayerInAgeRange());
+    Stream<Player> strikers = playersInAgeRange.filter(isPlayerStriker());
+    return strikers.collect(Collectors.groupingBy(Player::getPlaysFor, Collectors.summingLong(Player::getValue)));
+}
+private Predicate<? super Player> isPlayerStriker() {
+    return player -> player.getPosition() == Position.ST;
+}
+private Predicate<? super Player> isPlayerInAgeRange() {
+    return player -> {
+        int now = Calendar.getInstance().get(Calendar.YEAR);
+        return (now - player.getYearOfBirth() < 30) && (now - player.getYearOfBirth() > 25);
+    };
+}
+```
+尽管代码有些长，但可读性大大提高。
