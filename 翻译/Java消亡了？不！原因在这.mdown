@@ -15,4 +15,29 @@ JVM带来的巨大优势就是它提供的强大兼容性和稳定性。因为�
 ##安全性和互操作性
 Android环境就是Java安全性和互操作性的典型代表。Android占全球手机市场89%，运行基于Java。因为Java允许操作系统运行在虚拟机中，并不需要在每台设备上编译，提高了系统的稳定性和易用性。
 
-Android展现出的Java另一个优点就是与其他基于JVM语言的互操作，比如Scala、Groovy、Clojure、JRuby等等。你可以选择使用这些"更加动态"的语言来构建你的应用，并在需要更多性能的时候拾起
+Android展现出的Java另一个优点就是与其他基于JVM语言的互操作，比如Scala、Groovy、Clojure、JRuby等等。你可以选择使用这些"更加动态"的语言来构建你的应用，并在需要更多性能的时候重拾Java。
+
+巨大的Android市场在内部开发中也存在危险。Android+Java允许用户运行不受信任的应用，并通过虚拟机来运行所有应用来缓解这种危险。因此，应用充分利用操作系统核心的唯一方式就是放弃虚拟机的实现，也就是那个非常小的、被安全层紧紧保护的虚拟机。
+
+##Java的实际应用规模
+Amazon、Google、eBay和许多其他大型电商使用Java作为它们的后台。它们使用Java是因为Java久经考验并且可伸缩。任何语言的后台只能支撑少量用户，但Java可以处理200m或等多。让我们看几个典型例子：
+
+###Hadoop
+Apache Hadoop是支持在大规模硬件集群上运行应用的的Java框架。它被设计用来为那些操作和处理大数据的应用提供高吞吐量。如今Hadoop被许多公司，如Facebook、Amazon、IBM、Joost和Yahoo来处理数据、分析或生成记录。
+
+Hadoop的创造者Doug Cutting说过："Java协调了开发者开发效率和程序执行效率。开发者受益于这种简单、强大、类型安全的语言和丰富的高质量库。"简而言之：大数据离不开Hadoop，Hadoop离不开Java。
+
+###Twitter
+对于Oracle团队和Java来说，Twitter是近几年众人皆知的巨大成功。最初由Ruby on Rails构建，Twitter流行度急速上升，同时RoR框架可伸缩性的缺陷也清晰暴露出来。"Fail Whales(失败鲸)"(Twitter宕机时的标志画面)也频繁出现，直到Twitter在2012年转向Java。如今Twitter运行在Java+Scala之上，Fail Whales(失败鲸)也不复存在。
+
+###Minecraft
+Minecraft是款不可思议的成功游戏。开发团队通过它赚了上百万美元，然后以25亿美元价格卖给微软。Minecraft运行在Java之上。
+
+庞大的的Java社区帮助Minecraft蔓延到成千上万的游戏mod。同时Minecraft向新一代开发者推荐Java。Google上搜索"Minecraft mod制作"会返回65.3万的结果，其中大多是教12岁以下人群如何编程。
+
+其中一款开源工具是Eureka，人们用它来跟踪用户登录Netflix所使用的设备，并交叉校验动作和最近活动，来确保当前账户是安全的。
+
+##Java的未来
+去年，Oracle宣布Java 9预计在2016年9月到来。这次更新把语言中众多函数拆分成许多小组件，意在让Java更加快速和易用。Oracle的巨大投入(虽然总被黑)帮助Java一方面可以继续支持企业依赖，另一方面也可以有所新的发展。
+
+##
