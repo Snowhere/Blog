@@ -1,0 +1,18 @@
+[Is Java Dead? No! Here’s Why...](https://dzone.com/articles/is-java-dead-no-heres-why)
+
+#Java消亡了？不！原因在这...
+年复一年，关于"Java消亡了？"的疑问频繁涌现，然而，通过所有外部表现来看，Java仍活着，并且在发展。尽管许多新语言各领风骚，开发语言排行榜(TIOBE)上Java在2015年仍居榜首，并比2014年增长了[5%的使用量](http://www.tiobe.com/news/10/java-language-of-year-2015),远远超过其他语言。
+![Is Java Dead -- TIOBE](https://stormpath.com/wp-content/uploads/2016/06/2016-06-14_15-17-25-1024x534.png)
+另一方面，[PYPL index](http://pypl.github.io/PYPL.html),根据Google搜索频率为编程语言排名，展示Java以总搜索量的23.9%遥遥领先。
+
+近两年有很多Java死灰复燃的原因(Android开发的爆炸式增长，Java 8的发布，Spring社区的活跃，尤其是Spring Boot),市场优势来自于伟大的产品。这就是为什么我们认为Java并不会消亡。
+
+##Java虚拟机和Java生态环境
+Java虚拟机，或称JVM，将程序编译成字节码，稍后被JVM解析执行。因为JVM根植于你的特定硬件和系统，它允许Java在各处运行，Windows、Mac或各种Linux。
+
+JVM带来的巨大优势就是它提供的强大兼容性和稳定性。因为你的应用运行在虚拟机上而不是直接运行在硬件上，你可以编写一次应用并运行在每个有Java虚拟机的设备上。这也是Java核心原则："一次编写，到处运行"。这也让Java应用面对环境变化时有更大弹性。
+
+##安全性和互操作性
+Android环境就是Java安全性和互操作性的典型代表。Android占全球手机市场89%，运行基于Java。因为Java允许操作系统运行在虚拟机中，并不需要在每台设备上编译，提高了系统的稳定性和易用性。
+
+Android展现出的Java另一个优点就是与其他基于JVM语言的互操作，比如Scala、Groovy、Clojure、JRuby等等。你可以选择使用这些"更加动态"的语言来构建你的应用，并在需要更多性能的时候拾起
