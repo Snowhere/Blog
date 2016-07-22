@@ -1,0 +1,3 @@
+[Why Refactor Java Code? Here Are 44 Reasons (Based on 748 GitHub Projects)](https://dzone.com/articles/why-refactor-java-developers-offer-44-reasons)
+
+为什么要重构Java代码？这里有44个原因(基于GitHub上748个项目)
