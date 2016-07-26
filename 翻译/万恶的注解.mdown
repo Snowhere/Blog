@@ -1,0 +1,6 @@
+[Evil Annotations](https://dzone.com/articles/evil-annotations)
+
+#万恶的注解
+当Java 1.5引入注解，企业开发者对简化EJB和其他企业产品开发抱有很大期望。可以看一看同一时期的一篇文章[用EJB 3.0简化企业Java开发](http://www.javaworld.com/article/2072037/java-web-development/java-web-development-simplify-enterprise-java-development-with-ejb-3-0-part-1.html)。
+
+然而从那时起，Java企业使用注解出现一些无法预料的后果和副作用，一些甚至到今天都没有被注意到。
