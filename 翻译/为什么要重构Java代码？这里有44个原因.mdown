@@ -1,3 +1,10 @@
 [Why Refactor Java Code? Here Are 44 Reasons (Based on 748 GitHub Projects)](https://dzone.com/articles/why-refactor-java-developers-offer-44-reasons)
 
-为什么要重构Java代码？这里有44个原因(基于GitHub上748个项目)
+#为什么要重构Java代码？这里有44个原因(基于GitHub上748个项目)
+
+你的代码不会总是一成不变的。有时随着需求而变；有时随着依赖和接口而变；有时因为第一遍写的不好；等等。
+
+为了理解如何以及为何重构，归纳为下面两个方向：
+1. 需求改变 -> 做出改变
+2. 做出改变 <- 需求改变？
+这两个方向。对于第一个方向：好多需求的改变并不会导致我们做出改变。所以第一个方向有重构的必要，但不是必须的。对于第二个方向：差异并不总能清楚的指明改变的原因。重构的原因往往是
