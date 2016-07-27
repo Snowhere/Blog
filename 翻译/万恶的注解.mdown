@@ -3,4 +3,18 @@
 #万恶的注解
 当Java 1.5引入注解，企业开发者对简化EJB和其他企业产品开发抱有很大期望。可以看一看同一时期的一篇文章[用EJB 3.0简化企业Java开发](http://www.javaworld.com/article/2072037/java-web-development/java-web-development-simplify-enterprise-java-development-with-ejb-3-0-part-1.html)。
 
-然而从那时起，Java企业使用注解出现一些无法预料的后果和副作用，一些甚至到今天都没有被注意到。
+然而从那时起，Java企业使用注解出现一些无法预料的后果和副作用，一些甚至到今天都没有被注意到。幸运的是，并非所有的副作用都没有被注意到，来看一些例子，在StackOverflow标题为["Why Java Annotations?"](http://stackoverflow.com/questions/4285592/why-java-annotations)有很多有价值的评论，["Are Annotations Bad?"](https://dzone.com/articles/are-annotations-bad)这篇文章有很棒的观点，还有["Magics Is Evil"](https://doanduyhai.wordpress.com/2012/04/21/magics-is-evil/)，["Annotations…Good, Bad or Worse?"](http://www.javalobby.org/java/forums/t101604.html)。
+
+##并非所有的注解都相同
+尽管上面许多讨论都包含有价值的观点，但并不是所有注解都是相同的。
+
+这里有两类注解，区别在于他们是否在运行期影响程序。首先，说一下无害的一类，它们并不会在运行期对代码产生任何影响；另一种是有害的一类，它们会修改运行期行为。无害的注解包括@Deprecated, @Override, @SuppressWarnings, 等等。有害的注解包括@Entity, @Table, @PostConstruct, @ApplicationScoped,等等。
+
+在无害的注解中存在一小部分注解，它们非常实用。有一些提供在编译期间(静态检查)捕获错误或提供安全保障。一些实用的注解包括：@Override, @NonNull/@Nullable 来自([Checker Framework](http://checkerframework.org/)), 等等。
+
+##为什么有害的注解不好？
+我们定义了一些有害的注解，为什么要避免使用它们呢？
+
+想象一个标准的Java Data类拥有@PostConstruct方法。这个注解表示所标注的方法应该在对象创建好之后被调用。这个功能并不是由JVM处理，所以Date类隐式获取未知的框架和容器，而自身语义上并没有做任何事情。如果这些代码并不运行在任何容器中，而只是运行在JVM中呢？这个注解大大降低了这个类的重用性。另外对于任何使用Date的地方进行单元测试就变成了噩梦，因为你必须确保每次都正确绑定post-construction，要模拟一个兼容的容器。这就有点可笑了，一个Date类需要一个容器来运行，但这确实是有害的注解对类、方法和参数的影响。
+
+无可否认，业务逻辑往往复杂，需要更多依赖和关系，而不仅仅是一个简单的Date类。然而在一个类中显式或隐式
