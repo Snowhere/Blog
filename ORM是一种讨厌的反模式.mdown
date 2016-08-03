@@ -1,0 +1,4 @@
+[ORM Is an Offensive Anti-Pattern](http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html)
+
+#ORM是一种讨厌的反模式
+太长不看(TL;DR)("Too Long; Didn't Read)
