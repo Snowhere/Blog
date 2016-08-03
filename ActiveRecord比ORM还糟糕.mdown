@@ -1,0 +1,3 @@
+[ActiveRecord Is Even Worse Than ORM](https://dzone.com/articles/activerecord-is-even-worse-than-orm)
+
+#ActiveRecord比ORM还糟糕
