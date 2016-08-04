@@ -6,7 +6,7 @@ import lombok.Data;
 public class BizExt {
 
     // 评分
-    private double rating;
+    private String rating;
     // 人均消费
-    private double cost;
+    private String cost;
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class Response {
+public class POIs {
     //0：请求失败；1：请求成功
     private int status;
     //搜索方案数目,最大值为1000
