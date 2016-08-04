@@ -1,4 +1,104 @@
 [ORM Is an Offensive Anti-Pattern](http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html)
 
 #ORM是一种讨厌的反模式
-太长不看(TL;DR)("Too Long; Didn't Read)
+太长不看(TL;DR)("Too Long; Didn't Read."太长不想看,可以看这段摘要)ORM是一种讨厌的反模式,违背了所有面向对象的原则.将对象分隔开并放入被动的数据包中.ORM没有理由存在任何应用中,无论是小的网络应用还是涉及增删改查上千张表的企业系统.用什么来替代它呢?SQL对象(SQL-speaking objects).
+
+##ORM如何工作
+[Object-relational mapping](https://en.wikipedia.org/wiki/Object-relational_mapping)(ORM)是一种链接关系型数据库和面向对象语言(比如Java)的技术.在各种语言中有大量ORM的实现;比如:Java中的[http://hibernate.org/orm/](http://hibernate.org/orm/),Ruby on Rails中的ActiveRecord,PHP中的Doctrine,Python中的SQLAlchemy.在Java中,甚至把ORM设计作为JPA标准.
+
+首先,让我们看看ORM如何工作.比如,我们用Java,PostgreSQL和Hibernate.我们在数据库有张表,叫 *post*:
++-----+------------+--------------------------+
+| id  | date       | title                    |
++-----+------------+--------------------------+
+|   9 | 10/24/2014 | How to cook a sandwich   |
+|  13 | 11/03/2014 | My favorite movies       |
+|  27 | 11/17/2014 | How much I love my job   |
++-----+------------+--------------------------+
+
+如果我们在Java应用中对这张表增删改查(CRUD:create, read, update, and delete).首先,我们创建一个 *Post* 类(很抱歉代码很长,我尽量简洁一点)
+```java
+@Entity
+@Table(name = "post")
+public class Post {
+  private int id;
+  private Date date;
+  private String title;
+  @Id
+  @GeneratedValue
+  public int getId() {
+    return this.id;
+  }
+  @Temporal(TemporalType.TIMESTAMP)
+  public Date getDate() {
+    return this.date;
+  }
+  public Title getTitle() {
+    return this.title;
+  }
+  public void setDate(Date when) {
+    this.date = when;
+  }
+  public void setTitle(String txt) {
+    this.title = txt;
+  }
+}
+```
+在Hibernate做任何操作前,我们要创建一个session工厂:
+```java
+SessionFactory factory = new AnnotationConfiguration()
+  .configure()
+  .addAnnotatedClass(Post.class)
+  .buildSessionFactory();
+```
+这个工厂能在每次我们需要操作 *Post*对象时给我们"session".任何有关session的操作应该包裹下面代码块:
+```java
+Session session = factory.openSession();
+try {
+  Transaction txn = session.beginTransaction();
+  // your manipulations with the ORM, see below
+  txn.commit();
+} catch (HibernateException ex) {
+  txn.rollback();
+} finally {
+  session.close();
+}
+```
+当session准备就绪,下面是我们从数据库表中获取所有 *post*:
+```java
+List posts = session.createQuery("FROM Post").list();
+for (Post post : (List<Post>) posts){
+  System.out.println("Title: " + post.getTitle());
+}
+```
+我认为到这就很简单了.Hibernate是一个强大的引擎,链接数据库,执行SQL *SELECT*请求,然后取得数据.然后实例化 *Post*对象并装填数据.当我们得到对象时,它已经有了数据,比如我们上面使用 *getTitle()*.
+
+当我们想进行反向操作,将一个对象存入数据库,操作相同,顺序相反.我们先实例化 *Post*对象,装填数据,然后让Hibernate保存它:
+```java
+Post post = new Post();
+post.setDate(new Date());
+post.setTitle("How to cook an omelette");
+session.save(post);
+```
+这就是所有的ORM如何工作.基本原则总是一样的-ORM对象就是数据的信使.我们与ORM框架交互,框架与数据库交互.对象只是帮助我们向框架发送请求并处理响应.除了get和set,没有其他方法.我们甚至不知道数据库在哪.
+
+这就是对象-关系映射如何工作.
+你或许会问哪里有问题?到处!
+
+##ORM有什么问题?
+讲真的,这有什么问题?Hibernate成为最受欢迎的Java库已有10多年.几乎所有处理SQL的应用都在使用它.每个Java教程都会介绍Hibernate(或其他ORM,比如TopLink和OpenJPA)作为数据库连接应用.它已成为一个标准.我还要认为它有问题吗?当然.
+
+我想说整个ORM的构想就是有问题的.它的发明简直是面向对象编程里NULL指针之后的第二大错误.
+
+事实上,我并不是第一个指出这个问题的人.有众多知名作者讨论这个话题,包括Martin Fowler写的[OrmHate](http://martinfowler.com/bliki/OrmHate.html)(虽然不是反对ORM,但是也值得关注),Jeff Atwood写的[ Object-Relational Mapping Is the Vietnam of Computer Science](https://blog.codinghorror.com/object-relational-mapping-is-the-vietnam-of-computer-science/),Ted Neward写的[The Vietnam of Computer Science](http://blogs.tedneward.com/post/the-vietnam-of-computer-science/),Laurie Voss写的[ORM Is an Anti-Pattern](http://seldo.com/weblog/2011/08/11/orm_is_an_antipattern),等等.
+
+然而,我的论点不同于上面几位.尽管他们的论点实用又有根据,比如"ORM很慢"或"数据库升级困难",他们没抓住重点.你可以在Bozhidar Bozhanov的[ORM Haters Don’t Get It](http://techblog.bozho.net/orm-haters-dont-get-it/)这篇博客中找到很棒的论点.
+
+![](http://cf.jare.io/?u=http%3A%2F%2Fwww.yegor256.com%2Fimages%2F2014%2F11%2Form-anti-pattern.svg)
+
+重点是ORM没有在对象中封装数据库的交互,而是把固定的数据和活动的交互分隔开.一部分在对象中储存数据,另一部分由ORM引擎实现(session工厂)来与数据库交互数据.上面这张图展示了ORM做了什么.
+
+我作为 *post*数据的操作者,需要处理两个组件:一是ORM,二是返回的"删减版"(指只有get和set方法)对象.面向对象编程强调的是关注单一的切入点,也就是对象.但在ORM中,我需要关注两个切入点-ORM引擎和我们甚至不能称之为对象的"东西".
+
+因为这严重违背了面向对象的范式.我们可以从很多德高望重的论文中找到实用的解决方案.我可以再提供更多的解决方案.
+
+SQL不再隐藏(SQL Is Not Hidden).ORM用户常使用SQL(或其他方言,比如HQL).上面例子中,我们调用 *session.createQuery("FROM Post")* 来获取所有 *post*.即使这不是SQL,但很像SQL.
