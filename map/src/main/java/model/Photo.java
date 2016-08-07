@@ -7,5 +7,6 @@ import lombok.Data;
 public class Photo {
 
     private List<String> title;
+
     private String url;
 }

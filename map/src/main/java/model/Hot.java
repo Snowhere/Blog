@@ -8,6 +8,8 @@ import lombok.Data;
 public class Hot {
 
     private int status;
+
     private String msg;
+
     private Map<String, List<List<Integer>>> data;
 }

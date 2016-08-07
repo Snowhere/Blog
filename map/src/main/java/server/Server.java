@@ -28,13 +28,21 @@ import util.GaodeCategory;
 public class Server {
 
     private String convertUrl = "http://restapi.amap.com/v3/assistant/coordinate/convert?";
+
     private String searchUrl = "http://restapi.amap.com/v3/place/around?";
+
     private String detailUrl = "http://restapi.amap.com/v3/place/detail?";
+
     private String webUrl = "http://i.amap.com/detail/";
+
     private String key = "b04a1fecf97cf2b8c5dd6c1ded5bb2c8";
+
     private String hotUrl = "http://i.amap.com/service/aoi-index?";
+
     private PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-    private CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(manager).build();
+
+    private CloseableHttpClient httpClient = HttpClients.custom()
+        .setConnectionManager(manager).build();
 
     /**
      * 
@@ -46,15 +54,17 @@ public class Server {
         int offset = 25;
         int page = 1;
         String types = GaodeCategory.getHotPlace();
-        String getUrl = searchUrl + "output=json&extensions=all&key=" + key + "&location=" + location + "&radius="
-                        + radius + "&types=" + types + "&offset=" + offset + "&page=" + page;
+        String getUrl = searchUrl + "output=json&extensions=all&key=" + key
+            + "&location=" + location + "&radius=" + radius + "&types=" + types
+            + "&offset=" + offset + "&page=" + page;
         HttpGet httpget = new HttpGet(getUrl);
         ExecutorService executor = Executors.newCachedThreadPool();
         GetCall<POIs> task = new GetCall<POIs>(httpClient, httpget, POIs.class);
         Future<POIs> result = executor.submit(task);
         try {
             response = result.get();
-        } catch (InterruptedException | ExecutionException | UnsupportedOperationException e) {
+        } catch (InterruptedException | ExecutionException
+            | UnsupportedOperationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -69,15 +79,18 @@ public class Server {
     public Hot getHot(String poiid) {
         Hot response = new Hot();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        String date = format.format(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 2));
-        String getUrl = hotUrl + "offset=7&byhour=0&refresh=1&aoiids=" + poiid + "&end=" + date;
+        String date = format
+            .format(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 2));
+        String getUrl = hotUrl + "offset=7&byhour=0&refresh=1&aoiids=" + poiid
+            + "&end=" + date;
         HttpGet httpget = new HttpGet(getUrl);
         ExecutorService executor = Executors.newCachedThreadPool();
         GetCall<Hot> task = new GetCall<Hot>(httpClient, httpget, Hot.class);
         Future<Hot> result = executor.submit(task);
         try {
             response = result.get();
-        } catch (InterruptedException | ExecutionException | UnsupportedOperationException e) {
+        } catch (InterruptedException | ExecutionException
+            | UnsupportedOperationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
