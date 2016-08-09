@@ -8,7 +8,7 @@ public class POI {
 
     private String id;
 
-    private List<String> tag;
+    private String tag;
 
     // 名称
     private String name;
@@ -20,7 +20,7 @@ public class POI {
     private String typecode;
 
     // 行业类型
-    private List<String> biz_type;
+    private String biz_type;
 
     // 地址
     private String address;
@@ -34,11 +34,11 @@ public class POI {
     // 离中心点距离
     private String distance;
 
-    private List<String> postcode;
+    private String postcode;
 
-    private List<String> website;
+    private String website;
 
-    private List<String> email;
+    private String email;
 
     /** 以下数据均为poi详细信息列表，extensions=all时返回；extensions=base时不返回 **/
     // poi所在省份编码
@@ -96,7 +96,7 @@ public class POI {
 
     private String discount_num;
 
-    private List<BizExt> biz_ext;
+    private BizExt biz_ext;
 
     private List<String> event;
 

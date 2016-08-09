@@ -3,6 +3,9 @@ package run;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
+import model.POI;
+import model.POIModel;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -10,7 +13,7 @@ public class Main {
             "qwer");
         cp.start();
         ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
-        //arp.addMapping("valid", "pager", Valid.class);
+        arp.addMapping("poi",  POIModel.class);
         arp.start();
 
     }
