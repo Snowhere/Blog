@@ -14,7 +14,7 @@ import model.Response;
 import util.GaodeCategory;
 
 public class Task {
-    //间隔
+    //默认间隔
     private double distance = 0.004;
 
     //经
@@ -43,11 +43,11 @@ public class Task {
 
     private CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public void get() throws IOException {
+    public void get(String polygon) throws IOException {
 
         String getUrl = searchUrl
             + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
-            + "&polygon=" + polygon + "&types=" + types + "&page=" + page;
+            + "&polygon=" + polygon + "&types=" + types;
         HttpGet httpget = new HttpGet(getUrl);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
@@ -62,7 +62,6 @@ public class Task {
 
         //请求失败
         if (pois == null || pois.getStatus() == 0) {
-
             System.out.println(pois.getInfo());
             return;
         }
@@ -73,15 +72,16 @@ public class Task {
         }
         //区域poi数量过少,下次稍微增加区域范围
         if (pois.getCount() < 300) {
-            //处理本次结果
+          //处理本次结果
+            for(int i=1;i<pois.getCount()/25;i++){
+                getByPage(getUrl, i);
+            }
+            
         }
     }
 
-    public void getByPage(int page) throws IOException {
-        String getUrl = searchUrl
-            + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
-            + "&polygon=" + polygon + "&types=" + types + "&page=" + page;
-        HttpGet httpget = new HttpGet(getUrl);
+    public void getByPage(String url, int page) throws IOException {
+        HttpGet httpget = new HttpGet(url + "&page=" + page);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
         try {
