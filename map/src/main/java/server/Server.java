@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.Data;
 import model.Hot;
 import model.POI;
-import model.POIs;
+import model.Response;
 import task.GetCall;
 import util.GaodeCategory;
 
@@ -49,8 +49,8 @@ public class Server {
      * @param location 中心点坐标(格式:维度,经度)小数点后不超过6位
      * @param radius 半径
      */
-    public POIs getInfo(String location, int radius) {
-        POIs response = new POIs();
+    public Response getInfo(String location, int radius) {
+        Response response = new Response();
         int offset = 25;
         int page = 1;
         String types = GaodeCategory.getHotPlace();
@@ -59,8 +59,8 @@ public class Server {
             + "&offset=" + offset + "&page=" + page;
         HttpGet httpget = new HttpGet(getUrl);
         ExecutorService executor = Executors.newCachedThreadPool();
-        GetCall<POIs> task = new GetCall<POIs>(httpClient, httpget, POIs.class);
-        Future<POIs> result = executor.submit(task);
+        GetCall<Response> task = new GetCall<Response>(httpClient, httpget, Response.class);
+        Future<Response> result = executor.submit(task);
         try {
             response = result.get();
         } catch (InterruptedException | ExecutionException
@@ -99,7 +99,7 @@ public class Server {
 
     public static void main(String args[]) {
         Server server = new Server();
-        POIs response = server.getInfo("39.913501,116.471922", 1000);
+        Response response = server.getInfo("39.913501,116.471922", 1000);
         System.out.println("总共：" + response.getCount());
         for (POI poi : response.getPois()) {
             String id = poi.getId();

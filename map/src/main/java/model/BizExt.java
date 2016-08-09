@@ -10,4 +10,10 @@ public class BizExt {
 
     // 人均消费
     private String cost;
+
+    private String star;
+
+    private String hotel_ordering;
+
+    private String lowest_price;
 }

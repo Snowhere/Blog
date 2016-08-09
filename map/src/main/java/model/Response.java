@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class POIs {
+public class Response {
     //0：请求失败；1：请求成功
     private int status;
 
