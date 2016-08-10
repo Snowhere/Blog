@@ -1,13 +1,13 @@
-package run;
+package thread;
 
 import java.io.IOException;
 
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
-import model.AreaModel;
 import model.POI;
 import model.POIModel;
+import run.Task;
 
 public class Main {
 
@@ -17,27 +17,10 @@ public class Main {
         cp.start();
         ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
         arp.addMapping("poi", POIModel.class);
-        arp.addMapping("area", AreaModel.class);
         arp.start();
 
         Task task = new Task();
-        AreaModel area = AreaModel.model
-            .findFirst("select * from area order by id desc");
-        try {
-            if (area == null) {
-                task.get(Task.MIN_LNG, Task.MAX_LAT, Task.DISTANCE);
-            } else {
-                task.get(area.getDouble("rightlng"), area.getDouble("leftlat"),
-                    area.getDouble("distance"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         //从数据库中最后一条数据获取当前爬取的url信息,然后继续爬取.
-        // getPois(task);
-    }
-
-    private static void getPois(Task task) {
         POIModel model = POIModel.model
             .findFirst("SELECT  url_info,url FROM `poi` ORDER BY time desc");
         try {
@@ -45,7 +28,7 @@ public class Main {
                 String info = model.getStr("url_info");
                 String[] s = info.split("-");
                 double distance = Double.parseDouble(s[1]);
-                int page = Integer.parseInt(s[2]) + 1;
+                int page=Integer.parseInt(s[2])+1;
                 double lat = Double.parseDouble(s[0].split(";")[0].split(",")[1]);
                 double lng = Double.parseDouble(s[0].split(";")[1].split(",")[0]);
                 //跑完当前poi分页

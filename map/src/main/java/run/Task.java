@@ -15,6 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import com.alibaba.fastjson.JSON;
 
+import model.AreaModel;
 import model.BizExt;
 import model.POI;
 import model.POIModel;
@@ -66,58 +67,68 @@ public class Task {
      * @param distance 经度间隔
      * @throws IOException
      */
-    public void get(double lng, double lat, double distance) throws IOException {
+    public void getArea(double lng, double lat, double distance) throws IOException {
         //全部行遍历完
-        if (lat <= MIN_LAT) {
-            System.out.println("全部行遍历完");
-            return;
-        }
-        // 当前行遍历完,换下一行
-        if (lng >= MAX_LNG) {
-            lng = MIN_LNG;
-            lat = lat - DISTANCE;
-            get(lng, lat, distance);
-            return;
-        }
-        //当前行,下一区域
-        double rightLng = (lng + distance) > MAX_LNG ? MAX_LNG : (lng + distance);
-        double rightLat = (lat - DISTANCE) < MIN_LAT ? MIN_LNG : (lat - DISTANCE);
-        String polygon = lng + "," + lat + ";" + rightLng + "," + rightLat;
-        String getUrl = searchUrl
-            + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
-            + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
-            + URLEncoder.encode(types, "utf8");
-        HttpGet httpget = new HttpGet(getUrl);
-        CloseableHttpResponse response = httpClient.execute(httpget);
-        Response pois = null;
-        try {
-            pois = JSON.parseObject(response.getEntity().getContent(),
-                Response.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            response.close();
-        }
+        while (true) {
 
-        //请求失败
-        if (pois == null || pois.getStatus() == 0) {
-            System.out.println(pois.getInfo());
-            return;
+            if (lat <= MIN_LAT) {
+                System.out.println("全部行遍历完");
+                break;
+            }
+            // 当前行遍历完,换下一行
+            if (lng >= MAX_LNG) {
+                lng = MIN_LNG;
+                lat = lat - DISTANCE;
+                //get(lng, lat, distance);
+                continue;
+            }
+            //当前行,下一区域
+            double rightLng = (lng + distance) > MAX_LNG ? MAX_LNG
+                : (lng + distance);
+            double rightLat = (lat - DISTANCE) < MIN_LAT ? MIN_LNG
+                : (lat - DISTANCE);
+            String polygon = lng + "," + lat + ";" + rightLng + "," + rightLat;
+            String getUrl = searchUrl
+                + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
+                + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
+                + URLEncoder.encode(types, "utf8");
+            HttpGet httpget = new HttpGet(getUrl);
+            CloseableHttpResponse response = httpClient.execute(httpget);
+            Response pois = null;
+            try {
+                pois = JSON.parseObject(response.getEntity().getContent(),
+                    Response.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                response.close();
+            }
+
+            //请求失败
+            if (pois == null || pois.getStatus() == 0) {
+                System.out.println(pois.getInfo());
+                break;
+            }
+            //区域内poi数量过多,无法完全显示,缩小区域范围
+            if (pois.getCount() == 1000) {
+                //本次结果不处理,重新获取
+                //get(lng, lat, distance / 2);
+                distance /= 2;
+                continue;
+            }
+            //区域poi数量过少,下次稍微增加区域范围
+            if (pois.getCount() < 300) {
+                distance *= 2;
+            }
+            //处理本次结果
+            //getByPage(getUrl, 1, polygon + "-" + distance);
+            new AreaModel().set("leftlng", lng).set("leftlat", lat)
+                .set("rightlng", rightLng).set("rightlat", rightLat)
+                .set("distance", distance).set("num", pois.getCount()).save();
+            //遍历下一块区域
+            //get(rightLng, lat, distance);
+            lng = rightLng;
         }
-        //区域内poi数量过多,无法完全显示,缩小区域范围
-        if (pois.getCount() == 1000) {
-            //本次结果不处理,重新获取
-            get(lng, lat, distance / 2);
-            return;
-        }
-        //区域poi数量过少,下次稍微增加区域范围
-        if (pois.getCount() < 300) {
-            distance *= 2;
-        }
-        //处理本次结果
-        getByPage(getUrl, 1, polygon + "-" + distance);
-        //遍历下一块区域
-        get(rightLng, lat, distance);
     }
 
     /**
@@ -127,8 +138,12 @@ public class Task {
      * @param page
      * @throws IOException
      */
-    public void getByPage(String url, int page, String info) throws IOException {
-        HttpGet httpget = new HttpGet(url + "&page=" + page);
+    public void getPois(String polygon, int page, String info) throws IOException {
+        String getUrl = searchUrl
+            + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
+            + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
+            + URLEncoder.encode(types, "utf8");
+        HttpGet httpget = new HttpGet(getUrl + "&page=" + page);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
         try {
@@ -144,13 +159,12 @@ public class Task {
             System.out.println(pois.getInfo());
             return;
         }
-      
-        
+
         for (POI poi : pois.getPois()) {
             // save
-            POIModel model = new POIModel().set("poiid", poi.getId()).set("name", poi.getName())
-                .set("type", poi.getType()).set("tag", poi.getTag())
-                .set("typecode", poi.getTypecode())
+            POIModel model = new POIModel().set("poiid", poi.getId())
+                .set("name", poi.getName()).set("type", poi.getType())
+                .set("tag", poi.getTag()).set("typecode", poi.getTypecode())
                 .set("biz_type", poi.getBiz_type()).set("address", poi.getAddress())
                 .set("location", poi.getLocation()).set("tel", poi.getTel())
                 .set("adcode", poi.getAdcode()).set("adname", poi.getAdname())
@@ -164,11 +178,10 @@ public class Task {
                     .set("hotel_ordering", ext.getHotel_ordering())
                     .set("lowest_price", ext.getLowest_price());
             }
-            model.set("time", new Date()).set("url",url).set("url_info", info + "-" + page).save();
+            model.set("time", new Date())
+                .set("url_info", info + "-" + page).save();
             System.out.println(poi.getName());
         }
-        if(page< (pois.getCount() - 1) / 25 + 1){
-            getByPage(url, page+1, info);
-        }
+        
     }
 }
