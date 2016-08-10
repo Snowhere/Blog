@@ -138,7 +138,139 @@ for (Post post : posts.iterate()){
 Posts posts = // we'll discuss this right now
 posts.add(new Date(), "How to cook an omelette");
 ```
-你可以看到,我们有真实对象了.他们掌握所有操作,并且在内部隐藏实现细节.没有事务,火花或工厂.我们甚至不知道这些对象是否真的和PostgreSQL交互,或他们只是把数据保存在text文件中.
+你可以看到,我们有真实对象了.他们掌握所有操作,并且在内部隐藏实现细节.没有事务,会话或工厂.我们甚至不知道这些对象是否真的和PostgreSQL交互,或许它只是把数据保存在txt文件中.*Posts*带给我们的是获取post列表和创建新post的能力.具体实现很好地隐藏在其中.现在让我们看一看如何实现这两个类.
 
+我将使用[jcabi-jdbc](http://jdbc.jcabi.com/)作为JDBC包裹,当然你也可以使用其他你喜欢的JDBC.这无所谓.重点是与数据库的交互要隐藏在对象中.让我们开始实现 *PgPosts*类("pg"表示PostgreSQL).
+```java
+final class PgPosts implements Posts {
+  private final Source dbase;
+  public PgPosts(DataSource data) {
+    this.dbase = data;
+  }
+  public Iterable<Post> iterate() {
+    return new JdbcSession(this.dbase)
+      .sql("SELECT id FROM post")
+      .select(
+        new ListOutcome<Post>(
+          new ListOutcome.Mapping<Post>() {
+            @Override
+            public Post map(final ResultSet rset) {
+              return new PgPost(
+                this.dbase,
+                rset.getInteger(1)
+              );
+            }
+          }
+        )
+      );
+  }
+  public Post add(Date date, String title) {
+    return new PgPost(
+      this.dbase,
+      new JdbcSession(this.dbase)
+        .sql("INSERT INTO post (date, title) VALUES (?, ?)")
+        .set(new Utc(date))
+        .set(title)
+        .insert(new SingleOutcome<Integer>(Integer.class))
+    );
+  }
+}
+```
+然后我们创建 *PgPost*类来实现 *Post*接口:
+```java
+final class PgPost implements Post {
+  private final Source dbase;
+  private final int number;
+  public PgPost(DataSource data, int id) {
+    this.dbase = data;
+    this.number = id;
+  }
+  public int id() {
+    return this.number;
+  }
+  public Date date() {
+    return new JdbcSession(this.dbase)
+      .sql("SELECT date FROM post WHERE id = ?")
+      .set(this.number)
+      .select(new SingleOutcome<Utc>(Utc.class));
+  }
+  public String title() {
+    return new JdbcSession(this.dbase)
+      .sql("SELECT title FROM post WHERE id = ?")
+      .set(this.number)
+      .select(new SingleOutcome<String>(String.class));
+  }
+}
+```
+下面就是我们用刚刚创建的类来和数据库交互:
+```java
+Posts posts = new PgPosts(dbase);
+for (Post post : posts.iterate()){
+  System.out.println("Title: " + post.title());
+}
+Post post = posts.add(new Date(), "How to cook an omelette");
+System.out.println("Just added post #" + post.id());
+```
+你可以在这看到[完整例子](https://github.com/aintshy/hub/tree/0.7.2/src/main/java/com/aintshy/pgsql).这是一个开源的web app使用PostgreSQL来实现上面提到的-SQL-speaking objects.
 
+##性能如何?
+我能听到你的惊呼"性能怎么样?"在上面几行代码中,我们创建了和数据库的冗余链接.首先我们用 *SELECT id*来检索post的ID,然后为了获取它们的title,我们对应每个post发送 *SELECT title*请求.这确实效率很低.
+
+不要担心.这是面向对象编程,意味着这是可伸缩的!我们来创建一个 *PgPost*的装饰器,其构造函数接受数据,并在内部缓存:
+```java
+final class ConstPost implements Post {
+  private final Post origin;
+  private final Date dte;
+  private final String ttl;
+  public ConstPost(Post post, Date date, String title) {
+    this.origin = post;
+    this.dte = date;
+    this.ttl = title;
+  }
+  public int id() {
+    return this.origin.id();
+  }
+  public Date date() {
+    return this.dte;
+  }
+  public String title() {
+    return this.ttl;
+  }
+}
+```
+注意:这个装饰器并不知道PostgreSQL或JDBC.它仅仅是 *POST*对象的装饰,并缓存数据和title.通常,这个装饰器是不可变的.
+
+现在我们来创建 *Posts*的另一个实现,其返回一个"不可变"的对象:
+```java
+final class ConstPgPosts implements Posts {
+  // ...
+  public Iterable<Post> iterate() {
+    return new JdbcSession(this.dbase)
+      .sql("SELECT * FROM post")
+      .select(
+        new ListOutcome<Post>(
+          new ListOutcome.Mapping<Post>() {
+            @Override
+            public Post map(final ResultSet rset) {
+              return new ConstPost(
+                new PgPost(
+                  ConstPgPosts.this.dbase,
+                  rset.getInteger(1)
+                ),
+                Utc.getTimestamp(rset, 2),
+                rset.getString(3)
+              );
+            }
+          }
+        )
+      );
+  }
+}
+```
+现在所有post通过这个 *iterate()*方法返回,并且从数据库中取到了数据装配在新的类中.
+
+使用装饰器和对相同接口的众多实现,你可以组合任意的功能.最重要的是扩展功能的同时,不要增加设计的复杂度,因为类的大小不会增长.我们使用新的高聚合的类,它们更小巧.
+
+##事务又如何?
+每个对象应该在其单独的事务中执行,并且将
 

@@ -1,10 +1,15 @@
 package run;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -17,19 +22,23 @@ import model.Response;
 import util.GaodeCategory;
 
 public class Task {
-    //默认间隔
-    private double distance = 0.004;
-
     //经纬
     private double longitude = 0;
+
     private double latitude = 0;
 
+    //默认间隔
+    public static double DISTANCE = 0.004;
+
     //北京范围
-    private double maxLng = 116.715666;//右
-    private double minLng = 116.052341;//左
-    private double maxLat = 40.248446;//上
-    private double minLat = 39.725344;//下
-    
+    public static double MAX_LNG = 116.715666;//右
+
+    public static double MIN_LNG = 116.052341;//左
+
+    public static double MAX_LAT = 40.248446;//上
+
+    public static double MIN_LAT = 39.725344;//下
+
     //矩形区域搜索url
     private String searchUrl = "http://restapi.amap.com/v3/place/polygon?";
 
@@ -50,11 +59,34 @@ public class Task {
 
     private CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public void get(double lng,double lat,double distance) throws IOException {
-        String polygon="";
+    /**
+     * 纬度固定间距,经度动态间距,由左上开始一行一行遍历,纬度递减,经度递增
+     * @param lng 经
+     * @param lat 纬
+     * @param distance 经度间隔
+     * @throws IOException
+     */
+    public void get(double lng, double lat, double distance) throws IOException {
+        //全部行遍历完
+        if (lat <= MIN_LAT) {
+            System.out.println("全部行遍历完");
+            return;
+        }
+        // 当前行遍历完,换下一行
+        if (lng >= MAX_LNG) {
+            lng = MIN_LNG;
+            lat = lat - DISTANCE;
+            get(lng, lat, distance);
+            return;
+        }
+        //当前行,下一区域
+        double rightLng = (lng + distance) > MAX_LNG ? MAX_LNG : (lng + distance);
+        double rightLat = (lat - DISTANCE) < MIN_LAT ? MIN_LNG : (lat - DISTANCE);
+        String polygon = lng + "," + lat + ";" + rightLng + "," + rightLat;
         String getUrl = searchUrl
             + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
-            + "&polygon=" + polygon + "&types=" + types;
+            + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
+            + URLEncoder.encode(types, "utf8");
         HttpGet httpget = new HttpGet(getUrl);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
@@ -75,26 +107,27 @@ public class Task {
         //区域内poi数量过多,无法完全显示,缩小区域范围
         if (pois.getCount() == 1000) {
             //本次结果不处理,重新获取
-
+            get(lng, lat, distance / 2);
+            return;
         }
         //区域poi数量过少,下次稍微增加区域范围
         if (pois.getCount() < 300) {
-            //处理本次结果
-            for (int i = 1; i < pois.getCount() / 25; i++) {
-                getByPage(getUrl, polygon, i);
-            }
-
+            distance *= 2;
         }
+        //处理本次结果
+        getByPage(getUrl, 1, polygon + "-" + distance);
+        //遍历下一块区域
+        get(rightLng, lat, distance);
     }
 
     /**
-     * 分页遍历poi
+     * 分页遍历poi,自递归
      * @param url
      * @param polygon
      * @param page
      * @throws IOException
      */
-    public void getByPage(String url, String polygon, int page) throws IOException {
+    public void getByPage(String url, int page, String info) throws IOException {
         HttpGet httpget = new HttpGet(url + "&page=" + page);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
@@ -106,9 +139,16 @@ public class Task {
         } finally {
             response.close();
         }
+        //请求失败
+        if (pois == null || pois.getStatus() == 0) {
+            System.out.println(pois.getInfo());
+            return;
+        }
+      
+        
         for (POI poi : pois.getPois()) {
             // save
-            POIModel model = new POIModel().set("name", poi.getName())
+            POIModel model = new POIModel().set("poiid", poi.getId()).set("name", poi.getName())
                 .set("type", poi.getType()).set("tag", poi.getTag())
                 .set("typecode", poi.getTypecode())
                 .set("biz_type", poi.getBiz_type()).set("address", poi.getAddress())
@@ -124,7 +164,11 @@ public class Task {
                     .set("hotel_ordering", ext.getHotel_ordering())
                     .set("lowest_price", ext.getLowest_price());
             }
-            model.set("url_info", polygon + "-" + page).save();
+            model.set("time", new Date()).set("url",url).set("url_info", info + "-" + page).save();
+            System.out.println(poi.getName());
+        }
+        if(page< (pois.getCount() - 1) / 25 + 1){
+            getByPage(url, page+1, info);
         }
     }
 }
