@@ -6,7 +6,6 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
 import model.AreaModel;
-import model.POI;
 import model.POIModel;
 
 public class Main {
@@ -20,45 +19,60 @@ public class Main {
         arp.addMapping("area", AreaModel.class);
         arp.start();
 
+        //getArea();
+        //从数据库中最后一条数据获取当前爬取的url信息,然后继续爬取.
+        getPois();
+    }
+
+    private static void getArea() {
         Task task = new Task();
         AreaModel area = AreaModel.model
             .findFirst("select * from area order by id desc");
         try {
             if (area == null) {
-                task.get(Task.MIN_LNG, Task.MAX_LAT, Task.DISTANCE);
+                task.getArea(Task.MIN_LNG, Task.MAX_LAT, Task.DISTANCE);
             } else {
-                task.get(area.getDouble("rightlng"), area.getDouble("leftlat"),
+                task.getArea(area.getDouble("rightlng"), area.getDouble("leftlat"),
                     area.getDouble("distance"));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //从数据库中最后一条数据获取当前爬取的url信息,然后继续爬取.
-        // getPois(task);
     }
 
-    private static void getPois(Task task) {
+    private static void getPois() {
+        Task task = new Task();
         POIModel model = POIModel.model
-            .findFirst("SELECT  url_info,url FROM `poi` ORDER BY time desc");
-        try {
-            if (model != null) {
-                String info = model.getStr("url_info");
-                String[] s = info.split("-");
-                double distance = Double.parseDouble(s[1]);
-                int page = Integer.parseInt(s[2]) + 1;
-                double lat = Double.parseDouble(s[0].split(";")[0].split(",")[1]);
-                double lng = Double.parseDouble(s[0].split(";")[1].split(",")[0]);
-                //跑完当前poi分页
-                task.getByPage(model.getStr("url"), page, info);
+            .findFirst("SELECT  * FROM `poi` ORDER BY id desc");
+        int areaId = 1;
+        int page = 1;
+        if (model != null) {
+            areaId = model.getInt("area_id");
+            page = model.getInt("page") + 1;
+        }
+        while (areaId <= 2803) {
+            //获取区域块
+            AreaModel area = AreaModel.model.findById(areaId);
+            int num = area.getInt("num");
+            String polygon = area.getDouble("leftlng") + ","
+                + area.getDouble("leftlat") + ";" + area.getDouble("rightlng") + ","
+                + area.getDouble("rightlat");
+            try {
+                System.out.println(areaId);
+                //分页查poi
+                for (int i = page; i <= (num - 1) / 25 + 1; i++) {
+                    task.getPois(polygon, areaId, i);
+                }
                 //继续主循环
-                task.get(lng, lat, distance);
-            } else {
-                task.get(Task.MIN_LNG, Task.MAX_LAT, Task.DISTANCE);
+                areaId += 1;
+                page = 1;
+            } catch (IOException e) {
+                e.printStackTrace();
+                model = POIModel.model
+                    .findFirst("SELECT  * FROM `poi` ORDER BY id desc");
+                areaId = model.getInt("area_id");
+                page = model.getInt("page") + 1;
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-
 }

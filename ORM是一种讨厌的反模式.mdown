@@ -106,7 +106,7 @@ session.save(post);
 
 我再次重申.ORM的实际问题就是这种后果.本质缺点就是ORM将对象分隔开,严重违反了对象的含义.
 
-##SQL-Speaking Objects
+##SQL对象(SQL-Speaking Objects)
 ![](http://cf.jare.io/?u=http%3A%2F%2Fwww.yegor256.com%2Fimages%2F2014%2F11%2Fsql-speaking-object.svg)
 
 有什么解决方案?让我给你举个例子.我们来设计一个 *Post*类.我们需要将它分成两个类:*Post*和 *Posts*,单个和多个.我曾在我的一篇文章中提到过,一个好的对象是现实生活中实体的抽象.我们来实践这一原则.我们有两个实体:数据库表和表格行.这就是为什么我们创建两个类:*Post*展示表,*Post*展示行.
@@ -272,5 +272,40 @@ final class ConstPgPosts implements Posts {
 使用装饰器和对相同接口的众多实现,你可以组合任意的功能.最重要的是扩展功能的同时,不要增加设计的复杂度,因为类的大小不会增长.我们使用新的高聚合的类,它们更小巧.
 
 ##事务又如何?
-每个对象应该在其单独的事务中执行,并且将
+每个对象应该在其单独的事务中执行,并且将 *SELECT*和 *INSERT*封装在一起.这需要内置事务,数据库提供非常棒的支持.如果没有这样的支持,创建一个会话事务对象必须接受一个"callable"类.比如:
+```java
+final class Txn {
+  private final DataSource dbase;
+  public <T> T call(Callable<T> callable) {
+    JdbcSession session = new JdbcSession(this.dbase);
+    try {
+      session.sql("START TRANSACTION").exec();
+      T result = callable.call();
+      session.sql("COMMIT").exec();
+      return result;
+    } catch (Exception ex) {
+      session.sql("ROLLBACK").exec();
+      throw ex;
+    }
+  }
+}
+```
+然后,当你想在一个事务中进行一系列的操作,像下面这样:
+```java
+new Txn(dbase).call(
+  new Callable<Integer>() {
+    @Override
+    public Integer call() {
+      Posts posts = new PgPosts(dbase);
+      Post post = posts.add(new Date(), "How to cook an omelette");
+      posts.comments().post("This is my first comment!");
+      return post.id();
+    }
+  }
+);
+```
+这段代码会创建一个新的post并提交一个comment.如果任何调用失败,整个事务将回滚.
+
+对于我来说,这就是面向对象.我称它为"SQL-speaking objects",因为它们知道如何与数据库服务器通过SQL交互.这是它们的能力,完美封装在其内部.
+
 

@@ -1,15 +1,11 @@
 package run;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -68,9 +64,9 @@ public class Task {
      * @throws IOException
      */
     public void getArea(double lng, double lat, double distance) throws IOException {
-        //全部行遍历完
-        while (true) {
 
+        while (true) {
+            //全部行遍历完
             if (lat <= MIN_LAT) {
                 System.out.println("全部行遍历完");
                 break;
@@ -79,7 +75,6 @@ public class Task {
             if (lng >= MAX_LNG) {
                 lng = MIN_LNG;
                 lat = lat - DISTANCE;
-                //get(lng, lat, distance);
                 continue;
             }
             //当前行,下一区域
@@ -111,9 +106,8 @@ public class Task {
             }
             //区域内poi数量过多,无法完全显示,缩小区域范围
             if (pois.getCount() == 1000) {
-                //本次结果不处理,重新获取
-                //get(lng, lat, distance / 2);
                 distance /= 2;
+                //本次结果不处理,重新获取
                 continue;
             }
             //区域poi数量过少,下次稍微增加区域范围
@@ -121,24 +115,22 @@ public class Task {
                 distance *= 2;
             }
             //处理本次结果
-            //getByPage(getUrl, 1, polygon + "-" + distance);
             new AreaModel().set("leftlng", lng).set("leftlat", lat)
                 .set("rightlng", rightLng).set("rightlat", rightLat)
                 .set("distance", distance).set("num", pois.getCount()).save();
             //遍历下一块区域
-            //get(rightLng, lat, distance);
             lng = rightLng;
         }
     }
 
     /**
-     * 分页遍历poi,自递归
+     * 分页遍历poi
      * @param url
      * @param polygon
      * @param page
      * @throws IOException
      */
-    public void getPois(String polygon, int page, String info) throws IOException {
+    public boolean getPois(String polygon, int areaId, int page) throws IOException {
         String getUrl = searchUrl
             + "output=json&extensions=all&offset=25&key=b04a1fecf97cf2b8c5dd6c1ded5bb2c8"
             + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
@@ -157,7 +149,7 @@ public class Task {
         //请求失败
         if (pois == null || pois.getStatus() == 0) {
             System.out.println(pois.getInfo());
-            return;
+            return false;
         }
 
         for (POI poi : pois.getPois()) {
@@ -178,10 +170,10 @@ public class Task {
                     .set("hotel_ordering", ext.getHotel_ordering())
                     .set("lowest_price", ext.getLowest_price());
             }
-            model.set("time", new Date())
-                .set("url_info", info + "-" + page).save();
-            System.out.println(poi.getName());
+            model.set("time", new Date()).set("area_id", areaId).set("page", page)
+                .save();
+            //System.out.println(poi.getName());
         }
-        
+        return true;
     }
 }
