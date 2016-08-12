@@ -43,7 +43,7 @@ public class Main {
     private static void getPois() {
         Task task = new Task();
         POIModel model = POIModel.model
-            .findFirst("SELECT  * FROM `poi` ORDER BY id desc");
+            .findFirst("SELECT  * FROM `poi` ORDER BY id desc limit 1");
         int areaId = 1;
         int page = 1;
         if (model != null) {
@@ -69,7 +69,7 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
                 model = POIModel.model
-                    .findFirst("SELECT  * FROM `poi` ORDER BY id desc");
+                    .findFirst("SELECT  * FROM `poi` ORDER BY id desc limit 1");
                 areaId = model.getInt("area_id");
                 page = model.getInt("page") + 1;
             }
