@@ -9,6 +9,9 @@ import model.POIModel;
 import model.Response;
 
 public class IndexController extends Controller {
+    public void index(){
+        renderJsp("index.jsp");
+    }
     public void getInfo() {
 
         Response response = new Response();
@@ -16,7 +19,7 @@ public class IndexController extends Controller {
             this.getParaToInt(0));
         for (POIModel poi : pois) {
             CategoryModel model = CategoryModel.dao
-                .getByCode(poi.getStr("typecode"));
+                .getByCode(poi.getStr("typecode").split("\\|")[0]);
             if (model != null) {
                 response.push(model.getStr("first")).push(model.getStr("second"))
                     .push(model.getStr("code"), model.getStr("third")).push(poi);
@@ -37,7 +40,7 @@ public class IndexController extends Controller {
         List<POIModel> pois = POIModel.model.getAround(lng, lat, radius);
         for (POIModel poi : pois) {
             CategoryModel model = CategoryModel.dao
-                .getByCode(poi.getStr("typecode"));
+                .getByCode(poi.getStr("typecode").split("\\|")[0]);
             if (model != null) {
                 response.push(model.getStr("first")).push(model.getStr("second"))
                     .push(model.getStr("code"), model.getStr("third")).push(poi);

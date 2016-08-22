@@ -6,23 +6,27 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Echarts</title>
     <style type="text/css">
-    * {
-        margin: 0;
-        padding: 0;
-    }
+   
     </style>
 </head>
 
 <body>
-    <!-- 为 地图准备一个具备大小（宽高）的 DOM -->
-    <div id="container" style="width: 800px;height: 500px;"></div>
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div style="width:1800px;height:500px">
-        <div id="main" style="float:left;width: 600px;height:400px;"></div>
-        <div id="second" style="float:left;width: 600px;height:400px;"></div>
-        <div id="third" style="float:left;width: 600px;height:400px;"></div>
+    <div style="width:100%;min-width:1200px;">
+        <div id="main" style="float:left;width: 33%;height:300px;"></div>
+        <div id="second" style="float:left;width: 33%;height:300px;"></div>
+        <div id="third" style="float:left;width: 33%;height:300px;"></div>
     </div>
-    <div><h3 id="hotTitle"></h3><div id="hotMessage"></div>
+    <div style="width:1200px;">
+    	<!-- 为 地图准备一个具备大小（宽高）的 DOM -->
+    	<div id="container" style="float:left;width: 700px;height: 400px;border:1px solid blue"></div>
+    	<!-- 文字信息 -->
+    	<div style="float:left;width:400px;margin-left:50px">
+    		<!-- 热点地区 -->
+    		<h3 id="hotTitle"></h3><div id="hotMessage"></div>
+    		<!-- poi详情 -->
+    		<!-- <h3>POI详情</h3><div id="poiList"></div> -->
+    	</div>
     </div>
     <!-- 代码逻辑 -->
     <script src="jquery-1.11.3.min.js"></script>
@@ -58,7 +62,7 @@
             position: [lng, lat],
             map: map
         });
-        var clickHandle = AMap.event.addListener(marker, 'click', function() {
+        var mouseover = AMap.event.addListener(marker, 'mouseover', function() {
             //信息窗体
             infowindow = new AMap.InfoWindow({
                 content: content,
@@ -67,17 +71,35 @@
             })
             infowindow.open(map, marker.getPosition())
         });
+        var mouseout = AMap.event.addListener(marker, 'mouseout', function() {
+            //信息窗体
+        	infowindow.close();
+        });
         return marker;
     }
 
 
 
-    //绑定点击
+    //原点绑定点击
     var _onClick = function(e) {
+    	//清除原有点
+        if (infowindow) {
+            infowindow.close();
+        }
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap();
+        }
+        markers = [];
+        //清除饼状图
+        myChart.clear();
+        second.clear();
+        third.clear();
+        //
         position.setPosition(e.lnglat);
-        getAround(e.lnglat.lng, e.lnglat.lat, 1000);
         map.setCenter(e.lnglat);
         map.setZoom(14);
+        //载入数据
+        getAround(e.lnglat.lng, e.lnglat.lat, 1000);
     }
     var clickListener = AMap.event.addListener(map, "click", _onClick); //绑定事件，返回监听对象
     //AMap.event.removeListener(clickListener); //移除事件，以绑定时返回的对象作为参数
@@ -149,14 +171,7 @@
         //console.log(params.data);
        
        
-        //清除原有点
-        if (infowindow) {
-            infowindow.close();
-        }
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap();
-        }
-        markers = [];
+       
         for (var j = 0; j < params.data.list.length; j++) {
             markers.push(createMarker(params.data.list[j].location.split(',')[0], params.data.list[j].location.split(',')[1], params.data.list[j].name));
         }
