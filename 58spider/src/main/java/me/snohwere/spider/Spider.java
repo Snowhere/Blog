@@ -25,7 +25,7 @@ public class Spider extends Thread {
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(false);
         client.getJavaScriptEngine().shutdown();
-        
+        client.getOptions().setTimeout(1000);
         this.id = id;
     }
 
@@ -39,8 +39,7 @@ public class Spider extends Thread {
                 //if(num%10==0)System.gc();
                 task = MyQueue.TASK_QUEUE.take();
                 try {
-                    rootPage = client.getPage(task.getUrl());
-                 
+                    rootPage = client.getPage(task.getUrl());                 
                     task.process(rootPage);
                     task = null;
                 } catch (FailingHttpStatusCodeException | IOException e) {

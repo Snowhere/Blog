@@ -29,7 +29,7 @@ public class StoreListTask extends Task {
         try {
             Elements shops = doc.select("a.t");
             for (Element shop : shops) {
-                String url = shop.attr("href").split("?")[0];
+                String url = shop.attr("href").split("\\?")[0];
                 MyQueue.TASK_QUEUE.put(new StoreDetailTask(url));
             }
             //如果有下一页

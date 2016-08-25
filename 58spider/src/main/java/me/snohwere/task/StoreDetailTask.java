@@ -19,7 +19,7 @@ public class StoreDetailTask extends Task {
     @Override
     public void process(Document doc) {
         try {
-
+            String title = doc.select(".w headline>h1").get(0).html();
             //TODO 保存
             MyQueue.DATA_QUEUE.put(new Store());
 
