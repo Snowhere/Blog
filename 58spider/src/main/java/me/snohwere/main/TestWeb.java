@@ -35,11 +35,12 @@ public class TestWeb {
         String url = "";
         // 模拟浏览器打开一个目标网址
         try {
-            url = "http://bj.58.com/fatou/shangpucz/pn70";
+            //url = "http://bj.58.com/fatou/shangpucz/pn70";
+            url = "http://bj.58.com/shangpu/26727229546696x.shtml";
             HtmlPage page = client.getPage(url);
             Document document = Jsoup.parse(page.asXml());
             //qu(document);
-            storeList(document);
+            storeDetail(document);
         } catch (FailingHttpStatusCodeException | IOException  e) {
             e.printStackTrace();
             System.out.println(url);
@@ -82,5 +83,12 @@ public class TestWeb {
         if (next != null && !next.isEmpty()) {
             System.out.println("has next");
         }
+    }
+    
+    private static void storeDetail(Document doc){
+        String totalLook = doc.getElementById("totalcount").html();
+        String date = doc.getElementsByClass("other").get(0).html().split("<")[0].split("：")[1];
+        System.out.println(date);
+        System.out.println(totalLook);
     }
 }
