@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import me.snohwere.queue.MyQueue;
 import me.snohwere.task.Task;
+
 /**
  * 用WebClient的Spider
  * @author STH
@@ -25,7 +26,7 @@ public class Spider extends Thread {
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(false);
         client.getJavaScriptEngine().shutdown();
-        client.getOptions().setTimeout(1000);
+        client.getOptions().setTimeout(10000);
         this.id = id;
     }
 
@@ -39,15 +40,15 @@ public class Spider extends Thread {
                 //if(num%10==0)System.gc();
                 task = MyQueue.TASK_QUEUE.take();
                 try {
-                    rootPage = client.getPage(task.getUrl());                 
+                    rootPage = client.getPage(task.getUrl());
                     task.process(rootPage);
                     task = null;
                 } catch (FailingHttpStatusCodeException | IOException e) {
                     MyQueue.TASK_QUEUE.put(task);
-                    e.printStackTrace();
+                    System.out.println(e.getMessage()+"---"+task.getUrl());
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }

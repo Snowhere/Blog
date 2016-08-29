@@ -29,7 +29,7 @@ public class HttpSpider extends Thread {
     public void run() {
         HttpGet httpget;
         CloseableHttpResponse response;
-        Task task;
+        Task task = null;
         while (true) {
             System.out.println("线程" + id + "正在处理" + num++);
             try {
@@ -38,7 +38,8 @@ public class HttpSpider extends Thread {
                 response = httpclient.execute(httpget);
                 task.process(Jsoup.parse(response.getEntity().getContent().toString()));
             } catch (FailingHttpStatusCodeException | IOException | InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(task.getUrl());
+                System.out.println(e.getMessage());
             }
         }
     }

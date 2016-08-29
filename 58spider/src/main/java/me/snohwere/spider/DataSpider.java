@@ -18,12 +18,12 @@ public class DataSpider extends Thread {
 
     @Override
     public void run() {
-        batchSave();
+        save();
     }
 
     private void save() {
         while (true) {
-            System.out.println("数据库线程" + id + "正在处理" + num++);
+            //System.out.println("数据库线程" + id + "正在处理" + num++);
             try {
                 model = MyQueue.DATA_QUEUE.take();
                 model.save();
