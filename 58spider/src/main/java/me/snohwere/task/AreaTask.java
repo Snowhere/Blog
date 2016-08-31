@@ -20,18 +20,13 @@ public class AreaTask extends Task {
     }
 
     @Override
-    public void process(Document doc) {
-        try {
-            Element table = doc.getElementsByClass("pars").get(0);
-            Elements urls = table.getElementsByTag("tr").get(0)
-                .getElementsByTag("a");
-            for (int i = 1; i < urls.size(); i++) {
-                String code = urls.get(i).attr("href").split("/")[1];
-                String area = urls.get(i).html();
-                MyQueue.TASK_QUEUE.put(new PlaceTask(code, area));
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void process(Document doc) throws Exception {
+        Element table = doc.getElementsByClass("pars").get(0);
+        Elements urls = table.getElementsByTag("tr").get(0).getElementsByTag("a");
+        for (int i = 1; i < urls.size(); i++) {
+            String code = urls.get(i).attr("href").split("/")[1];
+            String area = urls.get(i).html();
+            MyQueue.TASK_QUEUE.put(new PlaceTask(code, area));
         }
     }
 }

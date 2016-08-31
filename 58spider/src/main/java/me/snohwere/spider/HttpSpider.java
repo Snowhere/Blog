@@ -1,14 +1,14 @@
 package me.snohwere.spider;
 
-import java.io.IOException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
 import me.snohwere.queue.MyQueue;
 import me.snohwere.task.Task;
+
 /**
  * 用HTTP请求的spider
  * @author STH
@@ -17,7 +17,9 @@ import me.snohwere.task.Task;
 public class HttpSpider extends Thread {
 
     private CloseableHttpClient httpclient;
+
     private int num = 0;
+
     private int id;
 
     public HttpSpider(int id) {
@@ -36,8 +38,9 @@ public class HttpSpider extends Thread {
                 task = MyQueue.TASK_QUEUE.take();
                 httpget = new HttpGet(task.getUrl());
                 response = httpclient.execute(httpget);
-                task.process(Jsoup.parse(response.getEntity().getContent().toString()));
-            } catch (FailingHttpStatusCodeException | IOException | InterruptedException e) {
+                task.process(
+                    Jsoup.parse(response.getEntity().getContent().toString()));
+            } catch (Exception e) {
                 System.out.println(task.getUrl());
                 System.out.println(e.getMessage());
             }

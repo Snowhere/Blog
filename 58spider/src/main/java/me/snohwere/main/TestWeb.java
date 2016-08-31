@@ -2,6 +2,8 @@ package me.snohwere.main;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.text.ParseException;
+import java.util.Date;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,11 +13,14 @@ import org.jsoup.select.Elements;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.jfinal.kit.StrKit;
 
+import me.snohwere.model.Store;
 import me.snohwere.queue.MyQueue;
 import me.snohwere.task.PlaceTask;
 import me.snohwere.task.StoreDetailTask;
 import me.snohwere.task.StoreListTask;
+import me.snohwere.util.Util;
 
 /**
  * 简单测试用HTTP请求
@@ -23,6 +28,20 @@ import me.snohwere.task.StoreListTask;
  * @date 2016年8月25日
  */
 public class TestWeb {
+    public static String getHtml(Element element) {
+        if (element != null) {
+            return element.html();
+        } else {
+            return "";
+        }
+    }
+    public static String getHtml(Elements elements) {
+        if (elements != null && !elements.isEmpty()) {
+            return elements.get(0).html();
+        } else {
+            return "";
+        }
+    }
 
     public static void main(String args[]) {
         WebClient client = new WebClient();
@@ -36,12 +55,12 @@ public class TestWeb {
         // 模拟浏览器打开一个目标网址
         try {
             //url = "http://bj.58.com/fatou/shangpucz/pn7";
-            url = "http://bj.58.com/shangpu/27160683569104x.shtml";
+            url = "http://bj.58.com/shangpu/27015598610492x.shtml";
             HtmlPage page = client.getPage(url);
             Document document = Jsoup.parse(page.asXml());
             //storeList(document);
             storeDetail(document);
-        } catch (FailingHttpStatusCodeException | IOException e) {
+        } catch (FailingHttpStatusCodeException | IOException | ParseException e) {
             e.printStackTrace();
             System.out.println(url);
         }
@@ -85,53 +104,62 @@ public class TestWeb {
         }
     }
 
-    private static void storeDetail(Document doc) {
-        String totalLook = doc.getElementById("totalcount").html();
-        String date = doc.getElementsByClass("other").get(0).html().split("<")[0].split("：")[1];
-        String title = doc.select(".headline>h1").get(0).html();
-        //"<.*>"
-        String content = doc.getElementsByClass("maincon").get(0).html()
-            .replaceAll("<[\\s\\S]*?>", "").replaceAll("\n", "").replaceAll(" ", "")
-            .replaceAll("&nbsp;", "");
-        String phone = doc.getElementById("t_phone").html();
+    private static void storeDetail(Document doc) throws ParseException {
+        Store store = new Store();
+        store.set("totalLook", getHtml(doc.getElementById("totalcount")));
+        String date = getHtml(doc.getElementsByClass("other"));
+        if (date.contains("发布时间")) {
+            store.set("date",
+                Util.dateFormat.parse(date.split("<")[0].split("：")[1]));
+        } else if (StrKit.notBlank(date)) {
+            store.set("date", new Date());
+        }
+        store.set("title", getHtml(doc.select(".headline>h1")));
+        store.set("content",
+            getHtml(doc.getElementsByClass("maincon"))
+                .replaceAll("<[\\s\\S]*?>", "").replaceAll("\n", "")
+                .replaceAll(" ", "").replaceAll("&nbsp;", ""));
+        String phone = getHtml(doc.getElementById("t_phone"));
         if (phone.contains("img")) {
             phone = phone.split("'")[1];
         }
+        store.set("phone", phone);
         Elements infoList = doc.select(".info>li");
+        String otherInfo = "";
         for (Element element : infoList) {
             String info = element.html().replaceAll("<[\\s\\S]*>", "")
                 .replaceAll("&nbsp;", "");
-            String otherInfo = "";
             switch (info.split("：")[0]) {
             case "区域":
                 break;
+            case "租金":
+                store.set("price",
+                    getHtml(element.getElementsByClass("redfont")));
+                break;
             case "价格":
-                System.out.println(
-                    "价格" + element.getElementsByClass("redfont").get(0).html());
-
+                store.set("price",
+                    getHtml(element.getElementsByClass("redfont")));
                 break;
             case "地址":
-                System.out.println("地址" + info.split("：")[1]);
+                store.set("address", info.split("：")[1]);
                 break;
             case "类型":
-                System.out.println("类型" + info.split("：")[1]);
+                store.set("type", info.split("：")[1]);
                 break;
             case "面积":
-                System.out.println("面积" + info.split("：")[1]);
+                store.set("size", info.split("：")[1]);
                 break;
-
+            case "临近":
+                store.set("near", info.split("：")[1]);
+                break;
+            case "历史经营":
+                store.set("history", info.split("：")[1]);
+                break;
             default:
                 otherInfo += info + ",";
                 break;
             }
-
         }
-
-        //地址,类型,面积,价格
-        //
-        //System.out.println(phone);
-        //System.out.println(title);
-        // System.out.println(date);
-        //System.out.println(totalLook);
+        System.out.println(date.split("<")[0].split("：")[1]);
     }
 }

@@ -11,7 +11,10 @@ import com.jfinal.plugin.activerecord.Model;
 public abstract class Task {
 
     protected String url;
+
     protected Model<? extends Model<?>> model;
+
+    protected int times = 0;
 
     public Task(String url) {
         this.url = url;
@@ -22,10 +25,15 @@ public abstract class Task {
     };
 
     public void process(HtmlPage page) {
-        process(Jsoup.parse(page.asXml()));
+        try {
+            process(Jsoup.parse(page.asXml()));
+        } catch (Exception e) {
+            System.out.println(url);
+            e.printStackTrace();
+        }
     };
 
-    public abstract void process(Document doc);
+    public abstract void process(Document doc) throws Exception;
 
     public String getHtml(Element element) {
         if (element != null) {
@@ -41,6 +49,18 @@ public abstract class Task {
         } else {
             return "";
         }
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public void setTimes(int times) {
+        this.times = times;
+    }
+
+    public void addTimes() {
+        this.times += 1;
     }
 
     public void infoLog(String message) {
