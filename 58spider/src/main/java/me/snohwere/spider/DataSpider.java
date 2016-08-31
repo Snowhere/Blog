@@ -18,7 +18,7 @@ public class DataSpider extends Thread {
 
     @Override
     public void run() {
-        save();
+        batchSave();
     }
 
     private void save() {

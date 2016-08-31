@@ -55,7 +55,7 @@ public class TestWeb {
         // 模拟浏览器打开一个目标网址
         try {
             //url = "http://bj.58.com/fatou/shangpucz/pn7";
-            url = "http://bj.58.com/shangpu/27015598610492x.shtml";
+            url = "http://bj.58.com/shangpu/26993260962730x.shtml";
             HtmlPage page = client.getPage(url);
             Document document = Jsoup.parse(page.asXml());
             //storeList(document);
@@ -116,9 +116,8 @@ public class TestWeb {
         }
         store.set("title", getHtml(doc.select(".headline>h1")));
         store.set("content",
-            getHtml(doc.getElementsByClass("maincon"))
-                .replaceAll("<[\\s\\S]*?>", "").replaceAll("\n", "")
-                .replaceAll(" ", "").replaceAll("&nbsp;", ""));
+            getHtml(doc.getElementsByClass("maincon")).replaceAll("<[\\s\\S]*?>", "")
+                .replaceAll("\n", "").replaceAll(" ", "").replaceAll("&nbsp;", ""));
         String phone = getHtml(doc.getElementById("t_phone"));
         if (phone.contains("img")) {
             phone = phone.split("'")[1];
@@ -126,40 +125,43 @@ public class TestWeb {
         store.set("phone", phone);
         Elements infoList = doc.select(".info>li");
         String otherInfo = "";
+        String split = Util.SPLIT_ONE;
         for (Element element : infoList) {
             String info = element.html().replaceAll("<[\\s\\S]*>", "")
                 .replaceAll("&nbsp;", "");
-            switch (info.split("：")[0]) {
+            if (info.contains(Util.SPLIT_TWO)) {
+                split = Util.SPLIT_TWO;
+            }
+            switch (info.split(split)[0]) {
             case "区域":
                 break;
             case "租金":
-                store.set("price",
-                    getHtml(element.getElementsByClass("redfont")));
+                store.set("price", getHtml(element.getElementsByClass("redfont")));
                 break;
             case "价格":
-                store.set("price",
-                    getHtml(element.getElementsByClass("redfont")));
+                store.set("price", getHtml(element.getElementsByClass("redfont")));
                 break;
             case "地址":
-                store.set("address", info.split("：")[1]);
+                store.set("address", info.split(split)[1]);
                 break;
             case "类型":
-                store.set("type", info.split("：")[1]);
+                store.set("type", info.split(split)[1]);
                 break;
             case "面积":
-                store.set("size", info.split("：")[1]);
+                store.set("size", info.split(split)[1]);
                 break;
             case "临近":
-                store.set("near", info.split("：")[1]);
+                store.set("near", info.split(split)[1]);
                 break;
             case "历史经营":
-                store.set("history", info.split("：")[1]);
+                store.set("history", info.split(split)[1]);
                 break;
             default:
                 otherInfo += info + ",";
                 break;
             }
         }
+        store.set("otherInfo", otherInfo);
         System.out.println(date.split("<")[0].split("：")[1]);
     }
 }

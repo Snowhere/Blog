@@ -36,7 +36,8 @@ public class PlaceTask extends Task {
             //model.set("place", place);
             //MyQueue.DATA_QUEUE.put(model);
             //创建详细任务
-            MyQueue.TASK_QUEUE.put(new StoreListTask(code, 1, area, place));
+            MyQueue.TASK_QUEUE.put(new StoreListTask(code, 1, 0, area, place));
+            MyQueue.TASK_QUEUE.put(new StoreListTask(code, 1, 1, area, place));
         }
     }
 }

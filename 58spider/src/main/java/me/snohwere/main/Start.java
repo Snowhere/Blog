@@ -19,7 +19,7 @@ public class Start {
         c3p0Plugin.start();
         ActiveRecordPlugin arp = new ActiveRecordPlugin(c3p0Plugin);
         arp.addMapping("area", Area.class);
-        arp.addMapping("person_store", Store.class);
+        arp.addMapping("store", Store.class);
         arp.start();
         letUsGo();
     }

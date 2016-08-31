@@ -1,5 +1,6 @@
 package me.snohwere.task;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jsoup.nodes.Document;
@@ -21,24 +22,27 @@ public class StoreDetailTask extends Task {
     private String area;
 
     private String place;
+    private int source;
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public StoreDetailTask(String url, String area, String place) {
+    public StoreDetailTask(String url, String area, String place, int source) {
         super(url);
         this.area = area;
         this.place = place;
+        this.source = source;
     }
 
     @Override
     public void process(Document doc) throws Exception {
         Store store = new Store();
+        store.set("source", source);
         store.set("url", url);
         store.set("area", area);
         store.set("place", place);
         store.set("totalLook", getHtml(doc.getElementById("totalcount")));
         String date = getHtml(doc.getElementsByClass("other"));
         if (date.contains("发布时间")) {
-            store.set("date",
-                Util.dateFormat.parse(date.split("<")[0].split("：")[1]));
+            store.set("date", dateFormat.parse(date.split("<")[0].split("：")[1]));
         } else if (StrKit.notBlank(date)) {
             store.set("date", new Date());
         }
