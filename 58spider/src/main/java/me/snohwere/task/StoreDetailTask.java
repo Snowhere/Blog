@@ -57,12 +57,12 @@ public class StoreDetailTask extends Task {
         store.set("phone", phone);
         Elements infoList = doc.select(".info>li");
         String otherInfo = "";
-        String split = Util.SPLIT_ONE;
+        String split = "：";
         for (Element element : infoList) {
             String info = element.html().replaceAll("<[\\s\\S]*>", "")
                 .replaceAll("&nbsp;", "");
-            if (info.contains(Util.SPLIT_TWO)) {
-                split = Util.SPLIT_TWO;
+            if (info.contains(":")) {
+                split = ":";
             }
             switch (info.split(split)[0]) {
             case "区域":
