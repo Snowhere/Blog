@@ -14,9 +14,10 @@ import me.snohwere.queue.MyQueue;
 public class PlaceTask extends Task {
 
     private static String URL = "http://bj.lianjia.com/xiaoqu/";
-
+    private String area;
     public PlaceTask(String area) {
         super(URL + area + "/");
+        this.area=area;
     }
 
     @Override
@@ -26,7 +27,7 @@ public class PlaceTask extends Task {
         Elements urls = table.getElementsByTag("a");
         for (Element url : urls) {
             String place = url.attr("href").split("/")[2];
-            MyQueue.TASK_QUEUE.put(new BlockListTask(place));
+            MyQueue.TASK_QUEUE.put(new BlockListTask(area,place));
         }
     }
 }

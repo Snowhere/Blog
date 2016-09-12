@@ -3,6 +3,7 @@ package me.snohwere.task;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import me.snohwere.model.Area;
 import me.snohwere.queue.MyQueue;
 
 /**
@@ -15,8 +16,8 @@ public class BlockListTask extends Task {
     private static String URL = "http://bj.lianjia.com/xiaoqu/";
 
     private String place;
-
-    public BlockListTask(String place) {
+    private String area;
+    public BlockListTask(String area,String place) {
         super(URL + place + "/");
         this.place = place;
     }
@@ -25,8 +26,10 @@ public class BlockListTask extends Task {
     public void process(Document doc) throws Exception {
         Elements elements = doc.select(".total>span");
         int total = Integer.parseInt(getHtml(elements));
-        for (int i = 1; i <= (total - 1) / 30 + 1; i++) {
+        Area area = new Area();
+        area.set("area", area).set("place", place).set("url", url).set("pages", total).save();
+        /*for (int i = 1; i <= (total - 1) / 30 + 1; i++) {
             MyQueue.TASK_QUEUE.put(new BlockPageTask(place, i));
-        }
+        }*/
     }
 }
