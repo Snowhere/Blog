@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 
 import me.snohwere.queue.MyQueue;
 import me.snohwere.task.Task;
+import me.snohwere.util.Util;
 
 /**
  * 用WebClient的Spider
@@ -42,7 +43,7 @@ public class Spider extends Thread {
         client.addRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
         client.addRequestHeader("Accept-Encoding", "gzip, deflate, sdch");
         client.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6");
-        client.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
+        client.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6");
         client.addRequestHeader("Connection", "keep-alive");
         client.addRequestHeader("Upgrade-Insecure-Requests", "1");
         client.addRequestHeader("Referer", "http://bj.lianjia.com/xiaoqu/1111027380051/");
@@ -87,9 +88,12 @@ public class Spider extends Thread {
         // 模拟浏览器打开一个目标网址
         HtmlPage rootPage;
         try {
+            
             task = MyQueue.TASK_QUEUE.poll(60, TimeUnit.SECONDS);
             while (task != null) {
                 System.out.println("线程" + id + "正在处理" + num++);
+                client.addRequestHeader("User-Agent", Util.getRandomAgent());
+                
                /* if (num%10==0) {
                     proxyConfig.setProxyHost("192.168.1."+ip);
                     client.getOptions().setProxyConfig(proxyConfig);
@@ -98,7 +102,7 @@ public class Spider extends Thread {
                     }
                 }*/
                 //if(num%10==0)System.gc();
-                //wait(100);
+                
                 try {
                     rootPage = client.getPage(task.getUrl());
                     task.process(rootPage);

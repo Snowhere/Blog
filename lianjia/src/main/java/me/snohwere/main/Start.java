@@ -26,13 +26,13 @@ public class Start {
         MyQueue.TASK_QUEUE.add(new AreaTask());
         System.out.println("Let's go");
         // HTTP线程
-        for (int i = 1; i < 20; i++) {
+        for (int i = 1; i < 2; i++) {
             Spider spider = new Spider(i);
             spider.start();
         }
-        // 数据库线程
+       /* // 数据库线程
         DataThread spider = new DataThread(1);
-        spider.start();
+        spider.start();*/
     }
 
 }
