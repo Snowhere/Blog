@@ -1,0 +1,31 @@
+  public void addExcel() {
+        UploadFile file = getFile("excel");
+        
+        String path = file.getSaveDirectory() + file.getFileName();
+        // 处理导入数据
+        List<Map<Integer, String>> list = new ArrayList<Map<Integer, String>>();
+        HSSFWorkbook hwb = null;
+        try {
+            //hwb = new HSSFWorkbook(new FileInputStream(new File(path)));
+            hwb = new HSSFWorkbook(new FileInputStream(file.getFile()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        HSSFSheet sheet = hwb.getSheetAt(0); // 获取到第一个sheet中数据
+        int i, j = 0;
+        for (i = 0; i < sheet.getLastRowNum() + 1; i++) {// 第二行开始取值，第一行为标题行
+            HSSFRow row = sheet.getRow(i);// 获取到第i列的行数据(表格行)
+            for (j = 0; j < row.getLastCellNum(); j++) {
+                HSSFCell cell = row.getCell(j);// 获取到第j行的数据(单元格)
+                cell.setCellType(CellType.STRING);
+                System.out.println(cell.getStringCellValue());
+            }
+        }
+    }
+
+
+    <form action="${pageContext.request.contextPath}/jf/sourceController/addExcel" method="post" enctype="multipart/form-data">
+<input type="file" name="excel" accept="application/vnd.ms-excel , application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+<input type="submit" value="提交">
+</form>
