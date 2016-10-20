@@ -36,6 +36,15 @@ public class Task {
 
     public static double MIN_LAT = 39.725344;//下
 
+    //成都范围
+    public static double C_MAX_LNG = 104.381116;//右
+
+    public static double C_MIN_LNG = 103.790142;//左
+
+    public static double C_MAX_LAT = 30.9166587;//上
+
+    public static double C_MIN_LAT = 30.4731469;//下
+    
     //矩形区域搜索url
     private String searchUrl = "http://restapi.amap.com/v3/place/polygon?";
 
@@ -67,20 +76,20 @@ public class Task {
 
         while (true) {
             //全部行遍历完
-            if (lat <= MIN_LAT) {
+            if (lat <= C_MIN_LAT) {
                 System.out.println("全部行遍历完");
                 break;
             }
             // 当前行遍历完,换下一行
-            if (lng >= MAX_LNG) {
-                lng = MIN_LNG;
+            if (lng >= C_MAX_LNG) {
+                lng = C_MIN_LNG;
                 lat = lat - DISTANCE;
                 continue;
             }
             //当前行,下一区域
-            double rightLng = (lng + distance) > MAX_LNG ? MAX_LNG
+            double rightLng = (lng + distance) > C_MAX_LNG ? C_MAX_LNG
                 : (lng + distance);
-            double rightLat = (lat - DISTANCE) < MIN_LAT ? MIN_LNG
+            double rightLat = (lat - DISTANCE) < C_MIN_LAT ? C_MIN_LNG
                 : (lat - DISTANCE);
             String polygon = lng + "," + lat + ";" + rightLng + "," + rightLat;
             String getUrl = searchUrl
