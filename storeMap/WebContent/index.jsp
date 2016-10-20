@@ -130,7 +130,7 @@
         });
         $.getJSON('${pageContext.request.contextPath}/getHotPlace?lng=' + lng + '&lat=' + lat + '&radius=' + radius, function(data) {
             var text='';
-            $('#hotTitle').html('有'+data.length+'几个热点地区');
+            $('#hotTitle').html('有'+data.length+'个热点地区');
             for (var i = 0;i<data.length; i++) {
                 text+='<a target="_blank" href="http://i.amap.com/detail/'+data[i].poiid+'">'+data[i].name+'</a><br>';
             }

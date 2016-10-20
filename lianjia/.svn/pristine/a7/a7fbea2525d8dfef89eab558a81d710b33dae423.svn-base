@@ -9,7 +9,6 @@ import me.snohwere.queue.MyQueue;
 import me.snohwere.spider.DataThread;
 import me.snohwere.spider.Spider;
 import me.snohwere.task.AreaTask;
-import me.snohwere.task.PlaceTask;
 
 public class Start {
 
@@ -26,7 +25,7 @@ public class Start {
     }
 
     private static void letUsGo() {
-        MyQueue.TASK_QUEUE.add(new PlaceTask("dongcheng"));
+        MyQueue.TASK_QUEUE.add(new AreaTask());
         System.out.println("Let's go");
         // HTTP线程
         for (int i = 1; i < 2; i++) {
