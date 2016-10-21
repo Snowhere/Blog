@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Date;
 
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.CoreConnectionPNames;
 
 import com.alibaba.fastjson.JSON;
 
@@ -65,6 +68,7 @@ public class Task {
 
     private CloseableHttpClient httpClient = HttpClients.createDefault();
 
+    private RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(3000).setConnectTimeout(3000).build();
     /**
      * 纬度固定间距,经度动态间距,由左上开始一行一行遍历,纬度递减,经度递增
      * @param lng 经
@@ -73,7 +77,6 @@ public class Task {
      * @throws IOException
      */
     public void getArea(double lng, double lat, double distance) throws IOException {
-
         while (true) {
             //全部行遍历完
             if (lat <= C_MIN_LAT) {
@@ -84,6 +87,7 @@ public class Task {
             if (lng >= C_MAX_LNG) {
                 lng = C_MIN_LNG;
                 lat = lat - DISTANCE;
+                distance /=4;
                 continue;
             }
             //当前行,下一区域
@@ -97,6 +101,7 @@ public class Task {
                 + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
                 + URLEncoder.encode(types, "utf8");
             HttpGet httpget = new HttpGet(getUrl);
+            httpget.setConfig(requestConfig);
             CloseableHttpResponse response = httpClient.execute(httpget);
             Response pois = null;
             try {
@@ -145,6 +150,7 @@ public class Task {
             + "&polygon=" + URLEncoder.encode(polygon, "utf8") + "&types="
             + URLEncoder.encode(types, "utf8");
         HttpGet httpget = new HttpGet(getUrl + "&page=" + page);
+        httpget.setConfig(requestConfig);
         CloseableHttpResponse response = httpClient.execute(httpget);
         Response pois = null;
         try {

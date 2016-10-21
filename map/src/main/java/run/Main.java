@@ -19,9 +19,9 @@ public class Main {
         arp.addMapping("c_area", AreaModel.class);
         arp.start();
 
-        //getArea();
+        getArea();
         //从数据库中最后一条数据获取当前爬取的url信息,然后继续爬取.
-        getPois();
+        //getPois();
     }
 
     private static void getArea() {
