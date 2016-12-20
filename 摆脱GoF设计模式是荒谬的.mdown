@@ -1,4 +1,0 @@
-[Getting Rid of the Gang-of-Four Design Patterns Is Nonsense](https://dzone.com/articles/getting-rid-of-the-gang-of-four-design-patterns-is)
-
-#摆脱GoF设计模式是荒谬的
-一些人发现Yet Another Post (YAP™)坚持Gang of Four (GOF™)的设计模式在拖他们后腿。那封邮件很有误导性，因为这并不是文章的本意。

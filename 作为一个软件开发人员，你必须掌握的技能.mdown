@@ -1,3 +1,22 @@
 [The Technical Skills You Need to Have as a Software Developer](https://dzone.com/articles/the-technical-skills-you-need-to-have-as-a-softwar)
 
 #作为一个软件开发人员，你必须掌握的技能
+我强烈支持并帮助软件开发者在他们的技术能力之外提升"软技能".事实上我曾写过一本关于这点的[书](http://simpleprogrammer.com/softskills)-但毫无疑问:**技术能力也相当重要**
+我的意思是,当你无法写代码并开发软件,你所有掌握的软技能毫无意义.或许你是一个称职的管理者或指导者,但不是一个合格的开发者.
+但如果你读了下面这些,我相信你会有兴趣成为一名软件开发者-或是一个大牛-所以我们来聊聊 **你需要掌握的技术技能**
+#技术买单
+![](https://spzone-simpleprogrammer.netdna-ssl.com/wp-content/uploads/2016/07/Technical-Skills-As-A-Software-Developer-1024x576.png)
+如今,这个话题淹没了众多开发新人,因为感觉**太多东西要掌握**,而且不知道**从哪里开始**.
+这里我想打破这个话题.探讨一下最**基本和受益**的技术技能,让你在成为软件开发者的路上越走越远.
+这一章并不是要把你成为开发者需要掌握的技术技能全部列出,我会试着列举几个基本的,给你一个概述.
+不用害怕.本书这一章标题"关于软件开发你需要知道的",我给大家一个章节概述这些技能,深入浅出.
+废话少说,简洁明了的看一下我认为最重要的技术技能.
+
+#一门编程语言
+我认为这个话题作为开始是明智之选,你觉得呢?
+不掌握一门编程语言就不是一个合格的程序员-Vern,你知道我什么意思(详见[Ernest P. Worrell](https://en.wikipedia.org/wiki/Ernest_P._Worrell)不懂这个梗也没关系)
+我在"学习哪种编程语言"章节中讨论过如何选择,所以不要太紧张.
+我马上就表示[编程语言的选择](https://simpleprogrammer.com/2013/12/02/programming-language-learn/)并不是你想象的那样重要.
+相反,我们来聊聊为什么我建议学习一门编程语言,而不是广泛涉猎.
+很多开发新手在找到一份工作前,花时间同时学习很多编程语言.
+然而我认为
