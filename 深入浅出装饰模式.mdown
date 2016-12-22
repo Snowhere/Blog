@@ -1,0 +1,2 @@
+[Is Inheritance Dead? A Detailed Look Into the Decorator Pattern](https://dzone.com/articles/is-inheritance-dead)
+#继承已死?深入浅出装饰模式
