@@ -17,6 +17,7 @@ public String concat(String str) {
     str.getChars(buf, len);
     return new String(buf, true);
 }
+```
 ``` java
 public static char[] copyOf(char[] original, int newLength) {
     char[] copy = new char[newLength];
@@ -71,4 +72,4 @@ public class StringConcatenateDemo {
       23: return
 }
 ```
-你可以在这些字节码中看到,使用了StringBuilder.所以我们在Java 8中不再需要使用StringBuilder.
+你可以在这些字节码中看到,使用了StringBuilder.所以我们在Java 8中不再需要使用StringBuilder类.
