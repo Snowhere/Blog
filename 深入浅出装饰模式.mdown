@@ -1,2 +1,23 @@
 [Is Inheritance Dead? A Detailed Look Into the Decorator Pattern](https://dzone.com/articles/is-inheritance-dead)
 #继承已死?深入浅出装饰模式
+当面向对象编程被提出时,继承是用来扩展对象功能的主要模式.如今,继承通常被认作是一种设计味道(design smell).
+事实上,使用继承扩展对象通常导致类层级的爆炸增加(详见 **类层级的爆炸增加**章节).另外,很多流行的语言,比如Java和C#并不支持多继承,限制了这种方式带来的好处.
+装饰模式为对象的扩展提供了除继承外的其他灵活选择.这种模式设计为多个装饰者可以相互叠加,每个装饰者都有新功能.和继承对比,一个装饰者可以在任意给定的接口上实现,消除了对整个类层级的要求.此外,使用装饰模式带来的是整洁易测的代码(详见 **易测性和其他优势**章节).
+悲观的看,如今很大一部分的软件开发人员对装饰模式的理解有限.这一部分归结于教育的缺失,也是因为编程语言没有跟上面向对象设计原则的演变,未能鼓励开发者学习使用这些模式.
+在这篇文章中,我们将讨论使用装饰模式相比继承的优势,并建议面向对象编程语言应该对装饰模式有原生的支持.事实上,我们相信装饰模式比继承带来更多的整洁易测的代码.
+
+##类层级的爆炸增加
+类层级的爆炸增加出现在需要给类添加新功能时,会导致类层级指数级增加.举例说明,我们看以下接口:
+```java
+public interface IEmailService
+{
+    void send(Email email);
+    Collection<EmailInfo> listEmails(int indexBegin, int indexEnd);
+    Email downloadEmail(EmailInfo emailInfo);
+}
+```
+默认 *EmailService*的实现会在连接邮件服务器失败时抛出异常.我们想扩展 *EmailService*的实现,在请求失败时重试几次再放弃.我们也想能够选择实现是否线程安全的.
+我们可以通过在 *EmailService*类添加重试操作和线程安全特性来达到这个目的.类的构造器接受参数,开/关每个特性.然而,这个解决方案破坏了[单一职责原则](https://en.wikipedia.org/wiki/Single_responsibility_principle)(因为 *EmailService*拥有额外的职责)和[开闭原则](https://en.wikipedia.org/wiki/Open/closed_principle)(因为这个类扩展时需要修改).此外,*EmailService*类可能是第三方库的一部分,我们无法修改.
+一般,不通过修改类而达到扩展类的方法是使用继承.
+
+

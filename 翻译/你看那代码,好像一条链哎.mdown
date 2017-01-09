@@ -1,0 +1,130 @@
+[Code Looks Like a Chain](https://dzone.com/articles/code-looks-like-a-chain-1)
+#你看那代码,好像一条链哎
+就如星爷多年前说的那样"你看那代码,好像一条链哎".什么?他没说过吗,或许我记错了.你应该已经猜到了,这篇文章,我们来讨论一下责任链设计模式.这个模式并不流行,至少在 *Gang of Four*定义的模式中是这样.但现代依赖注入框架让我们可以用巧妙的新奇的方式去实现这个模式.我们来看看.
+##介绍
+声明:这种模式并没有新东西.我的一个同事刚刚前几天使用过,我也曾用过很多次.这篇文章的灵感来源于我最近遇到的问题,我们下面来说说,我之前也没有意识到这个问题可以用这种模式来解决.
+
+##传统模式
+责任链模式是一种 *行为设计模式*.它首次在 *Gang of Four*写的 *Design Patterns*这本书中提及.模式的目的是:
+>避免请求的发送者与接收者耦合,为多个对象提供处理请求的机会.将接收对象串联成链,请求在链上传递,直到被一个对象处理.
+
+类的关系图如下所示:
+![](https://dzone.com/storage/temp/3623109-chain-of-responsibility-class-diagram.gif)
+通过定义一个可以用来响应客户端请求的标准接口,来实现松耦合.在上面的图中,表现为Handler抽象类型.可以通过创建链式的类,继承上面的接口来实现多个类响应请求的能力.每一个类在链中拥有下一个节点的实例.successor属性满足作用域.
+当调用时,每一个handler确定自己是否有能力处理请求.如果有,它执行请求的操作.在这,我们可以根据请求的转发规则实现许多不同的处理方式.一旦一个ConcreteHandler声明可以处理这个请求,我们可以实现规则用于停止请求在链中传递.这种情况下,handleRequest方法的实现方式如下所示:
+```java
+if (/* The request can be successfully handled */) {
+    // Handle the request
+} else {
+    successor.handleRequest(request);
+}
+```
+另一方面,我们可以将请求转发到链中的下一个handler,无论当前的handler是否能处理.
+```java
+if (/* The request can be successfully handled */) {
+    // Handle the request
+}
+successor.handleRequest(request);
+```
+构建链的操作应该和下面差不多.
+```java
+Handler chain = new ConcreteHandler1(new ConcreteHandler2(new ConcreteHandler3()));
+chain.handleRequest(request);
+```
+在JDK内部实现中,至少有两个地方用到了这种模式:
+* logging机制的实现:[java.util.logging.Logger#log()](https://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html)
+* http请求过滤器机制和Servlet响应规范的实现:[javax.servlet.Filter#doFilter()](http://docs.oracle.com/javaee/7/api/javax/servlet/Filter.html)
+
+##依赖注入的出现
+正如许多其他的情况一样,依赖注入模式的出现改变了一切.让我们看看依赖注入特性如何使责任链模式现代化.
+首先,我们需要一个所有依赖注入库都实现的特性:multibindings.基本上,它可以提供一个类型的所有子类型的实例,仅仅通过注入这个类型的集合.
+比如下面这个类型系统.
+```java
+interface Shop {}
+class PetShop implements Shop {}
+class Grocery implements Shop {}
+class Drugstore implements Shop {}
+// And so on...
+```
+现在,我们定义一个新类型ShoppingCenter,它拥有Shop每个子类型的实例.使用依赖注入,我们可以通过在ShoppingCenter注入一个Shop集合来实现这一目标.
+```java
+class ShoppingCenter {
+    private final Set<Shop> shops;
+    @Inject
+    public void ShoppingCenter(Set<Shop> shops) {
+        this.shops = shops;
+    }
+    // Class body using shops
+}
+```
+真TM简单!显然,每一个依赖注入库都有自己的配置来解决这种情况.在Spring中,使用auto-discovery特性,你只需要一点小小的配置.在Guice,稍稍复杂,但最终结果一样.
+
+##责任链模式的现代化实现
+简单总结一下:我们已经看到了责任链模式的典型形式;我们看到了依赖注入库提供的multibinding特性;最后,我们看到了如何把这两个概念搭配使用.
+首先,我们需要一个与原始的责任链设计模式稍有不同的实现.让我们引入一个新的类型ChainHandler.这个类型的职责就是拥有整个链,并暴露出一个接口,用于访问链提供给客户端的操作函数.
+```java
+class ChainHandler {
+    private final Set<Handler> handlers;
+    @Inject
+    public void ChainHandler(Set<Handler> handlers) {
+        this.handlers = handlers;
+    }
+    // Pass the request to each handler of the chain
+    public void handle(final Request request) {
+        handlers.forEach(h -> h.handle(request));
+    }
+}
+```
+利用依赖注入的优势,在不改变已有代码的基础上增加一个Handler的实现.这意味着实际上我们不需要执行回归测试.另一方面,将Handler的执行放入链中有一点困难(但并不是不能)
+
+##警告
+正如很多其他的模式一样,专注于构造模式的每个类的角色是什么很重要.你会给每个具体的Handler什么功能?你会把应用的业务逻辑直接放在Handler里面吗?
+首先,我们很多人都会提供上面的解决方案.这并不完全错误.然而,这种设计限制了代码的复用并违反了 **单一职责原则(Single Responsibility Principle)**.
+举个例子,我们需要实现一个系统,用来在金融业务中补全信息.补全操作使用责任链模式.一个可能要插入的补全信息就是根据IBAN(国际银行账号)或BIC码(银行代码)导出的收款人国家.然后我们来定义一个CountryPayeeEnricher.
+首先看一下,我们可以在CountryPayeeEnricher中直接编写代码用来补全国家信息.但如果我们需要在我们应用的其他位置(或其他应用)复用这个功能呢?遵循组合原则是一个更好地解决方案,将代码放进一个专有的类中.比如PayeeService.
+```java
+class PayeeService {
+    public Country deriveCountryFromPayee(String payee) {
+        // Code that extract the country information from the
+        // input payess
+    }
+    // Omissis...
+}
+class CountryPayeeEnricher implements Enrichment {
+    private PayeeService payeeService;
+    @Inject
+    public void CountryPayeeEnricher(PayeeService payeeService) {
+        this.payeeService = payeeService;
+    }
+    public void handle(Transaction tx) {
+        Country country = payeeService.deriveCountryFromPayee(tx.getPayee());
+        tx.setCountry(country);
+        // ...or something like this
+    }
+}
+```
+通过这种方式,我们最终有了两个拥有不同职责的类型:PayeeService类型,提供可复用的直接联系收款人信息的服务.CountryPayeeEnricher类型,代替之前类型提供服务的标准入口.
+
+##Scala方式
+为了完美,我也想讨论一下用Scala语言实现责任链模式.正如很多其他设计模式一样,这门语言内部已经实现了责任链模式:偏函数(partial functions).在理论层面,偏函数是定义了域里的一部分值的函数.在Scala中,这种函数有一个特别的类型-PartialFunction[T, V]
+在Scala中使用模式匹配(pattern matching)声明来定义偏函数,在下面这个例子中,fraction的默认值是0.
+``` scala
+val fraction: PartialFunction[Int, Int] = {
+  case d: Int if d != 0 =>  42 / d
+}
+```
+如果有多个定义集合,你可以有多个case子句.如果你为了应用函数,把每个case子句作为满足的情况(责任链里的handler,记得吗?),你就再次用到了责任链.
+``` scala
+case class Request(val value: String) { /* ... */ }
+val someStupidFunction: PartialFunction[Request, String] = {
+  case Request(42) => "The final answer"
+  case Request(0) => "You know nothing, John Snow"
+  case Request(666) => "Something strange is going on in here"
+  //. ..
+}
+```
+紧接着,一个偏函数可以当做好多handler构成的链.显然,通过这种方式使用责任链模式,你必须遵守一些额外的约束.事实上:
+* 你不能在每个handler中储存元数据.
+* 你不能从链中移除handler
+* 你不能显示检查handler或美观的打印它.
+如果你确实不需要做上面这些事情,模式匹配偏函数(pattern-matching PartialFunctions)用起来相当棒.
