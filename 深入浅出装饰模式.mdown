@@ -18,6 +18,14 @@ public interface IEmailService
 ```
 默认 *EmailService*的实现会在连接邮件服务器失败时抛出异常.我们想扩展 *EmailService*的实现,在请求失败时重试几次再放弃.我们也想能够选择实现是否线程安全的.
 我们可以通过在 *EmailService*类添加重试操作和线程安全特性来达到这个目的.类的构造器接受参数,开/关每个特性.然而,这个解决方案破坏了[单一职责原则](https://en.wikipedia.org/wiki/Single_responsibility_principle)(因为 *EmailService*拥有额外的职责)和[开闭原则](https://en.wikipedia.org/wiki/Open/closed_principle)(因为这个类扩展时需要修改).此外,*EmailService*类可能是第三方库的一部分,我们无法修改.
-一般,不通过修改类而达到扩展类的方法是使用继承.
+一般,不通过修改类而达到扩展类的方法是使用继承.通过继承,派生的类可以继承父类的属性和行为,并可以随意扩展或重载方法.在 *EmailService*的例子里,我们可以创建三个子类,一个增加重试,一个增加线程安全,一个增加所有特性.类的继承如下图所示:
+![](https://dzone.com/storage/temp/3585502-fig1.png)
+注意 *ThreadSafeEmailServiceWithRetries*可以继承自 *EmailServiceWithRetries*或 *ThreadSafeEmailService*(如果支持多继承可以两者).然而类的数量和产生的功能是相似的.
+除了重试和线程安全,我也想扩展我们的email服务API,让每个人都能选择开启日志.我们再一次用继承来扩展类的层次,如下所示:
+![](https://dzone.com/storage/temp/3585517-fig2.png)
+注意添加的支持日志的类的数量等同于已存在层级的类数量(在这个例子里是4个).为了确认行为,我们为层级添加缓存并检查结果.新的层级如下所示:
+![](https://dzone.com/storage/temp/3585534-fig3.png)
+你可以看到,类的层级结构指数级增长并变得难以管理.这个问题就是 *类层级的爆炸增加*
 
+##装饰模式的拯救
 

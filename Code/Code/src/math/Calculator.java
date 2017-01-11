@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-
+/**
+ * 计算器,计算一个完整的表达式
+ * @author STH
+ *
+ */
 public class Calculator {
 
     private String expression;
@@ -115,7 +119,35 @@ public class Calculator {
     }
 
     public static void main(String[] args) throws ExpressionException {
-        Calculator calculator = new Calculator("1 + 2 * 3 + ( 4 / 5 + 6 ) * 7");
-        System.out.println(calculator.calculate());
+       /* BigDecimal z=new BigDecimal("0.1");
+        BigDecimal xMax=new BigDecimal("9.1");
+        BigDecimal yMax=new BigDecimal("27.1");
+        for(BigDecimal x=new BigDecimal("8.5");xMax.compareTo(x)==1;x=x.add(z)){
+            for(BigDecimal y=new BigDecimal("26");yMax.compareTo(y)==1;y=y.add(z)){
+                String rule = "13008 * "+x+" + 3589 * "+y;
+                Calculator calculator = new Calculator(rule);
+                System.out.println(rule);
+                System.out.println(calculator.calculate());
+            }
+           System.out.println(x+","+xMax);
+        }*/
+        
+        /*Calculator calculator = new Calculator("1 + 2 * 3 + ( 4 / 5 + 6 ) * 7");
+        System.out.println(calculator.calculate());*/
+        
+        for(double x=8.5;x<=9.1;x=x+0.01){
+            for(double y=26.0;y<=27.1;y=y+0.01){
+                double  result = 13008*x+3589 *y;
+                String xBigDecimal =new java.text.DecimalFormat("0.00000000").format( 13008*x);
+                String yBigDecimal =new java.text.DecimalFormat("0.00000000").format( 3589 *y);
+               // System.out.println(xBigDecimal+","+yBigDecimal+","+new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)));
+                if (new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)).equals("207414")) {
+                    System.out.println(xBigDecimal+","+yBigDecimal+","+new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)));
+                }
+               /* System.out.println(new java.text.DecimalFormat("0").format(result)); */
+               /* System.out.println(x+","+y+","+result);*/
+            }
+          /* System.out.println(x+","+xMax);*/
+        }
     }
 }
