@@ -1,0 +1,42 @@
+#The Art of Defensive Programming
+防御性编程的艺术
+https://dev.to/0x13a/the-art-of-defensive-programming
+
+Why don’t developers write secure code? We’re not talking yet another time about “clean code” here. We’re talking about something more, on a pure practical perspective, software’s safety and security. Yes, because an insecure software is pretty much useless. Let’s see what does insecure software mean.
+
+为什么开发者不编写安全的代码？我们在这并不是要再一次讨论「整洁代码」。我们要从纯粹的实用观点出发，讨论其他东西——软件的安全性和保密性。是的，因为一个不安全的软件是无用的。我们来看看什么是不安全的软件。
+
+* The European Space Agency’s Ariane 5 Flight 501 was destroyed 40 seconds after takeoff (June 4, 1996). The US$1 billion prototype rocket self-destructed due to a bug in the on-board guidance software.
+
+* 欧洲航天局的 Ariane 5 Flight 501 在起飞后 40 秒毁坏（1996年6月4日）。价值 10 亿美金的原型火箭因为搭载的导航软件里的一个 bug 而自毁。
+
+* A bug in the code controlling the Therac-25 radiation therapy machine was directly responsible for at least five patient deaths in the 1980s when it administered excessive quantities of X-rays.
+
+* 20 世纪 80 年代，在 Therac-25 radiation 医疗机器的控制代码里的一个 bug 使得 X光强度过大，直接导致至少 5 名病人死亡。
+
+* The software error of a MIM-104 Patriot, caused its system clock to drift by one third of a second over a period of one hundred hours — resulting in failure to locate and intercept an incoming missile. The Iraqi missile impacted in a military compound in Dhahran, Saudi Arabia (February 25, 1991), killing 28 Americans.
+
+* MIM-104 Patriot（爱国者） 里的一个软件错误使它的系统每一百小时有三分之一秒的时钟偏移——导致定位拦截入侵导弹失败。伊拉克导弹飞入在达兰（沙特阿拉伯东北部城市）的一个军营（1991年2月25日），杀害了28名美国人。
+
+This should be enough to understand how important is to write secure software, specially in certain contexts. But also in other use cases, we should be aware where our software bugs can lead us to.
+
+这应该能够说明编写安全软件的重要性了，尤其在特定的环境中。当然也包括其他用例中，我们也应该意识到我们的软件 bug 会导致什么。
+
+##A first sight to Defensive Programming
+##防御式编程初窥
+
+Why do I think Defensive Programming is a good approach to issue these problems in certain kind of projects?
+
+为什么我认为防御式编程在特定种类工程中是解决这些问题的好的方式。
+
+>Defend against the impossible, because the impossible will happen.
+
+>防御针对可能性，因为可能性会发生。
+
+There are many definitions for Defensive Programming, it also depends on the level of “security” and level of resources you need for your software projects.
+
+防御式编程中有很多防御方式，这也取决于你的软件项目所需的「安全」的级别和资源级别。
+
+**Defensive programming* is a form of defensive design intended to ensure the continuing function of a piece of software under unforeseen circumstances. Defensive programming practices are often used where high availability, safety or security is needed — Wikipedia*
+
+防御式编程是[防御式设计](https://en.wikipedia.org/wiki/Defensive_design)的一种形式，用来确保
