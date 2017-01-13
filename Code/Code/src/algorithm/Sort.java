@@ -88,6 +88,7 @@ public class Sort {
                 if (numbers[i] <= pivot) {
                     tail++;
                     exchange(numbers, tail, i);
+                    show(numbers);
                 }
             }
             exchange(numbers, tail + 1, right);
@@ -102,7 +103,7 @@ public class Sort {
         int[] numbers = { 4, 3, 1, 3, 2, 5, 2 };
         Sort sort = new Sort();
         sort.show(numbers);
-        sort.sort3(numbers);
+        sort.quickSort(numbers,0,numbers.length-1);
         sort.show(numbers);
     }
 }
