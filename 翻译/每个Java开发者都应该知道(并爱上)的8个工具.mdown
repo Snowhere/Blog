@@ -1,4 +1,5 @@
-[Eight Tools Every Java Developer Should Know (and Love)](https://dzone.com/articles/eight-tools-every-java-developer-should-know-and-l)
+原文[Eight Tools Every Java Developer Should Know (and Love)](https://dzone.com/articles/eight-tools-every-java-developer-should-know-and-l)
+(译文发布在[码农网](http://www.codeceo.com/article/8-tools-every-java-developer-love.html))
 
 #每个Java开发者都应该知道(并爱上)的8个工具
 在Stormpath(一款用户管理和认证服务),我们认真对待质量和效率.任何一个优秀的工匠,仅仅拥有天赋是不够的,你在工作中还需要正确的工具.工程学不仅仅是科学,更是艺术.所以,在Stormpath,尽管我们拥有天赋,我们仍不断寻找所需的有用的工具.我们的工程师一直渴望向团队其他人分享新工具.现在,让我们向所有充满天赋的Java开发者推荐工具.

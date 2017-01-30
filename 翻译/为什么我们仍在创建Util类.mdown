@@ -1,4 +1,4 @@
-[Why Do We Still Create Util Classes?](https://dzone.com/articles/why-do-we-still-create-util-classes)
+原文[Why Do We Still Create Util Classes?](https://dzone.com/articles/why-do-we-still-create-util-classes)
 
 #为什么我们仍在创建Util类
 这个问题困扰了我一段时间,甚至几年,当我们有很棒的开源的项目包含所需的类和方法时,为什么我们坚持创建自己的util类,比如 StringUtils,DateUtils,或 CollectionUtils?事实上,最近我又愚蠢的创建了CSVUtil类,而不是使用[Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) 或 [OpenCSV](http://opencsv.sourceforge.net/).

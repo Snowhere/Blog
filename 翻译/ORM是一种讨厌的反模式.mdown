@@ -1,5 +1,5 @@
-[ORM Is an Offensive Anti-Pattern](http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html)
-
+原文[ORM Is an Offensive Anti-Pattern](http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html)
+(译文发布在[码农网](http://www.codeceo.com/article/orm-is-offensive-anti-pattern.html))
 #ORM是一种讨厌的反模式
 太长不看(TL;DR)("Too Long; Didn't Read."太长不想看,可以看这段摘要)ORM是一种讨厌的反模式,违背了所有面向对象的原则.将对象分隔开并放入被动的数据包中.ORM没有理由存在任何应用中,无论是小的网络应用还是涉及增删改查上千张表的企业系统.用什么来替代它呢?SQL对象(SQL-speaking objects).
 

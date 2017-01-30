@@ -1,5 +1,5 @@
-原文链接 https://dzone.com/articles/5-different-ways-to-create-objects-in-java-with-ex
-
+原文[5 Different Ways to Create Objects in Java](https://dzone.com/articles/5-different-ways-to-create-objects-in-java-with-ex)
+(译文发布在[码农网](http://www.codeceo.com/article/5-ways-java-create-object.html))
 #Java中创建对象的5种方式
 作为Java开发者，我们每天创建很多对象，但我们通常使用依赖管理系统，比如Spring去创建对象。然而这里有很多创建对象的方法，我们会在这篇文章中学到。
 Java中有5种创建对象的方式，下面给出它们的例子还有它们的字节码

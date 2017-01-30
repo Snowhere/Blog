@@ -1,3 +1,6 @@
+原文[5 Easy Ways to Write Hard-to-Test Code](https://dzone.com/articles/5-easy-ways-to-write-hard-to-testcode)
+(译文发布在[码农网](http://www.codeceo.com/article/5-ways-write-hard-to-test-code.html))
+
 # 5种方式教你编写难于测试的代码
 
 有一次，我听到在一个讲座上主持人问听众如何故意编写难于测试的代码。在场的小伙伴都惊呆了，因为没有任何人会故意写这种糟糕的代码。我记得他们甚至给不出一个好的答案。

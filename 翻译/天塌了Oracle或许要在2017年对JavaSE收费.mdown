@@ -1,4 +1,6 @@
-[The Sky Is Falling: Oracle (Might) Want Your Money for Java SE in 2017](https://dzone.com/articles/the-sky-is-falling-oracle-might-want-your-money-fo)
+原文[The Sky Is Falling: Oracle (Might) Want Your Money for Java SE in 2017](https://dzone.com/articles/the-sky-is-falling-oracle-might-want-your-money-fo)
+(译文发布在[码农网](http://www.codeceo.com/article/java-se-unfree-2017.html))
+
 #天塌了:Oracle或许要在2017年对Java SE收费
 最近[The Register](http://www.theregister.co.uk/)发表文章"[Oracle收购Sun6年之后终于把手伸向了免费用户](http://www.theregister.co.uk/2016/12/16/oracle_targets_java_users_non_compliance/)"伴随着副标题"认为Java是'免费'的?再想想(2017年你就欠我们钱了)",我被震惊到了-因为我有大量基于Java SE的客户端.
 等我读完整篇文章,我好奇真相是什么.

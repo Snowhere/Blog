@@ -1,4 +1,6 @@
-[We Don't Need StringBuilder for Concatenation Anymore](https://dzone.com/articles/string-concatenation-performacne-improvement-in-ja)
+原文[We Don't Need StringBuilder for Concatenation Anymore](https://dzone.com/articles/string-concatenation-performacne-improvement-in-ja)
+(译文发布在[码农网](http://www.codeceo.com/article/why-java8-not-use-stringbuilder.html))
+
 #我们不再需要StringBuilder拼接字符串
 在Java开发者中,字符串的拼接占用资源高往往是热议的话题.
 让我们深入讨论一下为什么会占用高资源.

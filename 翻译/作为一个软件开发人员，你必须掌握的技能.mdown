@@ -1,4 +1,4 @@
-[The Technical Skills You Need to Have as a Software Developer](https://dzone.com/articles/the-technical-skills-you-need-to-have-as-a-softwar)
+原文[The Technical Skills You Need to Have as a Software Developer](https://dzone.com/articles/the-technical-skills-you-need-to-have-as-a-softwar)
 
 #作为一个软件开发人员，你必须掌握的技能
 我强烈支持并帮助软件开发者在他们的技术能力之外提升"软技能".事实上我曾写过一本关于这点的[书](http://simpleprogrammer.com/softskills)-但毫无疑问:**技术能力也相当重要**

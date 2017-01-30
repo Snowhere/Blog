@@ -1,3 +1,6 @@
+原文[Giving up on test-first development](http://iansommerville.com/systems-software-and-technology/giving-up-on-test-first-development/)
+(译文发布在[伯乐在线](http://blog.jobbole.com/109861/)，感谢[艾凌风](http://www.jobbole.com/members/hanxiaomax)校稿)
+
 #Giving up on test-first development
 #放弃测试优先式开发
 
@@ -44,3 +47,5 @@ So, I’m going back to writing code first, then the tests. I’ll continue to t
 PS. I’m sure that TDD purists would say that I’m not doing it right so I’m not getting the real benefits of TDD. Maybe they are right. But I have never found zealots to be very convincing.
 
 附言。我很确定 TDD 纯粹主义者会说我做的不正确，所以没有真正从 TDD 受益。或许他们是对的。但是我还没有找到狂热者能够说服我。
+
+(发布在[伯乐在线](http://blog.jobbole.com/109861/)，感谢[艾凌风](http://www.jobbole.com/members/hanxiaomax)校稿)

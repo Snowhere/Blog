@@ -1,4 +1,6 @@
-[Code Looks Like a Chain](https://dzone.com/articles/code-looks-like-a-chain-1)
+原文[Code Looks Like a Chain](https://dzone.com/articles/code-looks-like-a-chain-1)
+(译文发布在[码农网](http://www.codeceo.com/article/code-looks-like-a-chain.html))
+
 #你看那代码,好像一条链哎
 就如星爷多年前说的那样"你看那代码,好像一条链哎".什么?他没说过吗,或许我记错了.你应该已经猜到了,这篇文章,我们来讨论一下责任链设计模式.这个模式并不流行,至少在 *Gang of Four*定义的模式中是这样.但现代依赖注入框架让我们可以用巧妙的新奇的方式去实现这个模式.我们来看看.
 ##介绍

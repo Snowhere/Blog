@@ -1,4 +1,5 @@
-[What Is an Object?](https://dzone.com/articles/who-is-an-object)
+原文[What Is an Object?](https://dzone.com/articles/who-is-an-object)
+(译文发布在[码农网](http://www.codeceo.com/article/what-is-object.html))
 
 #什么是对象
 我们有成千上万的面相对象书籍和成百上千的面相对象语言,我相信它们大多数给我们关于对象的定义是错误的。这就是为什么整个面向对象世界充满误解与错误。它们给对象的定义基于所采用硬件架构,所以很原始很机械。我想介绍一种更好地定义。

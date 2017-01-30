@@ -1,5 +1,5 @@
-(Functional Programming: The Good and the Bad)[https://dzone.com/articles/functional-programming-the-good-and-the-bad]
-
+原文[Functional Programming: The Good and the Bad](https://dzone.com/articles/functional-programming-the-good-and-the-bad)
+(译文发布在[码农网](http://www.codeceo.com/article/functional-programming.html ))
 #函数式编程：优与劣
 
 如今函数式编程越来越流行。越来越多的编程语言支持函数式编程风格，人们学习如何使用它们。函数式编程已不像以前那么小众——现在Ruby，Java和JavaScript都使用了函数式编程思想。
@@ -22,3 +22,4 @@ looper(h, t) := return t + looper(h)
 不要使用全局变量。它会跑到作用域外。
 
 相比那些所谓拥有函数式编程的语言，这就是你将在真正函数式语言中看到的两点关键不同点。函数式程序设计让你的重用能力更上一层楼，使代码更清晰，不过在没有优化的运行环境中会有潜在的性能代价。
+

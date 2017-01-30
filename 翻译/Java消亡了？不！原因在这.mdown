@@ -1,5 +1,5 @@
-[Is Java Dead? No! Here’s Why...](https://dzone.com/articles/is-java-dead-no-heres-why)
-
+原文[Is Java Dead? No! Here’s Why...](https://dzone.com/articles/is-java-dead-no-heres-why)
+(译文发布在[码农网](http://www.codeceo.com/article/java-no-die.html))
 #Java消亡了？不！原因在这...
 年复一年，关于"Java消亡了？"的疑问频繁涌现，然而，通过所有外部表现来看，Java仍活着，并且在发展。尽管许多新语言各领风骚，开发语言排行榜(TIOBE)上Java在2015年仍居榜首，并比2014年增长了[5%的使用量](http://www.tiobe.com/news/10/java-language-of-year-2015),远远超过其他语言。
 ![Is Java Dead -- TIOBE](https://stormpath.com/wp-content/uploads/2016/06/2016-06-14_15-17-25-1024x534.png)

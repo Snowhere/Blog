@@ -1,4 +1,4 @@
-[ActiveRecord Is Even Worse Than ORM](https://dzone.com/articles/activerecord-is-even-worse-than-orm)
+原文[ActiveRecord Is Even Worse Than ORM](https://dzone.com/articles/activerecord-is-even-worse-than-orm)
 
 #ActiveRecord比ORM还糟糕
 你或许还记得我怎么[看待ORM](http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html),一个非常流行的设计模式.简而言之,它鼓励我们把对象转变成被动的,贫乏的DTO,甚至称不上是对象.结局往往是戏剧的-整个编程范式从面向对象转移到面向过程.这些年,我试着在JPoint和JEEConf解释这些.每次访谈之后,总有人告诉我,我的建议可以称作[ActiveRecord](https://en.wikipedia.org/wiki/Active_record_pattern)或[Repository](https://msdn.microsoft.com/en-us/library/ff649690.aspx)模式.
