@@ -1,4 +1,5 @@
-[Things you probably didn’t know you could do with Chrome’s Developer Console](https://medium.freecodecamp.com/10-tips-to-maximize-your-javascript-debugging-experience-b69a75859329#.pokq5sefq)
+原文[Things you probably didn’t know you could do with Chrome’s Developer Console](https://medium.freecodecamp.com/10-tips-to-maximize-your-javascript-debugging-experience-b69a75859329#.pokq5sefq)
+(译文发布在[伯乐在线](http://web.jobbole.com/90300/)，感谢[艾凌风](http://www.jobbole.com/members/hanxiaomax)校稿)
 
 #Things you probably didn’t know you could do with Chrome’s Developer Console
 #Chrome 开发者控制台中，你可能意想不到的功能

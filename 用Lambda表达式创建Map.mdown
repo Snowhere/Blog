@@ -1,2 +1,0 @@
-[Creating Maps With Named Lambdas](https://dzone.com/articles/creating-maps-with-named-lambdas)
-#用Lambda表达式创建Map
