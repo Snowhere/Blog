@@ -8,25 +8,25 @@
 
 JavaScript has a feature called Scope. Though the concept of scope is not that easy to understand for many new developers, I will try my best to explain them to you in the simplest scope. Understanding scope will make your code stand out, reduce errors and help you make powerful design patterns with it.
 
-JavaScript 有个特性称为作用域。尽管对于很多开发新手来说，作用域的概念不容易理解，我会尽可能向你解释最简单的作用域。理解作用域能让你编码出众、减少错误并帮助你通过它实现强大的设计模式。
+JavaScript 有个特性称为作用域。尽管对于很多开发新手来说，作用域的概念不容易理解，我会尽可能地从最简单的角度向你解释它们。理解作用域能让你编写更优雅、错误更少的代码，并能帮助你实现强大的设计模式。
 
 ## What is Scope?
 ## 什么是作用域？
 
 Scope is the accessibility of variables, functions, and objects in some particular part of your code during runtime. In other words, scope determines the visibility of variables and other resources in areas of your code.
 
-作用域是你的代码在运行时各个变量、函数和对象的可达性。换句话说，作用域决定了你代码各部分里的变量和其他资源的可见性。
+作用域是你的代码在运行时，各个变量、函数和对象的可访问性。换句话说，作用域决定了你的代码里的**变量和其他资源**在**各个区域中**的可见性。
 
 ## Why Scope? The Principle of Least Access
 ## 为什么是作用域？最小访问原则
 
 So, what's the point in limiting the visibility of variables and not having everything available everywhere in your code? One advantage is that scope provides some level of security to your code. One common principle of computer security is that users should only have access to the stuff they need at a time.
 
-所以，限制变量的可见性并不让你的代码中所有东西在任意地方可用的好处是什么？一个优势是作用域为你的代码提供安全层级。计算机安全中一个通常的原则是用户只能访问他们当前需要的东西。
+那么，限制变量的可见性，不允许你代码中所有的东西在任意地方都可用的好处是什么？其中一个优势，是作用域为你的代码提供了一个**安全层级**。计算机安全中，有个常规的原则是：用户只能访问他们当前需要的东西。
 
 Think of computer administrators. As they have a lot of control over the company's systems, it might seem okay to grant full access user account to them. Suppose you have a company with three administrators, all of them having full access to the systems and everything is working smooth. But suddenly something bad happens and one of your system gets infected with a malicious virus. Now you don't know whose mistake that was? You realize that you should them basic user accounts and only grant full access privileges when needed. This will help you track changes and keep an account of who did what. This is called The Principle of Least Access. Seems intuitive? This principle is also applied to programming language designs, where it is called scope in most programming languages including JavaScript which we are going to study next.
 
-想一想计算机管理员。他们在公司各个系统上拥有很多控制权，似乎可以赋予他们有全部权限的账号。假设你有一家公司和三个管理员，他们都有系统的全部访问权限，并且一切运转正常。但是突然发生了一点意外，你的一个系统遭到恶意病毒攻击。现在你不知道这谁的错？你意识到你应该给他们基本用户的账号，并且只在需要时赋予他们完全的访问权。这能帮助你跟踪变化并记录每个人的操作。这叫做最小访问原则。眼熟吗？这个原则也应用于编程语言设计，在大多数编程语言（包括 JavaScript）中称为作用域，我们即将要学习它。
+想想计算机管理员吧。他们在公司各个系统上拥有很多控制权，看起来甚至可以给予他们拥有全部权限的账号。假设你有一家公司，拥有三个管理员，他们都有系统的全部访问权限，并且一切运转正常。但是突然发生了一点意外，你的一个系统遭到恶意病毒攻击。现在你不知道这谁出的问题了吧？你这才意识到你应该只给他们基本用户的账号，并且只在需要时赋予他们完全的访问权。这能帮助你跟踪变化并记录每个人的操作。这叫做最小访问原则。眼熟吗？这个原则也应用于编程语言设计，在大多数编程语言（包括 JavaScript）中称为作用域，接下来我们就要学习它。
 
 As you continue on in your programming journey, you will realize that scoping parts of your code helps improve efficiency, track bugs and reduce them. Scope also solves the naming problem when you have variables with the same name but in different scopes. Remember not to confuse scope with context. They are both different features.
 
@@ -47,14 +47,14 @@ In the JavaScript language there are two types of scopes:
 
 Variables defined inside a function are in local scope while variables defined outside of a function are in the global scope. Each function when invoked creates a new scope.
 
-变量定义在函数中，属于局部作用域，定义在函数之外则属于全局作用域。每个函数在调用的时候创建一个新的作用域。
+当变量定义在一个函数中时，变量就在局部作用域中，而定义在函数之外的变量则从属于全局作用域。每个函数在调用的时候会创建一个新的作用域。
 
 ## Global Scope
 ## 全局作用域
 
 When you start writing JavaScript in a document, you are already in the Global scope. There is only one Global scope throughout a JavaScript document. A variable is in the Global scope if it's defined outside of a function.
 
-当你在文档中（document）编写 JavaScript 时，你就已经在全局作用域中了。JavaScript 文档中（document）只有一个全局作用域。一个定义在函数之外的变量属于全局作用域。
+当你在文档中（document）编写 JavaScript 时，你就已经在全局作用域中了。JavaScript 文档中（document）只有一个全局作用域。定义在函数之外的变量会被保存在全局作用域中。
 
 ``` javascript
 // the scope is by default global
@@ -63,7 +63,7 @@ var name = 'Hammad';
 
 Variables inside the Global scope can be accessed and altered in any other scope.
 
-全局作用域里的变量能够被其他作用域访问输出。
+全局作用域里的变量能够在其他作用域中被访问和修改。
 
 ``` javascript
 var name = 'Hammad';
@@ -82,7 +82,7 @@ logName(); // logs 'Hammad'
 
 Variables defined inside a function are in the local scope. And they have a different scope for every call of that function. This means that variables having the same name can be used in different functions. This is because those variables are bound to their respective functions, each having different scopes, and are not accessible in other functions.
 
-定义在函数中的变量属于局部作用域。并且函数在每次调用时都有不同的作用域。这意味着同名变量可以用在不同的函数中。因为这些变量绑定在不同的函数中，拥有不同作用域，彼此之间不能访问。
+定义在函数中的变量就在局部作用域中。并且函数在每次调用时都有一个不同的作用域。这意味着同名变量可以用在不同的函数中。因为这些变量绑定在不同的函数中，拥有不同作用域，彼此之间不能访问。
 
 ``` javascript
 // Global Scope
@@ -105,7 +105,7 @@ function anotherFunction() {
 
 Block statements like if and switch conditions or for and while loops, unlike functions, don't create a new scope. Variables defined inside of a block statement will remain in the scope they were already in.
 
-块级声明包括`if`和`switch`条件，以及`for`和`while`循环，和函数不同，它们不会创建新的作用域。在块级声明中定义的变量属于块所存在的作用域。
+块级声明包括`if`和`switch`，以及`for`和`while`循环，和函数不同，它们不会创建新的作用域。在块级声明中定义的变量从属于该块所在的作用域。
 
 ``` javascript
 if (true) {
@@ -150,7 +150,7 @@ console.log(skills); // Uncaught ReferenceError: skills is not defined
 
 Global scope lives as long as your application lives. Local Scope lives as long as your functions are called and executed.
 
-全局作用域生存周期和你的应用相同。局部作用域存在于你的函数调用执行期间。
+一个应用中全局作用域的生存周期与该应用相同。局部作用域只在该函数调用执行期间存在。
 
 
 ## Context
@@ -158,7 +158,7 @@ Global scope lives as long as your application lives. Local Scope lives as long 
 
 Many developers often confuse scope and context as if they equally refer to the same concepts. But this is not the case. Scope is what we discussed above and Context is used to refer to the value of this in some particular part of your code. Scope refers to the visibility of variables and context refers to the value of this in the same scope. We can also change the context using function methods, which we will discuss later. In the global scope context is always the Window object.
 
-很多开发者经常弄混作用域和上下文，似乎两者是一个概念。但并非如此。作用域是我们上面讲到的那些，上下文通常涉及到你代码某些特殊部分中的`this`值。作用域和变量可见性相关，上下文和同一作用域的`this`值相关。我们当然也可以使用函数方法改变上下文，之后我们会讨论。在全局作用域中，上下文总是 Window 对象。
+很多开发者经常弄混作用域和上下文，似乎两者是一个概念。但并非如此。作用域是我们上面讲到的那些，而上下文通常涉及到你代码某些特殊部分中的`this`值。作用域指的是变量的可见性，而上下文指的是在相同的作用域中的`this`的值。我们当然也可以使用函数方法改变上下文，这个之后我们再讨论。在全局作用域中，上下文总是 Window 对象。
 
 ``` javascript
 // logs: Window {speechSynthesis: SpeechSynthesis, caches: CacheStorage, localStorage: Storage…}
@@ -174,7 +174,7 @@ logFunction();
 
 If scope is in the method of an object, context will be the object the method is part of.
 
-如果作用域在一个对象的方法中，上下文就是对象方法的一部分。
+如果作用域定义在一个对象的方法中，上下文就是这个方法所在的**那个对象**。
 
 ``` javascript
 class User {
@@ -192,7 +192,7 @@ class User {
 
 One thing you'll notice is that the value of context behaves differently if you call your functions using the new keyword. The context will then be set to the instance of the called function. Consider one of the examples above with the function called with the new keyword.
 
-你可能注意到一点，就是如果你使用`new`关键字调用函数时上下文的值会有差异。上下文会设置为调用的函数的实例。上面这个例子中，看一看用`new`关键字调用函数。
+你可能注意到一点，就是如果你使用`new`关键字调用函数时上下文的值会有差异。上下文会设置为被调用的函数的实例。考虑一下上面的这个例子，用`new`关键字调用的函数。
 
 ``` javascript
 function logFunction() {
@@ -207,40 +207,40 @@ When a function is called in Strict Mode, the context will default to undefined.
 当在严格模式（strict mode）中调用函数时，上下文默认是 undefined。
 
 ## Execution Context
-## 执行上下文
+## 执行环境
 
 To remove all confusions and from what we studied above, the word context in Execution Context refers to scope and not context. This is a weird naming convention but because of the JavaScipt specification, we are tied to it.
 
-为了解决掉我们上面学习中的各种困惑，执行上下文这个词中的上下文指的是作用域而并非上下文环境。这是一个怪异的命名约定，但由于 JavaScript 的文档如此，我们只好也这样约定。
+为了解决掉我们从上面学习中会出现的各种困惑，“执行环境（context）”这个词中的“环境（context）”指的是作用域而并非上下文。这是一个怪异的命名约定，但由于 JavaScript 的文档如此，我们只好也这样约定。
 
 JavaScript is a single-threaded language so it can only execute a single task at a time. The rest of the tasks are queued in the Execution Context. As I told you earlier that when the JavaScript interpreter starts to execute your code, the context (scope) is by default set to be global. This global context is appended to your execution context which is actually the first context that starts the execution context.
 
-JavaScript 是一种单线程语言，所以它同一时间只能执行单个任务。其他任务排列在执行上下文中。当 JavaScript 解析器开始执行你的代码，上下文（作用域）默认设为全局。全局上下文添加到你的执行上下文中，事实上这是执行上下文里的第一个上下文。
+JavaScript 是一种单线程语言，所以它同一时间只能执行单个任务。其他任务排列在执行环境中。当 JavaScript 解析器开始执行你的代码，环境（作用域）默认设为全局。全局环境添加到你的执行环境中，事实上这是执行环境里的第一个环境。
 
 After that, each function call (invocation) would append its context to the execution context. The same thing happens when an another function is called inside that function or somewhere else.
 
-之后，每个函数调用都会添加它的上下文到执行上下文中。无论是函数内部还是其他地方调用函数，都会是相同的过程。
+之后，每个函数调用都会添加它的环境到执行环境中。无论是函数内部还是其他地方调用函数，都会是相同的过程。
 
 Each function creates its own execution context.
 
-每个函数都会创建它自己的执行上下文。
+每个函数都会创建它自己的执行环境。
 
 Once the browser is done with the code in that context, that context will then be popped off from the execution context and the state of the current context in the execution context will be transferred to the parent context. The browser always executes the execution context that is at the top of the execution stack (which is actually the innermost level of scope in your code).
 
-当浏览器执行完上下文中的代码，这个上下文会从执行上下文中弹出，当前上下文会转移到父级上下文。浏览器总是执行在执行栈顶的上下文（事实上就是你代码最里层的作用域）。
+当浏览器执行完环境中的代码，这个环境会从执行环境中弹出，执行环境中当前环境的状态会转移到父级环境。浏览器总是先执行在执行栈顶的执行环境（事实上就是你代码最里层的作用域）。
 
 There can only be one global context but any number of function contexts.
 The execution context has two phases of creation and code execution.
 
-全局上下文只能有一个，函数上下文可以有任意多个。
-执行上下文有两个阶段：创建个执行
+全局环境只能有一个，函数环境可以有任意多个。
+执行环境有两个阶段：创建和执行。
 
 ###CREATION PHASE
 ###创建阶段
 
 The first phase that is the creation phase is present when a function is called but its code is not yet executed. Three main things that happen in the creation phase are:
 
-第一阶段是创建阶段，是函数调用但代码并未执行的时候。创建阶段主要发生了 3 件事。
+第一阶段是创建阶段，是函数刚被调用但代码并未执行的时候。创建阶段主要发生了 3 件事。
 
 * Creation of the Variable (Activation) Object,
 * Creation of the Scope Chain, and
@@ -255,7 +255,7 @@ The first phase that is the creation phase is present when a function is called 
 
 The Variable Object, also known as the activation object, contains all of the variables, functions and other declarations that are defined in a particular branch of the execution context. When a function is called, the interpreter scans it for all resources including function arguments, variables, and other declarations. Everything, when packed into a single object, becomes the the Variable Object.
 
-变量对象（Variable Object）也称为活动对象（activation object），包含所有变量、函数和其他在执行上下文中定义的声明。当函数调用时，解析器扫描所有资源，包括函数参数、变量和其他声明。当所有东西装填进一个对象，这就是变量对象。
+变量对象（Variable Object）也称为活动对象（activation object），包含所有变量、函数和其他在执行环境中定义的声明。当函数调用时，解析器扫描所有资源，包括函数参数、变量和其他声明。当所有东西装填进一个对象，这个对象就是变量对象。
 
 ``` javascript
 'variableObject': {
@@ -268,7 +268,7 @@ The Variable Object, also known as the activation object, contains all of the va
 
 In the creation phase of the execution context, the scope chain is created after the variable object. The scope chain itself contains the variable object. The Scope Chain is used to resolve variables. When asked to resolve a variable, JavaScript always starts at the innermost level of the code nest and keeps jumping back to the parent scope until it finds the variable or any other resource it is looking for. The scope chain can simply be defined as an object containing the variable object of its own execution context and all the other execution contexts of it parents, an object having a bunch of other objects.
 
-在执行上下文创建阶段，作用域链在变量对象之后创建。作用域链包含变量对象。作用域链通常处理变量。当处理一个变量时，JavaScript 开始从最内层沿着父级寻找所需的变量或其他资源。作用域链包含自己执行上下文以及所有父级上下文中包含的变量对象。
+在执行环境创建阶段，作用域链在变量对象之后创建。作用域链包含变量对象。作用域链用于解析变量。当解析一个变量时，JavaScript 开始从最内层沿着父级寻找所需的变量或其他资源。作用域链包含自己执行环境以及所有父级环境中包含的变量对象。
 
 ``` javascript
 'scopeChain': {
@@ -277,11 +277,11 @@ In the creation phase of the execution context, the scope chain is created after
 ```
 
 ###The Execution Context Object
-###执行上下文对象
+###执行环境对象
 
 The execution context can be represented as an abstract object like this:
 
-执行上下文可以用下面抽象对象表示：
+执行环境可以用下面抽象对象表示：
 
 ``` javascript
 executionContextObject = {
@@ -296,14 +296,14 @@ executionContextObject = {
 
 In the second phase of the execution context, that is the code execution phase, other values are assigned and the code is finally executed.
 
-执行上下文的第二个阶段就是代码执行阶段，赋值并且代码最终被执行。
+执行环境的第二个阶段就是代码执行阶段，进行其他赋值操作并且代码最终被执行。
 
 ## Lexical Scope
 ## 词法作用域
 
 Lexical Scope means that in a nested group of functions, the inner functions have access to the variables and other resources of their parent scope. This means that the child functions are lexically bound to the execution context of their parents. Lexical scope is sometimes also referred to as Static Scope.
 
-词法作用域意思是在函数嵌套中，内层函数可以访问父级作用域的变量等资源。这意味着子函数词法绑定到了父级执行上下文。词法作用域有时和静态作用域有关。
+词法作用域的意思是在函数嵌套中，内层函数可以访问父级作用域的变量等资源。这意味着子函数词法绑定到了父级执行环境。词法作用域有时和静态作用域有关。
 
 ``` javascript
 function grandfather() {
@@ -323,7 +323,7 @@ function grandfather() {
 
 The thing you will notice about lexical scope is that it works forward, meaning name can be accessed by its children's execution contexts. But it doesn't work backward to its parents, meaning that the variable likes cannot be accessed by its parents. This also tells us that variables having the same name in different execution contexts gain precedence from top to bottom of the execution stack. A variable, having a name similar to another variable, in the innermost function (topmost context of the execution stack) will have higher precedence.
 
-你可能注意到一点，词法作用域是向前的，意思是子执行上下文可以访问`name`。但不是由父级向后的，意味着父级不能访问`likes`。这也告诉了我们，在不同执行上下文中同名变量优先级在执行栈由上到下增加。一个变量和另一个变量同名，内层函数（执行栈顶的上下文）有更高的优先级。
+你可能注意到了词法作用域是向前的，意思是子执行环境可以访问`name`。但不是由父级向后的，意味着父级不能访问`likes`。这也告诉了我们，在不同执行环境中同名变量优先级在执行栈由上到下增加。一个变量和另一个变量同名，内层函数（执行栈顶的环境）有更高的优先级。
 
 ## Closures
 ## 闭包
@@ -338,11 +338,11 @@ A closure can not only access the variables defined in its outer function but al
 
 A closure can also access the variables of its outer function even after the function has returned. This allows the returned function to maintain access to all the resources of the outer function.
 
-即使函数已经返回，闭包仍然能访问外部函数的变量。这允许返回的函数能够持续访问外部函数的所有资源。
+即使函数已经return，闭包仍然能访问外部函数的变量。这意味着return的函数允许持续访问外部函数的所有资源。
 
 When you return an inner function from a function, that returned function will not be called when you try to call the outer function. You must first save the invocation of the outer function in a separate variable and then call the variable as a function. Consider this example:
 
-当你的外部函数返回一个内部函数，调用外部函数时你并不能调用返回的函数。你必须先用一个单独的变量保存外部函数的调用，然后将这个变量当做函数来调用。看下面这个例子：
+当你的外部函数return一个内部函数，调用外部函数时return的函数并不会被调用。你必须先用一个单独的变量保存外部函数的调用，然后将这个变量当做函数来调用。看下面这个例子：
 
 ``` javascript
 function greet() {
@@ -363,7 +363,7 @@ greetLetter(); // logs 'Hi Hammad'
 
 The key thing to note here is that greetLetter function can access the name variable of the greet function even after it has been returned. One way to call the returned function from the greet function without variable assignment is by using parentheses () two times ()() like this:
 
-值得注意的是，即使在`greet`函数返回后，`greetLetter`函数仍可以访问`greet`函数的`name`变量。如果不使用变量赋值来调用`greet`函数返回的函数，一种方法是使用`()`两次`()()`，如下所示：
+值得注意的是，即使在`greet`函数return后，`greetLetter`函数仍可以访问`greet`函数的`name`变量。如果不使用变量赋值来调用`greet`函数return的函数，一种方法是使用`()`两次`()()`，如下所示：
 
 ``` javascript
 function greet() {
@@ -415,7 +415,7 @@ Encapsulating functions from the public (global) scope saves them from vulnerabl
 
 The parenthesis at the end of the function tells the interpreter to execute it as soon as it reads it without invocation. We can add functions and variables in it and they will not accessible outside. But what if we want to access them outside, meaning we want some of them to be public and some of them to be private? One type of closure, we can use, is called the Module Pattern which allows us to scope our functions using both public and private scopes in an object.
 
-函数结尾的括号告诉解析器立即执行此函数。我们可以在其中加入变量和函数，外部无法访问。但如果我们想在外部访问它们，也就是说我们希望它们一些是公开的，一些是私有的？我们可以使用闭包的一种形式，称为模块模式（Module Pattern），它允许我们在一个对象中划分共有作用域和私有作用域的函数。
+函数结尾的括号告诉解析器立即执行此函数。我们可以在其中加入变量和函数，外部无法访问。但如果我们想在外部访问它们，也就是说我们希望它们一部分是公开的，一部分是私有的。我们可以使用闭包的一种形式，称为模块模式（Module Pattern），它允许我们用一个对象中的公有作用域和私有作用域来划分函数。
 
 ###THE MODULE PATTERN
 ###模块模式
@@ -440,7 +440,7 @@ var Module = (function() {
 
 The return statement of the Module contains our public functions. The private functions are just those that are not returned. Not returning functions makes them inaccessible outside of the Module namespace. But our public functions can access our private functions which make them handy for helper functions, AJAX calls, and other things.
 
-返回的 Modele 声明包含了我们的共有函数。私有函数并没有被返回。没有被返回的函数确保了它们在 Module 命名空间无法访问。但我们的共有函数可以访问我们的私有函数，方便它们使用有用的函数、AJAX 调用或其他东西。
+Module 的return语句包含了我们的公共函数。私有函数并没有被return。函数没有被return确保了它们在 Module 命名空间无法访问。但我们的共有函数可以访问我们的私有函数，方便它们使用有用的函数、AJAX 调用或其他东西。
 
 ``` javascript
 Module.publicMethod(); // works
@@ -449,7 +449,7 @@ Module.privateMethod(); // Uncaught ReferenceError: privateMethod is not defined
 
 One convention is to begin private functions with an underscore, and returning an anonymous object containing our public functions. This makes them easy to manage in a long object. This is how it looks:
 
-一种习俗是以下划线作为开始命名私有函数，并返回包含共有函数的无名对象。在很长的对象中十分有用。向下面这样：
+一种习惯是以下划线作为开始命名私有函数，并返回包含共有函数的匿名对象。这使它们在很长的对象中很容易被管理。向下面这样：
 
 ``` javascript
 var Module = (function () {
@@ -470,7 +470,7 @@ var Module = (function () {
 
 Another type of closure is the Immediately-Invoked Function Expression (IIFE). This is a self-invoked anonymous function called in the context of window, meaning that the value of this is set window. This exposes a single global interface to interact with. This is how it looks:
 
-另一种形式的闭包是立即执行函数表达式（Immediately-Invoked Function Expression，IIFE）。这是一种在 window 上下文中自调用的无名函数，也就是说`this`的值是`window`。它暴露了全局接口来交互。如下所示：
+另一种形式的闭包是立即执行函数表达式（Immediately-Invoked Function Expression，IIFE）。这是一种在 window 上下文中自调用的匿名函数，也就是说`this`的值是`window`。它暴露了一个单一全局接口用来交互。如下所示：
 
 ``` javascript
 (function(window) {
@@ -569,11 +569,11 @@ The following example takes a list of items in the document and logs them to the
 
 The HTML only contains an unordered list of items. The JavaScript then selects all of them from the DOM. The list is looped over till the end of the items in the list. Inside the loop, we log the content of the list item to the console.
 
-HTML 仅仅包含一个无序项目列表。JavaScript 从 DOM 中选取它们。循环直到最后一个项目。在循环中，我们打印项目内容到控制台。
+HTML文档中仅包含一个无序列表。JavaScript 从 DOM 中选取它们。列表项会被从头到尾循环一遍。在循环时，我们把列表项的内容输出到控制台。
 
 This log statement is wrapped in a function wrapped in parentheses on which the call function is called. The corresponding list item is passed to the call function so that the the keyword in the console statement logs the innerHTML of the correct object.
 
-打印声明包含在由括号包裹的函数中，然后调用`call`函数。相应的项目传入 call 函数，确保控制台输出正确对象的 innerHTML。
+输出语句包含在由括号包裹的函数中，然后调用`call`函数。相应的列表项传入 call 函数，确保控制台输出正确对象的 innerHTML。
 
 Objects can have methods, likewise functions being objects can also have methods. In fact, a JavaScript function comes with four built-in methods which are:
 
