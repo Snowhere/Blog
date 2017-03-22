@@ -1,4 +1,6 @@
-[The Background Properties](https://bitsofco.de/the-background-properties/)
+原文[The Background Properties](https://bitsofco.de/the-background-properties/)
+(译文发布在[伯乐在线](http://web.jobbole.com/90616/)，感谢[刘唱](http://www.jobbole.com/members/liuchang/)校稿)
+
 #The Background Properties
 #CSS 的 background 属性
 
@@ -85,7 +87,7 @@ The background-size property defines the size of the background image. It's valu
 
 The keywords available for this property are contain and cover. The keyword contain will scale the image to the largest size it can be where both it's height and width can fit within the area. cover, on the other hand, will scale the image to the smallest possible size where entire background area is still covered.
 
-属性可用的关键字是 `contain` 和 `cover`。`contain` 会按比例将图片放大直到宽高完全适应区域。`cover` 会将图像缩小到足够小的尺寸保证背景区域全部覆盖。
+属性可用的关键字是 `contain` 和 `cover`。`contain` 会按比例将图片放大直到宽高完全适应区域。`cover` 会将其调整至能够完全覆盖该区域的最小尺寸。
 
 ``` css
 .left { 

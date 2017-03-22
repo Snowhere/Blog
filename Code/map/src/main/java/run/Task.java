@@ -40,14 +40,23 @@ public class Task {
     public static double MIN_LAT = 39.725344;//下
 
     //成都范围
-    public static double C_MAX_LNG = 104.381116;//右
+/*    public static double C_MAX_LNG = 104.381116;//右
 
     public static double C_MIN_LNG = 103.790142;//左
 
     public static double C_MAX_LAT = 30.9166587;//上
 
-    public static double C_MIN_LAT = 30.4731469;//下
-    
+    public static double C_MIN_LAT = 30.4731469;//下*/
+
+    //燕郊范围
+    public static double C_MAX_LNG = 116.901225;//右
+
+    public static double C_MIN_LNG = 116.758147;//左
+
+    public static double C_MAX_LAT = 40.0280873;//上
+
+    public static double C_MIN_LAT = 39.8817129;//下
+
     //矩形区域搜索url
     private String searchUrl = "http://restapi.amap.com/v3/place/polygon?";
 
@@ -64,7 +73,7 @@ public class Task {
     private String types = GaodeCategory.getAll();
 
     //矩形区域
-    private String polygon = "116.467779,39.913470;116.471779,39.909470";
+    //private String polygon = "116.467779,39.913470;116.471779,39.909470";
 
     private CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -137,9 +146,9 @@ public class Task {
         }
     }
 
+
     /**
      * 分页遍历poi
-     * @param url
      * @param polygon
      * @param page
      * @throws IOException
@@ -163,6 +172,7 @@ public class Task {
         }
         //请求失败
         if (pois == null || pois.getStatus() == 0) {
+            assert pois != null;
             System.out.println(pois.getInfo());
             return false;
         }

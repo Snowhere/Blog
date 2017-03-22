@@ -1,6 +1,8 @@
+原文[The Art of Defensive Programming](https://dev.to/0x13a/the-art-of-defensive-programming)
+(译文发布在[伯乐在线](http://blog.jobbole.com/110123/)，感谢[刘唱](http://www.jobbole.com/members/liuchang/)校稿)
 #The Art of Defensive Programming
-防御性编程的艺术
-https://dev.to/0x13a/the-art-of-defensive-programming
+#防御性编程的艺术
+
 
 Why don’t developers write secure code? We’re not talking yet another time about “clean code” here. We’re talking about something more, on a pure practical perspective, software’s safety and security. Yes, because an insecure software is pretty much useless. Let’s see what does insecure software mean.
 
@@ -31,7 +33,7 @@ Why do I think Defensive Programming is a good approach to issue these problems 
 
 >Defend against the impossible, because the impossible will happen.
 
->防御针对可能性，因为可能性会发生。
+>抵御那些不可能的事，因为看似不可能的事也会发生。
 
 There are many definitions for Defensive Programming, it also depends on the level of “security” and level of resources you need for your software projects.
 
@@ -103,11 +105,11 @@ In big projects, where many people are involved, we can have many different ways
 
 ##Write SOLID code
 
-##编写高质量代码
+##编写符合 SOLID 原则的代码
 
 That’s the tough part for a (defensive) programmer, writing code that doesn’t suck. And this is a thing many people know and talk about, but nobody really cares or put the right amount of attention and effort into it in order to achieve SOLID code.
 
-这是（防御式）编程最困难的部分——编写不糟糕的代码。这也是很多人知道并讨论的，但没有人关心或注意并致力于实现高质量代码。
+这是（防御式）编程最困难的部分——编写不糟糕的代码。这也是很多人知道并讨论的，但没有人关心或注意并致力于实现符合 SOLID 原则的代码。
 
 Let’s see some bad examples
 
@@ -115,7 +117,7 @@ Let’s see some bad examples
 
 >Don’t: Uninitialized properties
 
->不要：未初始化的属性
+>避免：未初始化的属性
 
 ``` php
 <?php
@@ -160,7 +162,7 @@ Make it foolproof. Don’t use uninitialized object properties
 
 >Don’t: Leaking state outside class scope.
 
->不要：类的作用域外泄露状态
+>避免：类的作用域外泄露状态
 
 ```php
 <?php

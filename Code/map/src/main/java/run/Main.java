@@ -15,19 +15,19 @@ public class Main {
             "qwer");
         cp.start();
         ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
-        arp.addMapping("c_poi", POIModel.class);
-        arp.addMapping("c_area", AreaModel.class);
+        arp.addMapping("yj_poi", POIModel.class);
+        arp.addMapping("yj_area", AreaModel.class);
         arp.start();
 
-        getArea();
+        //getArea();
         //从数据库中最后一条数据获取当前爬取的url信息,然后继续爬取.
-        //getPois();
+        getPois();
     }
 
     private static void getArea() {
         Task task = new Task();
         AreaModel area = AreaModel.model
-            .findFirst("select * from c_area order by id desc");
+            .findFirst("select * from yj_area order by id desc");
         try {
             if (area == null) {
                 task.getArea(Task.C_MIN_LNG, Task.C_MAX_LAT, Task.DISTANCE);
@@ -43,9 +43,9 @@ public class Main {
     private static void getPois() {
         Task task = new Task();
         POIModel model = POIModel.model
-            .findFirst("SELECT  * FROM `c_poi` ORDER BY id desc limit 1");
+            .findFirst("SELECT  * FROM `yj_poi` ORDER BY id desc limit 1");
         AreaModel lastArea = AreaModel.model
-            .findFirst("select * from c_area order by id desc");
+            .findFirst("select * from yj_area order by id desc");
         int areaId = 1;
         int page = 1;
         if (model != null) {
@@ -71,7 +71,7 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
                 model = POIModel.model
-                    .findFirst("SELECT  * FROM `c_poi` ORDER BY id desc limit 1");
+                    .findFirst("SELECT  * FROM `yj_poi` ORDER BY id desc limit 1");
                 areaId = model.getInt("area_id");
                 page = model.getInt("page") + 1;
             }
