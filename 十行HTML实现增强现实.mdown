@@ -74,7 +74,7 @@ Next, we are going to create our a-frame scene. We also need to add the ARToolki
 
 Once we have created the 3d scene, we can start adding objects to it. In this line, we add a simple box. We then modify its material to make it transparent. We also change its position so it displays on top of the AR marker.
 
-一旦我们创建了 3d 场景，我们可以开始向里面添加对象。在这行代码中，我们添加了一个简单的盒子。然后我们修改了它的材质，让它变得透明。我们也改变了它的位置，所以它出现在 AR 标识（AR marker）的上面。
+一旦我们创建了 3d 场景，我们可以开始向里面添加对象。在这行代码中，我们添加了一个简单的盒子。然后我们修改了它的材质，让它变得透明。我们也改变了它的位置，所以它出现在 AR 标识（AR marker）的上方。
 
 ##Adding the AR Camera
 ##增加 AR 摄像头
@@ -93,5 +93,6 @@ Congratulations! You are done. You now have augmented reality, in only 10 lines 
 
 Check out this video version I made of the tutorial:
 
-可以看一下我做的视频教程：
+可以看一下我做的视频教程（搬运自youtube，字幕为 youtube 自动识别内嵌字幕，有少量识别误差，不影响观看）：
+
 
