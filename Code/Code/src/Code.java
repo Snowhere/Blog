@@ -1,5 +1,13 @@
 import java.util.HashMap;
+import Thread.*;
 
 public class Code {
-    HashMap<String, String > map = new HashMap<>();
+    private volatile long lastStat = System.currentTimeMillis();
+
+    public static void main(String args[]) {
+       int i = 0;
+       int j = (i-1)/0;
+       System.out.print(j);
+    }
+
 }
