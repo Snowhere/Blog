@@ -1,0 +1,58 @@
+[How We Built r/Place](https://redditblog.com/2017/04/13/how-we-built-rplace/)
+#How We Built r/Place
+#Reddit 的愚人节项目 r/Place 是怎么做出来的
+
+Each year for April Fools’, rather than a prank, we like to create a project that explores the way that humans interact at large scales. This year we came up with Place, a collaborative canvas on which a single user could only place a single tile every five minutes. This limitation de-emphasized the importance of the individual and necessitated the collaboration of many users in order to achieve complex creations. Each tile placed was relayed to observers in real-time.
+
+每年的愚人节，我们喜欢创建项目来探索人类大规模的交流互动，而不是做一些恶作剧。今年我们提出了 Place，这是一个协作的画板，每个用户每 5 分钟只能修改一个小块。这一限制弱化了个体的重要性，强化了大量用户协作完成复制创作的必要性。每个小块的变化实时传递给观察者。
+
+Multiple engineering teams (frontend, backend, mobile) worked on the project and most of it was built using existing technology at Reddit. This post details how we approached building Place from a technical perspective.
+
+许多开发团队（前端、后端、移动端）协作开发这个项目，项目大部分基于 Reddit 已有的技术。这篇文章从技术角度详细描述我们如何完成 Place。
+
+But first, if you want to check out the code for yourself, you can find it here. And if you’re interested in working on projects like Place in the future, we’re hiring!
+
+且慢。如果你想查看我们的代码，[在这里](http://github.com/reddit/reddit-plugin-place-opensource)。如果你对构建 Place 这一类项目感兴趣，[我们欢迎你](https://about.reddit.com/careers/)
+
+##Requirements
+##需求
+
+Defining requirements for an April Fools’ project is extremely important because it will launch with zero ramp-up and be available immediately to all of Reddit’s users. If it doesn’t work perfectly out of the gate, it’s unlikely to attract enough users to make for an interesting experience.
+
+定义愚人节项目的需求十分重要，因为它一旦发布即面向所有 Reddit 用户，没有增长过程。如果它一开始并不能完美运作，似乎就不能吸引足够的用户来创作并获得有趣的体验。
+
+* The board must be 1000 tiles by 1000 tiles so it feels very large.
+* All clients must be kept in sync with the same view of the current board state, otherwise users with different versions of the board will have difficulty collaborating.
+* We should support at least 100,000 simultaneous users.
+* Users can place one tile every 5 minutes, so we must support an average update rate of 100,000 tiles per 5 minutes (333 updates/s).
+* The project must be designed in such a way that it’s unlikely to affect the rest of the site’s normal function even with very high traffic to r/place.
+* The configuration must be flexible in case there are unexpected bottlenecks or failures. This means that board size and tile cooldown should be adjustable on the fly in case data sizes are too large or update rates are too high.
+* The API should be generally open and transparent so the reddit community can build on it (bots, extensions, data collection, external visualizations, etc) if they choose to do so.
+
+* 画板必须有 1000*1000 个小块，所以它会非常大。
+* 所有客户端必须和当前画板状态同步，并显示一致，否则用户基于不同版本的画板难以协作。
+* 我们必须支持至少 100000 的并发同步用户。
+* 用户每 5 分钟可以修改一个小块，所以我们必须支持平均每 5 分钟 100000 个小块的更新（每秒 333 个更新）。
+* 项目的设计必须遵循这一点，即使 r/place 流量巨大，也不能影响站点其他功能。
+* 配置必须有足够弹性，应对意外的瓶颈或故障。这意味着画板的大小和小块的使用间隔可以在运行时调节，以防数据量过大或更新过于频繁。
+* API 必须开放和透明，reddit 社区如果对此有兴趣，可以在此之上构建项目（机器人、扩展、数据收集、外部可视化等等）。
+
+##Backend
+##后端
+
+###Implementation decisions
+###实施决策
+
+The main challenge for the backend was keeping all the clients in sync with the state of the board. Our solution was to initialize the client state by having it listen for real-time tile placements immediately and then make a request for the full board. The full board in the response could be a few seconds stale as long as we also had real-time placements starting from before it was generated. When the client received the full board it replayed all the real-time placements it received while waiting. All subsequent tile placements could be drawn to the board immediately as they were received.
+
+后端最大的挑战就是保持所有客户端对画板的状态同步。我们的解决方案是初始化客户端状态时立刻实时监听小块的变化，然后请求整个画板。响应中的整个画板也会有几秒的
+
+For this scheme to work we needed the request for the full state of the board to be as fast as possible. Our initial approach was to store the full board in a single row in Cassandra and each request for the full board would read that entire row. The format for each column in the row was:
+
+(x, y): {‘timestamp’: epochms, ‘author’: user_name, ‘color’: color}
+
+Because the board contained 1 million tiles this meant that we had to read a row with 1 million columns. On our production cluster this read took up to 30 seconds, which was unacceptably slow and could have put excessive strain on Cassandra.
+
+Our next approach was to store the full board in redis. We used a bitfield of 1 million 4 bit integers. Each 4 bit integer was able to encode a 4 bit color, and the x,y coordinates were determined by the offset (offset = x + 1000y) within the bitfield. We could read the entire board state by reading the entire bitfield. We were able to update individual tiles by updating the value of the bitfield at a specific offset (no need for locking or read/modify/write). We still needed to store the full details in Cassandra so that users could inspect individual tiles to see who placed them and when. We also planned on using Cassandra to restore the board in case of a redis failure. Reading the entire board from redis took less than 100ms, which was fast enough.
+
+Illustration showing how colors were stored in redis, using a 2×2 board:
