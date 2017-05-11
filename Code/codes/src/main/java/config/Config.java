@@ -36,7 +36,7 @@ public class Config extends JFinalConfig {
     public void configPlugin(Plugins me) {
         // 配置C3p0数据库连接池插件
         C3p0Plugin c3p0Plugin = new C3p0Plugin(
-            "jdbc:mysql://localhost/map?useUnicode=true", "root", "qwer");
+            "jdbc:mysql://localhost/map?useUnicode=true", "", "");
         me.add(c3p0Plugin);
 
         // 配置ActiveRecord插
