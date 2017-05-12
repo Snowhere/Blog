@@ -29,7 +29,7 @@ Defining requirements for an April Fools’ project is extremely important becau
 * The configuration must be flexible in case there are unexpected bottlenecks or failures. This means that board size and tile cooldown should be adjustable on the fly in case data sizes are too large or update rates are too high.
 * The API should be generally open and transparent so the reddit community can build on it (bots, extensions, data collection, external visualizations, etc) if they choose to do so.
 
-* 画板必须有 1000*1000 个小块，所以它会非常大。
+* 画板必须有 1000×1000 个小块，所以它会非常大。
 * 所有客户端必须和当前画板状态同步，并显示一致，否则用户基于不同版本的画板难以协作。
 * 我们必须支持至少 100000 的并发同步用户。
 * 用户每 5 分钟可以修改一个小块，所以我们必须支持平均每 5 分钟 100000 个小块的更新（每秒 333 个更新）。
@@ -45,14 +45,82 @@ Defining requirements for an April Fools’ project is extremely important becau
 
 The main challenge for the backend was keeping all the clients in sync with the state of the board. Our solution was to initialize the client state by having it listen for real-time tile placements immediately and then make a request for the full board. The full board in the response could be a few seconds stale as long as we also had real-time placements starting from before it was generated. When the client received the full board it replayed all the real-time placements it received while waiting. All subsequent tile placements could be drawn to the board immediately as they were received.
 
-后端最大的挑战就是保持所有客户端对画板的状态同步。我们的解决方案是初始化客户端状态时立刻实时监听小块的变化，然后请求整个画板。响应中的整个画板也会有几秒的
+后端最大的挑战就是保持所有客户端与画板的状态同步。我们的解决方案是初始化客户端状态时立刻实时监听小块的变化，然后请求整个画板。只要我们在生成画板的时候有实时的小块更改，那么响应返回的整个画板就会有几秒的延迟。当客户端接收到整个画板，把在等待时的小块变化在画板上重演。所有随后的小块变化都将在被接收到时画在画板上。
 
 For this scheme to work we needed the request for the full state of the board to be as fast as possible. Our initial approach was to store the full board in a single row in Cassandra and each request for the full board would read that entire row. The format for each column in the row was:
 
-(x, y): {‘timestamp’: epochms, ‘author’: user_name, ‘color’: color}
+为了让这个策略正常实施，我们需要尽可能快的请求到画板的整体状态。我们的初步方案是用[单行Cassandra](https://pandaforme.gitbooks.io/introduction-to-cassandra/content/understand_the_cassandra_data_model.html)储存整个画板，每个针对整个画板的请求可以读取整行。行中的每列格式如下所示：
+
+`(x, y): {‘timestamp’: epochms, ‘author’: user_name, ‘color’: color}`
 
 Because the board contained 1 million tiles this meant that we had to read a row with 1 million columns. On our production cluster this read took up to 30 seconds, which was unacceptably slow and could have put excessive strain on Cassandra.
 
+因为画板包含一百万个小块，这意味着我们不得不读取有一百万列的行。在我们的生产集群上这种读取花费 30 秒，慢到无法接受，所以我们不能过度依赖 Cassandra。
+
 Our next approach was to store the full board in redis. We used a bitfield of 1 million 4 bit integers. Each 4 bit integer was able to encode a 4 bit color, and the x,y coordinates were determined by the offset (offset = x + 1000y) within the bitfield. We could read the entire board state by reading the entire bitfield. We were able to update individual tiles by updating the value of the bitfield at a specific offset (no need for locking or read/modify/write). We still needed to store the full details in Cassandra so that users could inspect individual tiles to see who placed them and when. We also planned on using Cassandra to restore the board in case of a redis failure. Reading the entire board from redis took less than 100ms, which was fast enough.
 
+我们下一个方案使用 redis 储存整个画板。我们使用 bitfield 处理一百万个 4 位的整型。每个 4 位的整型可以编码 4 位的颜色，横纵（x，y）坐标可以在 bitfield 里用偏移量表示（offset = x + 1000y）。我们可以通过读取整个 bitfield 来获取整个画板的状态。我们可以通过在 bitfield 中更新指定偏移量上的值，来更新单独的小块(不在需要加锁或读/改/写)。我们仍然需要在 Cassandra 中储存所有的细节，让用户可以检查单独的小块，看一看何时何人更改了它。我们也计划用 Cassandra 备份整个画板，以防 redis 失效。从 redis 中读取整个画板不超过 100ms，这已经足够快了。
+
 Illustration showing how colors were stored in redis, using a 2×2 board:
+
+插图展示了我们如何用 redis 储存 2×2 画板的颜色：
+
+![](https://redditupvoted.files.wordpress.com/2017/04/drawio-1.png?w=720&h=199)
+
+We were concerned about exceeding maximum read bandwidth on redis. If many clients connected or refreshed at once they would simultaneously request the full state of the board, all triggering reads from redis. Because the board was a shared global state the obvious solution was to use caching. We decided to cache at the CDN (Fastly) layer because it was simple to implement and it meant the cache was as close to clients as possible which would help response speed. Requests for the full state of the board were cached by Fastly with an expiration of 1 second. We also added the stale-while-revalidate cache control header option to prevent more requests from falling through than we wanted when the cached board expired. Fastly maintains around 33 POPs which do independent caching, so we expected to get at most 33 requests per second for the full board.
+
+我们非常关心 redis 读取最大带宽。如果很多客户端同时链接或刷新，它们会同时请求整个画板的状态，全部都触发 redis 的读取操作。因为画板是全局共享状态，显而易见的解决方案是使用缓存。我们决定在 CDN 层（Fastly）使用缓存，因为实现简单，并且缓存离客户端更近可以提高响应速度。对整个画板的请求被 Fastly 缓存下来并设置 1 秒的超时时间。我们也添加了[stale-while-revalidate](https://docs.fastly.com/guides/performance-tuning/serving-stale-content#usage)这个控制缓存的头信息，来应对画板缓存过期导致超过预期的大量请求。[Fastly 维护着大约 33 处独立缓存 POPs（接入点）](https://www.fastly.com/network-map)，所以我们预期每秒最多有 33 个针对整个画板的请求。
+
+We used our websocket service to publish updates to all the clients. We’ve had success using it in production for reddit live threads with over 100,000 simultaneous viewers, live PM notifications, and other features. The websocket service has also been a cornerstone of our past April Fools projects such as The Button and Robin. For r/place, clients maintained a websocket connection to receive real-time tile placement updates.
+
+我们使用我们的[websocket 服务](https://github.com/reddit/reddit-service-websockets)向所有客户端推送更新。我们已经成功地在[reddit live](https://www.reddit.com/live)生产环境中应用过它，来处理超过 100000 的并发用户，比如 live PM notifications 功能或其他特性。wesocket 服务也曾是我们过去愚人节项目的基础，比如 [The Button](https://redditblog.com/2015/04/01/the-button/) 和 [Robin](https://redditblog.com/2016/04/01/Robin/) 两个项目。对于 r/place 项目，客户端维护一个 websocket 链接来接收实时的小块变化更新。
+
+###API
+
+Retrieve the full board
+**检索整个画板**
+
+![](https://redditupvoted.files.wordpress.com/2017/04/board-bitmap.png?w=720&h=368)
+
+Requests first went to Fastly. If there was an unexpired copy of the board it would be returned immediately without hitting the reddit application servers. Otherwise, if there was a cache miss or the copy was too old, the reddit application would read the full board from redis and return that to Fastly to be cached and returned to the client.
+
+请求首先到达 Fastly。如果那里有一份未过期的画板副本，它会立刻返回从而不需要访问 reddit 应用服务器。否则如果缓存未命中或副本过时，reddit 应用会从 redis 中读取整个画板然后返回到 Fastly 中并缓存，并返回给客户端。
+
+Request rate and response time as measured by the reddit application:
+
+reddit 应用测量的请求速率和响应时间：
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/CspXQWvOn7sRoQvtk9RH2yrGafLF9AgE?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+Notice that the request rate never exceeds 33/s, meaning that the caching by Fastly was very effective at preventing most requests from hitting the reddit application.
+
+注意，请求速率从没超过 33 个/秒，说明 Fastly 缓存非常给力，阻止了大量直接访问 reddit 应用的请求。
+
+<iframe name="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" id="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+
+When a request did hit the reddit application the read from redis was very fast.
+
+当请求访问 reddit 应用时，redis 的读取操作非常迅速。
+
+Draw a tile
+
+**绘制一个小块**
+
+![](https://redditupvoted.files.wordpress.com/2017/04/draw.png?w=720&h=533)
+
+The steps for drawing a tile were:
+
+绘制一个小块的步骤如下：
+
+1. Read the timestamp of the user’s last tile placement from Cassandra. If it was more recent than the cooldown period (5 minutes) reject the draw attempt and return an error to the user.
+2. Write the tile details to redis and Cassandra.
+3. Write the current timestamp as the user’s last tile placement in Cassandra.
+4. Tell the websocket service to send a message to all connected clients with the new tile.
+
+1. 从 Cassandra 读取用户上一次更改小块的时间戳。如果和当前时间间隔比冷却时间（5 分钟）短，拒绝绘制请求，返回给用户一个错误。
+2. 向 redis 和 Cassandra 写入小块详情。
+3. 
+All reads and writes to Cassandra were done with consistency level QUORUM to ensure strong consistency.
+
+We actually had a race condition here that allowed users to place multiple tiles at once. There was no locking around the steps 1-3 so simultaneous tile draw attempts could all pass the check at step 1 and then draw multiple tiles at step 2. It seems that some users discovered this error or had bots that didn’t gracefully follow the ratelimits so there were about 15,000 tiles drawn that abused this error (~0.09% of all tiles placed).
+
+Request rate and response time as measured by the reddit application:

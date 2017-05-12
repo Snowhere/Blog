@@ -4,10 +4,11 @@ import com.jfinal.config.*;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 import com.jfinal.render.ViewType;
+import com.jfinal.template.Engine;
 import controller.IndexController;
-import model.AreaModel;
-import model.CategoryModel;
-import model.POIModel;
+import model.CodeModel;
+import model.UserAuthModel;
+import model.UserModel;
 
 /**
  * API引导式配置
@@ -18,9 +19,11 @@ public class Config extends JFinalConfig {
      * 配置常量
      */
     public void configConstant(Constants me) {
-        me.setDevMode(false);
+        me.setDevMode(true);
         me.setViewType(ViewType.JSP);
         me.setMaxPostSize(1024 * 1024 * 30);
+        me.setError404View("");
+        me.setError500View("");
     }
 
     /**
@@ -29,6 +32,8 @@ public class Config extends JFinalConfig {
     public void configRoute(Routes me) {
         me.add("/", IndexController.class);
     }
+
+
 
     /**
      * 配置插件
@@ -44,9 +49,9 @@ public class Config extends JFinalConfig {
         arp.setShowSql(true);
         me.add(arp);
 
-        arp.addMapping("poi", POIModel.class);
-        arp.addMapping("area", AreaModel.class);
-        arp.addMapping("category", CategoryModel.class);
+        arp.addMapping("code", CodeModel.class);
+        arp.addMapping("user", UserModel.class);
+        arp.addMapping("user_auth", UserAuthModel.class);
     }
 
     @Override
@@ -56,5 +61,7 @@ public class Config extends JFinalConfig {
     @Override
     public void configHandler(Handlers me) {
     }
+    public void configEngine(Engine engine) {
 
+    }
 }
