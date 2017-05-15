@@ -89,6 +89,7 @@ Requests first went to Fastly. If there was an unexpired copy of the board it wo
 Request rate and response time as measured by the reddit application:
 
 reddit 应用测量的请求速率和响应时间：
+
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/CspXQWvOn7sRoQvtk9RH2yrGafLF9AgE?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 Notice that the request rate never exceeds 33/s, meaning that the caching by Fastly was very effective at preventing most requests from hitting the reddit application.
@@ -118,9 +119,45 @@ The steps for drawing a tile were:
 
 1. 从 Cassandra 读取用户上一次更改小块的时间戳。如果和当前时间间隔比冷却时间（5 分钟）短，拒绝绘制请求，返回给用户一个错误。
 2. 向 redis 和 Cassandra 写入小块详情。
-3. 
+3. 向 Cassandra 写入用户上一次修改小块的时间戳。
+4. 让 websocket 服务向所有链接的客户端发送新的小块。
+
 All reads and writes to Cassandra were done with consistency level QUORUM to ensure strong consistency.
+
+Cassandra 的所有读写操作的[一致性设置为 QUORUM 级别](http://docs.datastax.com/en/archived/cassandra/1.2/cassandra/dml/dml_config_consistency_c.html)，来确保强一致性。
 
 We actually had a race condition here that allowed users to place multiple tiles at once. There was no locking around the steps 1-3 so simultaneous tile draw attempts could all pass the check at step 1 and then draw multiple tiles at step 2. It seems that some users discovered this error or had bots that didn’t gracefully follow the ratelimits so there were about 15,000 tiles drawn that abused this error (~0.09% of all tiles placed).
 
+我们当然也有竞态条件允许用户一次更改多个小块。在步骤 1-3 中并没有锁，因此批量小块修改的操作通过步骤 1 的检查之后将在步骤 2 中进行修改。看起来一些用户发现了这个漏洞或一些机器脚本不遵守速率限制，所以大概有 15000 个小块被利用这个漏洞进行更改（占全部更改小块的 0.09%）
+
 Request rate and response time as measured by the reddit application:
+
+reddit 应用测量的请求速率和响应时间：
+
+<iframe name="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" id="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+
+We experienced a maximum tile placement rate of almost 200/s. This was below our calculated maximum rate of 333/s (average of 100,000 users placing a tile every 5 minutes).
+
+我们经历了更改小块最大速率大概 200/s。这比我们估算的最大速率 333/s 要低（平均每 5 分钟 100000 个用户更改小块）。
+
+<iframe name="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" id="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+
+Get details of a single tile
+
+**获取单个小块详情**
+
+![](https://redditupvoted.files.wordpress.com/2017/04/pixel1.png?w=720&h=251)
+
+Requests for individual tiles resulted in a read straight from Cassandra.
+
+直接从 Cassandra 请求单个小块。
+
+Request rate and response time as measured by the reddit application:
+
+reddit 应用测量的请求速率和响应时间：
+
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/r6g7cutrnyaP8oQhVkZcjZpcbe1WQ8f5?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=3" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+This endpoint was very popular. In addition to regular client requests, people wrote scrapers to retrieve the entire board one tile at a time. Since this endpoint wasn’t cached by the CDN, all requests ended up being served by the reddit application.
+
+
