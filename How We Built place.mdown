@@ -1,226 +1,226 @@
 [How We Built r/Place](https://redditblog.com/2017/04/13/how-we-built-rplace/)
 #How We Built r/Place
-#Reddit µÄÓŞÈË½ÚÏîÄ¿ r/Place ÊÇÔõÃ´×ö³öÀ´µÄ
+#Reddit çš„æ„šäººèŠ‚é¡¹ç›® r/Place æ˜¯æ€ä¹ˆåšå‡ºæ¥çš„
 
-Each year for April Fools¡¯, rather than a prank, we like to create a project that explores the way that humans interact at large scales. This year we came up with Place, a collaborative canvas on which a single user could only place a single tile every five minutes. This limitation de-emphasized the importance of the individual and necessitated the collaboration of many users in order to achieve complex creations. Each tile placed was relayed to observers in real-time.
+Each year for April Foolsâ€™, rather than a prank, we like to create a project that explores the way that humans interact at large scales. This year we came up with Place, a collaborative canvas on which a single user could only place a single tile every five minutes. This limitation de-emphasized the importance of the individual and necessitated the collaboration of many users in order to achieve complex creations. Each tile placed was relayed to observers in real-time.
 
-Ã¿ÄêµÄÓŞÈË½Ú£¬ÎÒÃÇÏ²»¶´´½¨ÏîÄ¿À´Ì½Ë÷ÈËÀà´ó¹æÄ£µÄ½»Á÷»¥¶¯£¬¶ø²»ÊÇ×öÒ»Ğ©¶ñ×÷¾ç¡£½ñÄêÎÒÃÇÌá³öÁË Place£¬ÕâÊÇÒ»¸öĞ­×÷µÄ»­°å£¬Ã¿¸öÓÃ»§Ã¿ 5 ·ÖÖÓÖ»ÄÜĞŞ¸ÄÒ»¸öĞ¡¿é¡£ÕâÒ»ÏŞÖÆÈõ»¯ÁË¸öÌåµÄÖØÒªĞÔ£¬Ç¿»¯ÁË´óÁ¿ÓÃ»§Ğ­×÷Íê³É¸´ÖÆ´´×÷µÄ±ØÒªĞÔ¡£Ã¿¸öĞ¡¿éµÄ±ä»¯ÊµÊ±´«µİ¸ø¹Û²ìÕß¡£
+æ¯å¹´çš„æ„šäººèŠ‚ï¼Œæˆ‘ä»¬å–œæ¬¢åˆ›å»ºé¡¹ç›®æ¥æ¢ç´¢äººç±»å¤§è§„æ¨¡çš„äº¤æµäº’åŠ¨ï¼Œè€Œä¸æ˜¯åšä¸€äº›æ¶ä½œå‰§ã€‚ä»Šå¹´æˆ‘ä»¬æå‡ºäº† Placeï¼Œè¿™æ˜¯ä¸€ä¸ªåä½œçš„ç”»æ¿ï¼Œæ¯ä¸ªç”¨æˆ·æ¯ 5 åˆ†é’Ÿåªèƒ½ä¿®æ”¹ä¸€ä¸ªå°å—ã€‚è¿™ä¸€é™åˆ¶å¼±åŒ–äº†ä¸ªä½“çš„é‡è¦æ€§ï¼Œå¼ºåŒ–äº†å¤§é‡ç”¨æˆ·åä½œå®Œæˆå¤åˆ¶åˆ›ä½œçš„å¿…è¦æ€§ã€‚æ¯ä¸ªå°å—çš„å˜åŒ–å®æ—¶ä¼ é€’ç»™è§‚å¯Ÿè€…ã€‚
 
 Multiple engineering teams (frontend, backend, mobile) worked on the project and most of it was built using existing technology at Reddit. This post details how we approached building Place from a technical perspective.
 
-Ğí¶à¿ª·¢ÍÅ¶Ó£¨Ç°¶Ë¡¢ºó¶Ë¡¢ÒÆ¶¯¶Ë£©Ğ­×÷¿ª·¢Õâ¸öÏîÄ¿£¬ÏîÄ¿´ó²¿·Ö»ùÓÚ Reddit ÒÑÓĞµÄ¼¼Êõ¡£ÕâÆªÎÄÕÂ´Ó¼¼Êõ½Ç¶ÈÏêÏ¸ÃèÊöÎÒÃÇÈçºÎÍê³É Place¡£
+è®¸å¤šå¼€å‘å›¢é˜Ÿï¼ˆå‰ç«¯ã€åç«¯ã€ç§»åŠ¨ç«¯ï¼‰åä½œå¼€å‘è¿™ä¸ªé¡¹ç›®ï¼Œé¡¹ç›®å¤§éƒ¨åˆ†åŸºäº Reddit å·²æœ‰çš„æŠ€æœ¯ã€‚è¿™ç¯‡æ–‡ç« ä»æŠ€æœ¯è§’åº¦è¯¦ç»†æè¿°æˆ‘ä»¬å¦‚ä½•å®Œæˆ Placeã€‚
 
-But first, if you want to check out the code for yourself, you can find it here. And if you¡¯re interested in working on projects like Place in the future, we¡¯re hiring!
+But first, if you want to check out the code for yourself, you can find it here. And if youâ€™re interested in working on projects like Place in the future, weâ€™re hiring!
 
-ÇÒÂı¡£Èç¹ûÄãÏë²é¿´ÎÒÃÇµÄ´úÂë£¬[ÔÚÕâÀï](http://github.com/reddit/reddit-plugin-place-opensource)¡£Èç¹ûÄã¶Ô¹¹½¨ Place ÕâÒ»ÀàÏîÄ¿¸ĞĞËÈ¤£¬[ÎÒÃÇ»¶Ó­Äã](https://about.reddit.com/careers/)
+ä¸”æ…¢ã€‚å¦‚æœä½ æƒ³æŸ¥çœ‹æˆ‘ä»¬çš„ä»£ç ï¼Œ[åœ¨è¿™é‡Œ](http://github.com/reddit/reddit-plugin-place-opensource)ã€‚å¦‚æœä½ å¯¹æ„å»º Place è¿™ä¸€ç±»é¡¹ç›®æ„Ÿå…´è¶£ï¼Œ[æˆ‘ä»¬æ¬¢è¿ä½ ](https://about.reddit.com/careers/)
 
 ##Requirements
-##ĞèÇó
+##éœ€æ±‚
 
-Defining requirements for an April Fools¡¯ project is extremely important because it will launch with zero ramp-up and be available immediately to all of Reddit¡¯s users. If it doesn¡¯t work perfectly out of the gate, it¡¯s unlikely to attract enough users to make for an interesting experience.
+Defining requirements for an April Foolsâ€™ project is extremely important because it will launch with zero ramp-up and be available immediately to all of Redditâ€™s users. If it doesnâ€™t work perfectly out of the gate, itâ€™s unlikely to attract enough users to make for an interesting experience.
 
-¶¨ÒåÓŞÈË½ÚÏîÄ¿µÄĞèÇóÊ®·ÖÖØÒª£¬ÒòÎªËüÒ»µ©·¢²¼¼´ÃæÏòËùÓĞ Reddit ÓÃ»§£¬Ã»ÓĞÔö³¤¹ı³Ì¡£Èç¹ûËüÒ»¿ªÊ¼²¢²»ÄÜÍêÃÀÔË×÷£¬ËÆºõ¾Í²»ÄÜÎüÒı×ã¹»µÄÓÃ»§À´´´×÷²¢»ñµÃÓĞÈ¤µÄÌåÑé¡£
+å®šä¹‰æ„šäººèŠ‚é¡¹ç›®çš„éœ€æ±‚ååˆ†é‡è¦ï¼Œå› ä¸ºå®ƒä¸€æ—¦å‘å¸ƒå³é¢å‘æ‰€æœ‰ Reddit ç”¨æˆ·ï¼Œæ²¡æœ‰å¢é•¿è¿‡ç¨‹ã€‚å¦‚æœå®ƒä¸€å¼€å§‹å¹¶ä¸èƒ½å®Œç¾è¿ä½œï¼Œä¼¼ä¹å°±ä¸èƒ½å¸å¼•è¶³å¤Ÿçš„ç”¨æˆ·æ¥åˆ›ä½œå¹¶è·å¾—æœ‰è¶£çš„ä½“éªŒã€‚
 
 * The board must be 1000 tiles by 1000 tiles so it feels very large.
 * All clients must be kept in sync with the same view of the current board state, otherwise users with different versions of the board will have difficulty collaborating.
 * We should support at least 100,000 simultaneous users.
 * Users can place one tile every 5 minutes, so we must support an average update rate of 100,000 tiles per 5 minutes (333 updates/s).
-* The project must be designed in such a way that it¡¯s unlikely to affect the rest of the site¡¯s normal function even with very high traffic to r/place.
+* The project must be designed in such a way that itâ€™s unlikely to affect the rest of the siteâ€™s normal function even with very high traffic to r/place.
 * The configuration must be flexible in case there are unexpected bottlenecks or failures. This means that board size and tile cooldown should be adjustable on the fly in case data sizes are too large or update rates are too high.
 * The API should be generally open and transparent so the reddit community can build on it (bots, extensions, data collection, external visualizations, etc) if they choose to do so.
 
-* »­°å±ØĞëÓĞ 1000¡Á1000 ¸öĞ¡¿é£¬ËùÒÔËü»á·Ç³£´ó¡£
-* ËùÓĞ¿Í»§¶Ë±ØĞëºÍµ±Ç°»­°å×´Ì¬Í¬²½£¬²¢ÏÔÊ¾Ò»ÖÂ£¬·ñÔòÓÃ»§»ùÓÚ²»Í¬°æ±¾µÄ»­°åÄÑÒÔĞ­×÷¡£
-* ÎÒÃÇ±ØĞëÖ§³ÖÖÁÉÙ 100000 µÄ²¢·¢Í¬²½ÓÃ»§¡£
-* ÓÃ»§Ã¿ 5 ·ÖÖÓ¿ÉÒÔĞŞ¸ÄÒ»¸öĞ¡¿é£¬ËùÒÔÎÒÃÇ±ØĞëÖ§³ÖÆ½¾ùÃ¿ 5 ·ÖÖÓ 100000 ¸öĞ¡¿éµÄ¸üĞÂ£¨Ã¿Ãë 333 ¸ö¸üĞÂ£©¡£
-* ÏîÄ¿µÄÉè¼Æ±ØĞë×ñÑ­ÕâÒ»µã£¬¼´Ê¹ r/place Á÷Á¿¾Ş´ó£¬Ò²²»ÄÜÓ°ÏìÕ¾µãÆäËû¹¦ÄÜ¡£
-* ÅäÖÃ±ØĞëÓĞ×ã¹»µ¯ĞÔ£¬Ó¦¶ÔÒâÍâµÄÆ¿¾±»ò¹ÊÕÏ¡£ÕâÒâÎ¶×Å»­°åµÄ´óĞ¡ºÍĞ¡¿éµÄÊ¹ÓÃ¼ä¸ô¿ÉÒÔÔÚÔËĞĞÊ±µ÷½Ú£¬ÒÔ·ÀÊı¾İÁ¿¹ı´ó»ò¸üĞÂ¹ıÓÚÆµ·±¡£
-* API ±ØĞë¿ª·ÅºÍÍ¸Ã÷£¬reddit ÉçÇøÈç¹û¶Ô´ËÓĞĞËÈ¤£¬¿ÉÒÔÔÚ´ËÖ®ÉÏ¹¹½¨ÏîÄ¿£¨»úÆ÷ÈË¡¢À©Õ¹¡¢Êı¾İÊÕ¼¯¡¢Íâ²¿¿ÉÊÓ»¯µÈµÈ£©¡£
+* ç”»æ¿å¿…é¡»æœ‰ 1000Ã—1000 ä¸ªå°å—ï¼Œæ‰€ä»¥å®ƒä¼šéå¸¸å¤§ã€‚
+* æ‰€æœ‰å®¢æˆ·ç«¯å¿…é¡»å’Œå½“å‰ç”»æ¿çŠ¶æ€åŒæ­¥ï¼Œå¹¶æ˜¾ç¤ºä¸€è‡´ï¼Œå¦åˆ™ç”¨æˆ·åŸºäºä¸åŒç‰ˆæœ¬çš„ç”»æ¿éš¾ä»¥åä½œã€‚
+* æˆ‘ä»¬å¿…é¡»æ”¯æŒè‡³å°‘ 100000 çš„å¹¶å‘åŒæ­¥ç”¨æˆ·ã€‚
+* ç”¨æˆ·æ¯ 5 åˆ†é’Ÿå¯ä»¥ä¿®æ”¹ä¸€ä¸ªå°å—ï¼Œæ‰€ä»¥æˆ‘ä»¬å¿…é¡»æ”¯æŒå¹³å‡æ¯ 5 åˆ†é’Ÿ 100000 ä¸ªå°å—çš„æ›´æ–°ï¼ˆæ¯ç§’ 333 ä¸ªæ›´æ–°ï¼‰ã€‚
+* é¡¹ç›®çš„è®¾è®¡å¿…é¡»éµå¾ªè¿™ä¸€ç‚¹ï¼Œå³ä½¿ r/place æµé‡å·¨å¤§ï¼Œä¹Ÿä¸èƒ½å½±å“ç«™ç‚¹å…¶ä»–åŠŸèƒ½ã€‚
+* é…ç½®å¿…é¡»æœ‰è¶³å¤Ÿå¼¹æ€§ï¼Œåº”å¯¹æ„å¤–çš„ç“¶é¢ˆæˆ–æ•…éšœã€‚è¿™æ„å‘³ç€ç”»æ¿çš„å¤§å°å’Œå°å—çš„ä½¿ç”¨é—´éš”å¯ä»¥åœ¨è¿è¡Œæ—¶è°ƒèŠ‚ï¼Œä»¥é˜²æ•°æ®é‡è¿‡å¤§æˆ–æ›´æ–°è¿‡äºé¢‘ç¹ã€‚
+* API å¿…é¡»å¼€æ”¾å’Œé€æ˜ï¼Œreddit ç¤¾åŒºå¦‚æœå¯¹æ­¤æœ‰å…´è¶£ï¼Œå¯ä»¥åœ¨æ­¤ä¹‹ä¸Šæ„å»ºé¡¹ç›®ï¼ˆæœºå™¨äººã€æ‰©å±•ã€æ•°æ®æ”¶é›†ã€å¤–éƒ¨å¯è§†åŒ–ç­‰ç­‰ï¼‰ã€‚
 
 ##Backend
-##ºó¶Ë
+##åç«¯
 
 ###Implementation decisions
-###ÊµÊ©¾ö²ß
+###å®æ–½å†³ç­–
 
 The main challenge for the backend was keeping all the clients in sync with the state of the board. Our solution was to initialize the client state by having it listen for real-time tile placements immediately and then make a request for the full board. The full board in the response could be a few seconds stale as long as we also had real-time placements starting from before it was generated. When the client received the full board it replayed all the real-time placements it received while waiting. All subsequent tile placements could be drawn to the board immediately as they were received.
 
-ºó¶Ë×î´óµÄÌôÕ½¾ÍÊÇ±£³ÖËùÓĞ¿Í»§¶ËÓë»­°åµÄ×´Ì¬Í¬²½¡£ÎÒÃÇµÄ½â¾ö·½°¸ÊÇ³õÊ¼»¯¿Í»§¶Ë×´Ì¬Ê±Á¢¿ÌÊµÊ±¼àÌıĞ¡¿éµÄ±ä»¯£¬È»ºóÇëÇóÕû¸ö»­°å¡£Ö»ÒªÎÒÃÇÔÚÉú³É»­°åµÄÊ±ºòÓĞÊµÊ±µÄĞ¡¿é¸ü¸Ä£¬ÄÇÃ´ÏìÓ¦·µ»ØµÄÕû¸ö»­°å¾Í»áÓĞ¼¸ÃëµÄÑÓ³Ù¡£µ±¿Í»§¶Ë½ÓÊÕµ½Õû¸ö»­°å£¬°ÑÔÚµÈ´ıÊ±µÄĞ¡¿é±ä»¯ÔÚ»­°åÉÏÖØÑİ¡£ËùÓĞËæºóµÄĞ¡¿é±ä»¯¶¼½«ÔÚ±»½ÓÊÕµ½Ê±»­ÔÚ»­°åÉÏ¡£
+åç«¯æœ€å¤§çš„æŒ‘æˆ˜å°±æ˜¯ä¿æŒæ‰€æœ‰å®¢æˆ·ç«¯ä¸ç”»æ¿çš„çŠ¶æ€åŒæ­¥ã€‚æˆ‘ä»¬çš„è§£å†³æ–¹æ¡ˆæ˜¯åˆå§‹åŒ–å®¢æˆ·ç«¯çŠ¶æ€æ—¶ç«‹åˆ»å®æ—¶ç›‘å¬å°å—çš„å˜åŒ–ï¼Œç„¶åè¯·æ±‚æ•´ä¸ªç”»æ¿ã€‚åªè¦æˆ‘ä»¬åœ¨ç”Ÿæˆç”»æ¿çš„æ—¶å€™æœ‰å®æ—¶çš„å°å—æ›´æ”¹ï¼Œé‚£ä¹ˆå“åº”è¿”å›çš„æ•´ä¸ªç”»æ¿å°±ä¼šæœ‰å‡ ç§’çš„å»¶è¿Ÿã€‚å½“å®¢æˆ·ç«¯æ¥æ”¶åˆ°æ•´ä¸ªç”»æ¿ï¼ŒæŠŠåœ¨ç­‰å¾…æ—¶çš„å°å—å˜åŒ–åœ¨ç”»æ¿ä¸Šé‡æ¼”ã€‚æ‰€æœ‰éšåçš„å°å—å˜åŒ–éƒ½å°†åœ¨è¢«æ¥æ”¶åˆ°æ—¶ç”»åœ¨ç”»æ¿ä¸Šã€‚
 
 For this scheme to work we needed the request for the full state of the board to be as fast as possible. Our initial approach was to store the full board in a single row in Cassandra and each request for the full board would read that entire row. The format for each column in the row was:
 
-ÎªÁËÈÃÕâ¸ö²ßÂÔÕı³£ÊµÊ©£¬ÎÒÃÇĞèÒª¾¡¿ÉÄÜ¿ìµÄÇëÇóµ½»­°åµÄÕûÌå×´Ì¬¡£ÎÒÃÇµÄ³õ²½·½°¸ÊÇÓÃ[µ¥ĞĞCassandra](https://pandaforme.gitbooks.io/introduction-to-cassandra/content/understand_the_cassandra_data_model.html)´¢´æÕû¸ö»­°å£¬Ã¿¸öÕë¶ÔÕû¸ö»­°åµÄÇëÇó¿ÉÒÔ¶ÁÈ¡ÕûĞĞ¡£ĞĞÖĞµÄÃ¿ÁĞ¸ñÊ½ÈçÏÂËùÊ¾£º
+ä¸ºäº†è®©è¿™ä¸ªç­–ç•¥æ­£å¸¸å®æ–½ï¼Œæˆ‘ä»¬éœ€è¦å°½å¯èƒ½å¿«çš„è¯·æ±‚åˆ°ç”»æ¿çš„æ•´ä½“çŠ¶æ€ã€‚æˆ‘ä»¬çš„åˆæ­¥æ–¹æ¡ˆæ˜¯ç”¨[å•è¡ŒCassandra](https://pandaforme.gitbooks.io/introduction-to-cassandra/content/understand_the_cassandra_data_model.html)å‚¨å­˜æ•´ä¸ªç”»æ¿ï¼Œæ¯ä¸ªé’ˆå¯¹æ•´ä¸ªç”»æ¿çš„è¯·æ±‚å¯ä»¥è¯»å–æ•´è¡Œã€‚è¡Œä¸­çš„æ¯åˆ—æ ¼å¼å¦‚ä¸‹æ‰€ç¤ºï¼š
 
-`(x, y): {¡®timestamp¡¯: epochms, ¡®author¡¯: user_name, ¡®color¡¯: color}`
+`(x, y): {â€˜timestampâ€™: epochms, â€˜authorâ€™: user_name, â€˜colorâ€™: color}`
 
 Because the board contained 1 million tiles this meant that we had to read a row with 1 million columns. On our production cluster this read took up to 30 seconds, which was unacceptably slow and could have put excessive strain on Cassandra.
 
-ÒòÎª»­°å°üº¬Ò»°ÙÍò¸öĞ¡¿é£¬ÕâÒâÎ¶×ÅÎÒÃÇ²»µÃ²»¶ÁÈ¡ÓĞÒ»°ÙÍòÁĞµÄĞĞ¡£ÔÚÎÒÃÇµÄÉú²ú¼¯ÈºÉÏÕâÖÖ¶ÁÈ¡»¨·Ñ 30 Ãë£¬Âıµ½ÎŞ·¨½ÓÊÜ£¬ËùÒÔÎÒÃÇ²»ÄÜ¹ı¶ÈÒÀÀµ Cassandra¡£
+å› ä¸ºç”»æ¿åŒ…å«ä¸€ç™¾ä¸‡ä¸ªå°å—ï¼Œè¿™æ„å‘³ç€æˆ‘ä»¬ä¸å¾—ä¸è¯»å–æœ‰ä¸€ç™¾ä¸‡åˆ—çš„è¡Œã€‚åœ¨æˆ‘ä»¬çš„ç”Ÿäº§é›†ç¾¤ä¸Šè¿™ç§è¯»å–èŠ±è´¹ 30 ç§’ï¼Œæ…¢åˆ°æ— æ³•æ¥å—ï¼Œæ‰€ä»¥æˆ‘ä»¬ä¸èƒ½è¿‡åº¦ä¾èµ– Cassandraã€‚
 
 Our next approach was to store the full board in redis. We used a bitfield of 1 million 4 bit integers. Each 4 bit integer was able to encode a 4 bit color, and the x,y coordinates were determined by the offset (offset = x + 1000y) within the bitfield. We could read the entire board state by reading the entire bitfield. We were able to update individual tiles by updating the value of the bitfield at a specific offset (no need for locking or read/modify/write). We still needed to store the full details in Cassandra so that users could inspect individual tiles to see who placed them and when. We also planned on using Cassandra to restore the board in case of a redis failure. Reading the entire board from redis took less than 100ms, which was fast enough.
 
-ÎÒÃÇÏÂÒ»¸ö·½°¸Ê¹ÓÃ redis ´¢´æÕû¸ö»­°å¡£ÎÒÃÇÊ¹ÓÃ bitfield ´¦ÀíÒ»°ÙÍò¸ö 4 Î»µÄÕûĞÍ¡£Ã¿¸ö 4 Î»µÄÕûĞÍ¿ÉÒÔ±àÂë 4 Î»µÄÑÕÉ«£¬ºá×İ£¨x£¬y£©×ø±ê¿ÉÒÔÔÚ bitfield ÀïÓÃÆ«ÒÆÁ¿±íÊ¾£¨offset = x + 1000y£©¡£ÎÒÃÇ¿ÉÒÔÍ¨¹ı¶ÁÈ¡Õû¸ö bitfield À´»ñÈ¡Õû¸ö»­°åµÄ×´Ì¬¡£ÎÒÃÇ¿ÉÒÔÍ¨¹ıÔÚ bitfield ÖĞ¸üĞÂÖ¸¶¨Æ«ÒÆÁ¿ÉÏµÄÖµ£¬À´¸üĞÂµ¥¶ÀµÄĞ¡¿é(²»ÔÚĞèÒª¼ÓËø»ò¶Á/¸Ä/Ğ´)¡£ÎÒÃÇÈÔÈ»ĞèÒªÔÚ Cassandra ÖĞ´¢´æËùÓĞµÄÏ¸½Ú£¬ÈÃÓÃ»§¿ÉÒÔ¼ì²éµ¥¶ÀµÄĞ¡¿é£¬¿´Ò»¿´ºÎÊ±ºÎÈË¸ü¸ÄÁËËü¡£ÎÒÃÇÒ²¼Æ»®ÓÃ Cassandra ±¸·İÕû¸ö»­°å£¬ÒÔ·À redis Ê§Ğ§¡£´Ó redis ÖĞ¶ÁÈ¡Õû¸ö»­°å²»³¬¹ı 100ms£¬ÕâÒÑ¾­×ã¹»¿ìÁË¡£
+æˆ‘ä»¬ä¸‹ä¸€ä¸ªæ–¹æ¡ˆä½¿ç”¨ redis å‚¨å­˜æ•´ä¸ªç”»æ¿ã€‚æˆ‘ä»¬ä½¿ç”¨ bitfield å¤„ç†ä¸€ç™¾ä¸‡ä¸ª 4 ä½çš„æ•´å‹ã€‚æ¯ä¸ª 4 ä½çš„æ•´å‹å¯ä»¥ç¼–ç  4 ä½çš„é¢œè‰²ï¼Œæ¨ªçºµï¼ˆxï¼Œyï¼‰åæ ‡å¯ä»¥åœ¨ bitfield é‡Œç”¨åç§»é‡è¡¨ç¤ºï¼ˆoffset = x + 1000yï¼‰ã€‚æˆ‘ä»¬å¯ä»¥é€šè¿‡è¯»å–æ•´ä¸ª bitfield æ¥è·å–æ•´ä¸ªç”»æ¿çš„çŠ¶æ€ã€‚æˆ‘ä»¬å¯ä»¥é€šè¿‡åœ¨ bitfield ä¸­æ›´æ–°æŒ‡å®šåç§»é‡ä¸Šçš„å€¼ï¼Œæ¥æ›´æ–°å•ç‹¬çš„å°å—(ä¸åœ¨éœ€è¦åŠ é”æˆ–è¯»/æ”¹/å†™)ã€‚æˆ‘ä»¬ä»ç„¶éœ€è¦åœ¨ Cassandra ä¸­å‚¨å­˜æ‰€æœ‰çš„ç»†èŠ‚ï¼Œè®©ç”¨æˆ·å¯ä»¥æ£€æŸ¥å•ç‹¬çš„å°å—ï¼Œçœ‹ä¸€çœ‹ä½•æ—¶ä½•äººæ›´æ”¹äº†å®ƒã€‚æˆ‘ä»¬ä¹Ÿè®¡åˆ’ç”¨ Cassandra å¤‡ä»½æ•´ä¸ªç”»æ¿ï¼Œä»¥é˜² redis å¤±æ•ˆã€‚ä» redis ä¸­è¯»å–æ•´ä¸ªç”»æ¿ä¸è¶…è¿‡ 100msï¼Œè¿™å·²ç»è¶³å¤Ÿå¿«äº†ã€‚
 
-Illustration showing how colors were stored in redis, using a 2¡Á2 board:
+Illustration showing how colors were stored in redis, using a 2Ã—2 board:
 
-²åÍ¼Õ¹Ê¾ÁËÎÒÃÇÈçºÎÓÃ redis ´¢´æ 2¡Á2 »­°åµÄÑÕÉ«£º
+æ’å›¾å±•ç¤ºäº†æˆ‘ä»¬å¦‚ä½•ç”¨ redis å‚¨å­˜ 2Ã—2 ç”»æ¿çš„é¢œè‰²ï¼š
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/drawio-1.png?w=720&h=199)
 
 We were concerned about exceeding maximum read bandwidth on redis. If many clients connected or refreshed at once they would simultaneously request the full state of the board, all triggering reads from redis. Because the board was a shared global state the obvious solution was to use caching. We decided to cache at the CDN (Fastly) layer because it was simple to implement and it meant the cache was as close to clients as possible which would help response speed. Requests for the full state of the board were cached by Fastly with an expiration of 1 second. We also added the stale-while-revalidate cache control header option to prevent more requests from falling through than we wanted when the cached board expired. Fastly maintains around 33 POPs which do independent caching, so we expected to get at most 33 requests per second for the full board.
 
-ÎÒÃÇ·Ç³£¹ØĞÄ redis ¶ÁÈ¡×î´ó´ø¿í¡£Èç¹ûºÜ¶à¿Í»§¶ËÍ¬Ê±Á´½Ó»òË¢ĞÂ£¬ËüÃÇ»áÍ¬Ê±ÇëÇóÕû¸ö»­°åµÄ×´Ì¬£¬È«²¿¶¼´¥·¢ redis µÄ¶ÁÈ¡²Ù×÷¡£ÒòÎª»­°åÊÇÈ«¾Ö¹²Ïí×´Ì¬£¬ÏÔ¶øÒ×¼ûµÄ½â¾ö·½°¸ÊÇÊ¹ÓÃ»º´æ¡£ÎÒÃÇ¾ö¶¨ÔÚ CDN ²ã£¨Fastly£©Ê¹ÓÃ»º´æ£¬ÒòÎªÊµÏÖ¼òµ¥£¬²¢ÇÒ»º´æÀë¿Í»§¶Ë¸ü½ü¿ÉÒÔÌá¸ßÏìÓ¦ËÙ¶È¡£¶ÔÕû¸ö»­°åµÄÇëÇó±» Fastly »º´æÏÂÀ´²¢ÉèÖÃ 1 ÃëµÄ³¬Ê±Ê±¼ä¡£ÎÒÃÇÒ²Ìí¼ÓÁË[stale-while-revalidate](https://docs.fastly.com/guides/performance-tuning/serving-stale-content#usage)Õâ¸ö¿ØÖÆ»º´æµÄÍ·ĞÅÏ¢£¬À´Ó¦¶Ô»­°å»º´æ¹ıÆÚµ¼ÖÂ³¬¹ıÔ¤ÆÚµÄ´óÁ¿ÇëÇó¡£[Fastly Î¬»¤×Å´óÔ¼ 33 ´¦¶ÀÁ¢»º´æ POPs£¨½ÓÈëµã£©](https://www.fastly.com/network-map)£¬ËùÒÔÎÒÃÇÔ¤ÆÚÃ¿Ãë×î¶àÓĞ 33 ¸öÕë¶ÔÕû¸ö»­°åµÄÇëÇó¡£
+æˆ‘ä»¬éå¸¸å…³å¿ƒ redis è¯»å–æœ€å¤§å¸¦å®½ã€‚å¦‚æœå¾ˆå¤šå®¢æˆ·ç«¯åŒæ—¶é“¾æ¥æˆ–åˆ·æ–°ï¼Œå®ƒä»¬ä¼šåŒæ—¶è¯·æ±‚æ•´ä¸ªç”»æ¿çš„çŠ¶æ€ï¼Œå…¨éƒ¨éƒ½è§¦å‘ redis çš„è¯»å–æ“ä½œã€‚å› ä¸ºç”»æ¿æ˜¯å…¨å±€å…±äº«çŠ¶æ€ï¼Œæ˜¾è€Œæ˜“è§çš„è§£å†³æ–¹æ¡ˆæ˜¯ä½¿ç”¨ç¼“å­˜ã€‚æˆ‘ä»¬å†³å®šåœ¨ CDN å±‚ï¼ˆFastlyï¼‰ä½¿ç”¨ç¼“å­˜ï¼Œå› ä¸ºå®ç°ç®€å•ï¼Œå¹¶ä¸”ç¼“å­˜ç¦»å®¢æˆ·ç«¯æ›´è¿‘å¯ä»¥æé«˜å“åº”é€Ÿåº¦ã€‚å¯¹æ•´ä¸ªç”»æ¿çš„è¯·æ±‚è¢« Fastly ç¼“å­˜ä¸‹æ¥å¹¶è®¾ç½® 1 ç§’çš„è¶…æ—¶æ—¶é—´ã€‚æˆ‘ä»¬ä¹Ÿæ·»åŠ äº†[stale-while-revalidate](https://docs.fastly.com/guides/performance-tuning/serving-stale-content#usage)è¿™ä¸ªæ§åˆ¶ç¼“å­˜çš„å¤´ä¿¡æ¯ï¼Œæ¥åº”å¯¹ç”»æ¿ç¼“å­˜è¿‡æœŸå¯¼è‡´è¶…è¿‡é¢„æœŸçš„å¤§é‡è¯·æ±‚ã€‚[Fastly ç»´æŠ¤ç€å¤§çº¦ 33 å¤„ç‹¬ç«‹ç¼“å­˜ POPsï¼ˆæ¥å…¥ç‚¹ï¼‰](https://www.fastly.com/network-map)ï¼Œæ‰€ä»¥æˆ‘ä»¬é¢„æœŸæ¯ç§’æœ€å¤šæœ‰ 33 ä¸ªé’ˆå¯¹æ•´ä¸ªç”»æ¿çš„è¯·æ±‚ã€‚
 
-We used our websocket service to publish updates to all the clients. We¡¯ve had success using it in production for reddit live threads with over 100,000 simultaneous viewers, live PM notifications, and other features. The websocket service has also been a cornerstone of our past April Fools projects such as The Button and Robin. For r/place, clients maintained a websocket connection to receive real-time tile placement updates.
+We used our websocket service to publish updates to all the clients. Weâ€™ve had success using it in production for reddit live threads with over 100,000 simultaneous viewers, live PM notifications, and other features. The websocket service has also been a cornerstone of our past April Fools projects such as The Button and Robin. For r/place, clients maintained a websocket connection to receive real-time tile placement updates.
 
-ÎÒÃÇÊ¹ÓÃÎÒÃÇµÄ[websocket ·şÎñ](https://github.com/reddit/reddit-service-websockets)ÏòËùÓĞ¿Í»§¶ËÍÆËÍ¸üĞÂ¡£ÎÒÃÇÒÑ¾­³É¹¦µØÔÚ[reddit live](https://www.reddit.com/live)Éú²ú»·¾³ÖĞÓ¦ÓÃ¹ıËü£¬À´´¦Àí³¬¹ı 100000 µÄ²¢·¢ÓÃ»§£¬±ÈÈç live PM notifications ¹¦ÄÜ»òÆäËûÌØĞÔ¡£wesocket ·şÎñÒ²ÔøÊÇÎÒÃÇ¹ıÈ¥ÓŞÈË½ÚÏîÄ¿µÄ»ù´¡£¬±ÈÈç [The Button](https://redditblog.com/2015/04/01/the-button/) ºÍ [Robin](https://redditblog.com/2016/04/01/Robin/) Á½¸öÏîÄ¿¡£¶ÔÓÚ r/place ÏîÄ¿£¬¿Í»§¶ËÎ¬»¤Ò»¸ö websocket Á´½ÓÀ´½ÓÊÕÊµÊ±µÄĞ¡¿é±ä»¯¸üĞÂ¡£
+æˆ‘ä»¬ä½¿ç”¨æˆ‘ä»¬çš„[websocket æœåŠ¡](https://github.com/reddit/reddit-service-websockets)å‘æ‰€æœ‰å®¢æˆ·ç«¯æ¨é€æ›´æ–°ã€‚æˆ‘ä»¬å·²ç»æˆåŠŸåœ°åœ¨[reddit live](https://www.reddit.com/live)ç”Ÿäº§ç¯å¢ƒä¸­åº”ç”¨è¿‡å®ƒï¼Œæ¥å¤„ç†è¶…è¿‡ 100000 çš„å¹¶å‘ç”¨æˆ·ï¼Œæ¯”å¦‚ live PM notifications åŠŸèƒ½æˆ–å…¶ä»–ç‰¹æ€§ã€‚wesocket æœåŠ¡ä¹Ÿæ›¾æ˜¯æˆ‘ä»¬è¿‡å»æ„šäººèŠ‚é¡¹ç›®çš„åŸºç¡€ï¼Œæ¯”å¦‚ [The Button](https://redditblog.com/2015/04/01/the-button/) å’Œ [Robin](https://redditblog.com/2016/04/01/Robin/) ä¸¤ä¸ªé¡¹ç›®ã€‚å¯¹äº r/place é¡¹ç›®ï¼Œå®¢æˆ·ç«¯ç»´æŠ¤ä¸€ä¸ª websocket é“¾æ¥æ¥æ¥æ”¶å®æ—¶çš„å°å—å˜åŒ–æ›´æ–°ã€‚
 
 ###API
 
 Retrieve the full board
-**¼ìË÷Õû¸ö»­°å**
+**æ£€ç´¢æ•´ä¸ªç”»æ¿**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/board-bitmap.png?w=720&h=368)
 
 Requests first went to Fastly. If there was an unexpired copy of the board it would be returned immediately without hitting the reddit application servers. Otherwise, if there was a cache miss or the copy was too old, the reddit application would read the full board from redis and return that to Fastly to be cached and returned to the client.
 
-ÇëÇóÊ×ÏÈµ½´ï Fastly¡£Èç¹ûÄÇÀïÓĞÒ»·İÎ´¹ıÆÚµÄ»­°å¸±±¾£¬Ëü»áÁ¢¿Ì·µ»Ø´Ó¶ø²»ĞèÒª·ÃÎÊ reddit Ó¦ÓÃ·şÎñÆ÷¡£·ñÔòÈç¹û»º´æÎ´ÃüÖĞ»ò¸±±¾¹ıÊ±£¬reddit Ó¦ÓÃ»á´Ó redis ÖĞ¶ÁÈ¡Õû¸ö»­°åÈ»ºó·µ»Øµ½ Fastly ÖĞ²¢»º´æ£¬²¢·µ»Ø¸ø¿Í»§¶Ë¡£
+è¯·æ±‚é¦–å…ˆåˆ°è¾¾ Fastlyã€‚å¦‚æœé‚£é‡Œæœ‰ä¸€ä»½æœªè¿‡æœŸçš„ç”»æ¿å‰¯æœ¬ï¼Œå®ƒä¼šç«‹åˆ»è¿”å›ä»è€Œä¸éœ€è¦è®¿é—® reddit åº”ç”¨æœåŠ¡å™¨ã€‚å¦åˆ™å¦‚æœç¼“å­˜æœªå‘½ä¸­æˆ–å‰¯æœ¬è¿‡æ—¶ï¼Œreddit åº”ç”¨ä¼šä» redis ä¸­è¯»å–æ•´ä¸ªç”»æ¿ç„¶åè¿”å›åˆ° Fastly ä¸­å¹¶ç¼“å­˜ï¼Œå¹¶è¿”å›ç»™å®¢æˆ·ç«¯ã€‚
 
 Request rate and response time as measured by the reddit application:
 
-reddit Ó¦ÓÃ²âÁ¿µÄÇëÇóËÙÂÊºÍÏìÓ¦Ê±¼ä£º
+reddit åº”ç”¨æµ‹é‡çš„è¯·æ±‚é€Ÿç‡å’Œå“åº”æ—¶é—´ï¼š
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/CspXQWvOn7sRoQvtk9RH2yrGafLF9AgE?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 Notice that the request rate never exceeds 33/s, meaning that the caching by Fastly was very effective at preventing most requests from hitting the reddit application.
 
-×¢Òâ£¬ÇëÇóËÙÂÊ´ÓÃ»³¬¹ı 33 ¸ö/Ãë£¬ËµÃ÷ Fastly »º´æ·Ç³£¸øÁ¦£¬×èÖ¹ÁË´óÁ¿Ö±½Ó·ÃÎÊ reddit Ó¦ÓÃµÄÇëÇó¡£
+æ³¨æ„ï¼Œè¯·æ±‚é€Ÿç‡ä»æ²¡è¶…è¿‡ 33 ä¸ª/ç§’ï¼Œè¯´æ˜ Fastly ç¼“å­˜éå¸¸ç»™åŠ›ï¼Œé˜»æ­¢äº†å¤§é‡ç›´æ¥è®¿é—® reddit åº”ç”¨çš„è¯·æ±‚ã€‚
 
 <iframe name="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" id="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
 
 When a request did hit the reddit application the read from redis was very fast.
 
-µ±ÇëÇó·ÃÎÊ reddit Ó¦ÓÃÊ±£¬redis µÄ¶ÁÈ¡²Ù×÷·Ç³£Ñ¸ËÙ¡£
+å½“è¯·æ±‚è®¿é—® reddit åº”ç”¨æ—¶ï¼Œredis çš„è¯»å–æ“ä½œéå¸¸è¿…é€Ÿã€‚
 
 Draw a tile
 
-**»æÖÆÒ»¸öĞ¡¿é**
+**ç»˜åˆ¶ä¸€ä¸ªå°å—**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/draw.png?w=720&h=533)
 
 The steps for drawing a tile were:
 
-»æÖÆÒ»¸öĞ¡¿éµÄ²½ÖèÈçÏÂ£º
+ç»˜åˆ¶ä¸€ä¸ªå°å—çš„æ­¥éª¤å¦‚ä¸‹ï¼š
 
-1. Read the timestamp of the user¡¯s last tile placement from Cassandra. If it was more recent than the cooldown period (5 minutes) reject the draw attempt and return an error to the user.
+1. Read the timestamp of the userâ€™s last tile placement from Cassandra. If it was more recent than the cooldown period (5 minutes) reject the draw attempt and return an error to the user.
 2. Write the tile details to redis and Cassandra.
-3. Write the current timestamp as the user¡¯s last tile placement in Cassandra.
+3. Write the current timestamp as the userâ€™s last tile placement in Cassandra.
 4. Tell the websocket service to send a message to all connected clients with the new tile.
 
-1. ´Ó Cassandra ¶ÁÈ¡ÓÃ»§ÉÏÒ»´Î¸ü¸ÄĞ¡¿éµÄÊ±¼ä´Á¡£Èç¹ûºÍµ±Ç°Ê±¼ä¼ä¸ô±ÈÀäÈ´Ê±¼ä£¨5 ·ÖÖÓ£©¶Ì£¬¾Ü¾ø»æÖÆÇëÇó£¬·µ»Ø¸øÓÃ»§Ò»¸ö´íÎó¡£
-2. Ïò redis ºÍ Cassandra Ğ´ÈëĞ¡¿éÏêÇé¡£
-3. Ïò Cassandra Ğ´ÈëÓÃ»§ÉÏÒ»´ÎĞŞ¸ÄĞ¡¿éµÄÊ±¼ä´Á¡£
-4. ÈÃ websocket ·şÎñÏòËùÓĞÁ´½ÓµÄ¿Í»§¶Ë·¢ËÍĞÂµÄĞ¡¿é¡£
+1. ä» Cassandra è¯»å–ç”¨æˆ·ä¸Šä¸€æ¬¡æ›´æ”¹å°å—çš„æ—¶é—´æˆ³ã€‚å¦‚æœå’Œå½“å‰æ—¶é—´é—´éš”æ¯”å†·å´æ—¶é—´ï¼ˆ5 åˆ†é’Ÿï¼‰çŸ­ï¼Œæ‹’ç»ç»˜åˆ¶è¯·æ±‚ï¼Œè¿”å›ç»™ç”¨æˆ·ä¸€ä¸ªé”™è¯¯ã€‚
+2. å‘ redis å’Œ Cassandra å†™å…¥å°å—è¯¦æƒ…ã€‚
+3. å‘ Cassandra å†™å…¥ç”¨æˆ·ä¸Šä¸€æ¬¡ä¿®æ”¹å°å—çš„æ—¶é—´æˆ³ã€‚
+4. è®© websocket æœåŠ¡å‘æ‰€æœ‰é“¾æ¥çš„å®¢æˆ·ç«¯å‘é€æ–°çš„å°å—ã€‚
 
 All reads and writes to Cassandra were done with consistency level QUORUM to ensure strong consistency.
 
-Cassandra µÄËùÓĞ¶ÁĞ´²Ù×÷µÄ[Ò»ÖÂĞÔÉèÖÃÎª QUORUM ¼¶±ğ](http://docs.datastax.com/en/archived/cassandra/1.2/cassandra/dml/dml_config_consistency_c.html)£¬À´È·±£Ç¿Ò»ÖÂĞÔ¡£
+Cassandra çš„æ‰€æœ‰è¯»å†™æ“ä½œçš„[ä¸€è‡´æ€§è®¾ç½®ä¸º QUORUM çº§åˆ«](http://docs.datastax.com/en/archived/cassandra/1.2/cassandra/dml/dml_config_consistency_c.html)ï¼Œæ¥ç¡®ä¿å¼ºä¸€è‡´æ€§ã€‚
 
-We actually had a race condition here that allowed users to place multiple tiles at once. There was no locking around the steps 1-3 so simultaneous tile draw attempts could all pass the check at step 1 and then draw multiple tiles at step 2. It seems that some users discovered this error or had bots that didn¡¯t gracefully follow the ratelimits so there were about 15,000 tiles drawn that abused this error (~0.09% of all tiles placed).
+We actually had a race condition here that allowed users to place multiple tiles at once. There was no locking around the steps 1-3 so simultaneous tile draw attempts could all pass the check at step 1 and then draw multiple tiles at step 2. It seems that some users discovered this error or had bots that didnâ€™t gracefully follow the ratelimits so there were about 15,000 tiles drawn that abused this error (~0.09% of all tiles placed).
 
-ÎÒÃÇµ±È»Ò²ÓĞ¾ºÌ¬Ìõ¼şÔÊĞíÓÃ»§Ò»´Î¸ü¸Ä¶à¸öĞ¡¿é¡£ÔÚ²½Öè 1-3 ÖĞ²¢Ã»ÓĞËø£¬Òò´ËÅúÁ¿Ğ¡¿éĞŞ¸ÄµÄ²Ù×÷Í¨¹ı²½Öè 1 µÄ¼ì²éÖ®ºó½«ÔÚ²½Öè 2 ÖĞ½øĞĞĞŞ¸Ä¡£¿´ÆğÀ´Ò»Ğ©ÓÃ»§·¢ÏÖÁËÕâ¸öÂ©¶´»òÒ»Ğ©»úÆ÷½Å±¾²»×ñÊØËÙÂÊÏŞÖÆ£¬ËùÒÔ´ó¸ÅÓĞ 15000 ¸öĞ¡¿é±»ÀûÓÃÕâ¸öÂ©¶´½øĞĞ¸ü¸Ä£¨Õ¼È«²¿¸ü¸ÄĞ¡¿éµÄ 0.09%£©
+æˆ‘ä»¬å½“ç„¶ä¹Ÿæœ‰ç«æ€æ¡ä»¶å…è®¸ç”¨æˆ·ä¸€æ¬¡æ›´æ”¹å¤šä¸ªå°å—ã€‚åœ¨æ­¥éª¤ 1-3 ä¸­å¹¶æ²¡æœ‰é”ï¼Œå› æ­¤æ‰¹é‡å°å—ä¿®æ”¹çš„æ“ä½œé€šè¿‡æ­¥éª¤ 1 çš„æ£€æŸ¥ä¹‹åå°†åœ¨æ­¥éª¤ 2 ä¸­è¿›è¡Œä¿®æ”¹ã€‚çœ‹èµ·æ¥ä¸€äº›ç”¨æˆ·å‘ç°äº†è¿™ä¸ªæ¼æ´æˆ–ä¸€äº›æœºå™¨è„šæœ¬ä¸éµå®ˆé€Ÿç‡é™åˆ¶ï¼Œæ‰€ä»¥å¤§æ¦‚æœ‰ 15000 ä¸ªå°å—è¢«åˆ©ç”¨è¿™ä¸ªæ¼æ´è¿›è¡Œæ›´æ”¹ï¼ˆå å…¨éƒ¨æ›´æ”¹å°å—çš„ 0.09%ï¼‰
 
 Request rate and response time as measured by the reddit application:
 
-reddit Ó¦ÓÃ²âÁ¿µÄÇëÇóËÙÂÊºÍÏìÓ¦Ê±¼ä£º
+reddit åº”ç”¨æµ‹é‡çš„è¯·æ±‚é€Ÿç‡å’Œå“åº”æ—¶é—´ï¼š
 
 <iframe name="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" id="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
 
 We experienced a maximum tile placement rate of almost 200/s. This was below our calculated maximum rate of 333/s (average of 100,000 users placing a tile every 5 minutes).
 
-ÎÒÃÇ¾­ÀúÁË¸ü¸ÄĞ¡¿é×î´óËÙÂÊ´ó¸Å 200/s¡£Õâ±ÈÎÒÃÇ¹ÀËãµÄ×î´óËÙÂÊ 333/s ÒªµÍ£¨Æ½¾ùÃ¿ 5 ·ÖÖÓ 100000 ¸öÓÃ»§¸ü¸ÄĞ¡¿é£©¡£
+æˆ‘ä»¬ç»å†äº†æ›´æ”¹å°å—æœ€å¤§é€Ÿç‡å¤§æ¦‚ 200/sã€‚è¿™æ¯”æˆ‘ä»¬ä¼°ç®—çš„æœ€å¤§é€Ÿç‡ 333/s è¦ä½ï¼ˆå¹³å‡æ¯ 5 åˆ†é’Ÿ 100000 ä¸ªç”¨æˆ·æ›´æ”¹å°å—ï¼‰ã€‚
 
 <iframe name="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" id="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
 
 Get details of a single tile
 
-**»ñÈ¡µ¥¸öĞ¡¿éÏêÇé**
+**è·å–å•ä¸ªå°å—è¯¦æƒ…**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/pixel1.png?w=720&h=251)
 
 Requests for individual tiles resulted in a read straight from Cassandra.
 
-Ö±½Ó´Ó Cassandra ÇëÇóµ¥¸öĞ¡¿é¡£
+ç›´æ¥ä» Cassandra è¯·æ±‚å•ä¸ªå°å—ã€‚
 
 Request rate and response time as measured by the reddit application:
 
-reddit Ó¦ÓÃ²âÁ¿µÄÇëÇóËÙÂÊºÍÏìÓ¦Ê±¼ä£º
+reddit åº”ç”¨æµ‹é‡çš„è¯·æ±‚é€Ÿç‡å’Œå“åº”æ—¶é—´ï¼š
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/r6g7cutrnyaP8oQhVkZcjZpcbe1WQ8f5?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=3" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
-This endpoint was very popular. In addition to regular client requests, people wrote scrapers to retrieve the entire board one tile at a time. Since this endpoint wasn¡¯t cached by the CDN, all requests ended up being served by the reddit application.
+This endpoint was very popular. In addition to regular client requests, people wrote scrapers to retrieve the entire board one tile at a time. Since this endpoint wasnâ€™t cached by the CDN, all requests ended up being served by the reddit application.
 
-Õâ¸ö·şÎñ¶ËµãÓÃµÄºÜ¶à¡£³ıÁË¿Í»§¶ËÆµ·±µÄÇëÇóÖ®Íâ£¬ÓĞÈË±àĞ´×¥È¡¹¤¾ßÃ¿´Î¼ìË÷Õû¸ö»­°åµÄÒ»¸öĞ¡¿é¡£ÓÉÓÚÕâ¸ö·şÎñ¶ËµãÃ»ÓĞÔÚ CDN »º´æ£¬ËùÓĞÇëÇó±» reddit Ó¦ÓÃ³ÌĞò´¦Àí¡£
+è¿™ä¸ªæœåŠ¡ç«¯ç‚¹ç”¨çš„å¾ˆå¤šã€‚é™¤äº†å®¢æˆ·ç«¯é¢‘ç¹çš„è¯·æ±‚ä¹‹å¤–ï¼Œæœ‰äººç¼–å†™æŠ“å–å·¥å…·æ¯æ¬¡æ£€ç´¢æ•´ä¸ªç”»æ¿çš„ä¸€ä¸ªå°å—ã€‚ç”±äºè¿™ä¸ªæœåŠ¡ç«¯ç‚¹æ²¡æœ‰åœ¨ CDN ç¼“å­˜ï¼Œæ‰€æœ‰è¯·æ±‚è¢« reddit åº”ç”¨ç¨‹åºå¤„ç†ã€‚
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/IG0h7j3hnsdDgIJUeRqNhLEk6gnmBVU5?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=6" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 Response times for these requests were pretty fast and stable throughout the project.
 
-ÔÚÕû¸öÏîÄ¿ÖĞ£¬ÕâĞ©ÇëÇóµÄÏìÓ¦Ê±¼ä·Ç³£Ñ¸ËÙÎÈ¶¨¡£
+åœ¨æ•´ä¸ªé¡¹ç›®ä¸­ï¼Œè¿™äº›è¯·æ±‚çš„å“åº”æ—¶é—´éå¸¸è¿…é€Ÿç¨³å®šã€‚
 
 ###Websockets
 ###Websockets
 
-We don¡¯t have isolated metrics for r/place¡¯s effect on the websocket service, but we can estimate and subtract the baseline use from the values before the project started and after it ended.
+We donâ€™t have isolated metrics for r/placeâ€™s effect on the websocket service, but we can estimate and subtract the baseline use from the values before the project started and after it ended.
 
-ÎÒÃÇ²¢Ã»ÓĞÔÚ websocket ·şÎñÖĞÎª r/place ×öµ¥¶ÀÖ¸±ê£¬µ«ÊÇÎÒÃÇ¿ÉÒÔ¹À¼Æ²¢¼õÈ¥ÏîÄ¿¿ªÊ¼Ç°ºóµÄ»ù±¾Ê¹ÓÃÁ¿¡£
+æˆ‘ä»¬å¹¶æ²¡æœ‰åœ¨ websocket æœåŠ¡ä¸­ä¸º r/place åšå•ç‹¬æŒ‡æ ‡ï¼Œä½†æ˜¯æˆ‘ä»¬å¯ä»¥ä¼°è®¡å¹¶å‡å»é¡¹ç›®å¼€å§‹å‰åçš„åŸºæœ¬ä½¿ç”¨é‡ã€‚
 
 Total connections to the websocket service:
 
-websocket ·şÎñ×ÜÁ¬½ÓÊı£º
+websocket æœåŠ¡æ€»è¿æ¥æ•°ï¼š
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/sHVdLetjYXpTj6wYEm9MJ7BbIVMT2YLn?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=12" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 The baseline before r/place began was around 20,000 connections and it peaked at 100,000 connections, so we probably had around 80,000 users connected to r/place at its peak.
 
-r/place ¿ªÊ¼Ç°µÄ»ù±¾Ê¹ÓÃÁ¿´ó¸ÅÓĞ 20000 ¸öÁ¬½Ó£¬¶ø·åÖµ 100000 ¸öÁ´½Ó£¬ËùÒÔ¸ß·åÆÚÎÒÃÇ´ó¸ÅÓĞ 80000 ¸öÓÃ»§Á¬½Óµ½ r/place¡£
+r/place å¼€å§‹å‰çš„åŸºæœ¬ä½¿ç”¨é‡å¤§æ¦‚æœ‰ 20000 ä¸ªè¿æ¥ï¼Œè€Œå³°å€¼ 100000 ä¸ªé“¾æ¥ï¼Œæ‰€ä»¥é«˜å³°æœŸæˆ‘ä»¬å¤§æ¦‚æœ‰ 80000 ä¸ªç”¨æˆ·è¿æ¥åˆ° r/placeã€‚
 
 Websocket service bandwidth:
 
-Websocket ·şÎñ´ø¿í£º
+Websocket æœåŠ¡å¸¦å®½ï¼š
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/0NqYDPULvSli579TsulcvT3MsTzodgqX?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=13" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 At the peak of r/place the websocket service was transmitting over 4 gbps (150 Mbps per instance and 24 instances).
 
-¸ß·åÆÚ r/place µÄ websocket ·şÎñÍÌÍÂÁ¿³¬¹ı 4gbps£¨24¸öÊµÀı£¬Ã¿¸ö 150 Mbps£©
+é«˜å³°æœŸ r/place çš„ websocket æœåŠ¡ååé‡è¶…è¿‡ 4gbpsï¼ˆ24ä¸ªå®ä¾‹ï¼Œæ¯ä¸ª 150 Mbpsï¼‰
 
 ##Frontend: Web and Mobile Clients
-##Ç°¶Ë£ºWebºÍÒÆ¶¯¶Ë
+##å‰ç«¯ï¼šWebå’Œç§»åŠ¨ç«¯
 
 Building the frontend for Place involved many of the challenges for cross-platform app development. We wanted Place to be a seamless experience on all of our major platforms including desktop web, mobile web, iOS and Android.
 
-¹¹½¨ r/place µÄÇ°¶Ë¹¤³ÌÉæ¼°µ½ÁË¿çÆ½Ì¨¿ª·¢µÄÖÚ¶àÌôÕ½¡£ÎÒÃÇÆÚÍû r/place ÔÚÎÒÃÇËùÓĞÖ÷Á÷Æ½Ì¨ÉÏÓµÓĞÎŞ·ìÌåÑé£¬°üÀ¨×ÀÃæweb¡¢ÒÆ¶¯web¡¢iOS ºÍ Android¡£
+æ„å»º r/place çš„å‰ç«¯å·¥ç¨‹æ¶‰åŠåˆ°äº†è·¨å¹³å°å¼€å‘çš„ä¼—å¤šæŒ‘æˆ˜ã€‚æˆ‘ä»¬æœŸæœ› r/place åœ¨æˆ‘ä»¬æ‰€æœ‰ä¸»æµå¹³å°ä¸Šæ‹¥æœ‰æ— ç¼ä½“éªŒï¼ŒåŒ…æ‹¬æ¡Œé¢webã€ç§»åŠ¨webã€iOS å’Œ Androidã€‚
 
 The UI in place needed to do three important things:
 
-r/place µÄ UI ĞèÒª×öÈı¼şºÜÖØÒªµÄÊÂ£º
+r/place çš„ UI éœ€è¦åšä¸‰ä»¶å¾ˆé‡è¦çš„äº‹ï¼š
 
 1. Display the state of the board in real time
 2. Facilitate user interaction with the board
 3. Work on all of our platforms, including our mobile apps
 
 
-1. ÊµÊ±Õ¹Ê¾»­°å×´Ì¬¡£
-2. ÈÃÓÃ»§ºÍ»­°å½»»¥·½±ãÈİÒ×
-3. ÔÚÎÒÃÇËùÓĞÆ½Ì¨ÉÏÕı³£ÔËĞĞ£¬°üÀ¨ÒÆ¶¯¶Ë app¡£
+1. å®æ—¶å±•ç¤ºç”»æ¿çŠ¶æ€ã€‚
+2. è®©ç”¨æˆ·å’Œç”»æ¿äº¤äº’æ–¹ä¾¿å®¹æ˜“
+3. åœ¨æˆ‘ä»¬æ‰€æœ‰å¹³å°ä¸Šæ­£å¸¸è¿è¡Œï¼ŒåŒ…æ‹¬ç§»åŠ¨ç«¯ appã€‚
 
 The main focus of the UI was the canvas, and the Canvas API was a perfect fit for it. We used a single 1000 x 1000 <canvas> element, drawing each tile as a single pixel.
 
-UI µÄÖ÷Òª½¹µã¼¯ÖĞÔÚÁË canvas£¬²¢ÇÒ [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) ÍêÈ«ÄÜÊ¤ÈÎÒªÇó¡£ÎÒÃÇÊ¹ÓÃÒ»¸ö 1000 x 1000 µÄ `<canvas>` ÔªËØ£¬°ÑÃ¿¸öĞ¡¿éµ±×öÒ»¸öÏñËØ½øĞĞ»æÖÆ¡£
+UI çš„ä¸»è¦ç„¦ç‚¹é›†ä¸­åœ¨äº† canvasï¼Œå¹¶ä¸” [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) å®Œå…¨èƒ½èƒœä»»è¦æ±‚ã€‚æˆ‘ä»¬ä½¿ç”¨ä¸€ä¸ª 1000 x 1000 çš„ `<canvas>` å…ƒç´ ï¼ŒæŠŠæ¯ä¸ªå°å—å½“åšä¸€ä¸ªåƒç´ è¿›è¡Œç»˜åˆ¶ã€‚
 
 ###Drawing the canvas
-###»æÖÆ canvas
+###ç»˜åˆ¶ canvas
 
 The canvas needed to represent the state of the board in real time. We needed to draw the state of the entire board when the page loaded, and draw updates to the board state that came in over websockets. There are generally three ways to go about updating a canvas element using the CanvasRenderingContext2D interface:
 
@@ -229,4 +229,4 @@ The canvas needed to represent the state of the board in real time. We needed to
 Drawing an existing image onto the canvas using drawImage()
 Draw shapes with the various shape drawing methods, e.g. using fillRect() to fill a rectangle with a color
 Construct an ImageData object and paint it into the canvas using putImageData()
-The first option wouldn¡¯t work for us since since we didn¡¯t already have the board in image form, 
+The first option wouldnâ€™t work for us since since we didnâ€™t already have the board in image form, 
