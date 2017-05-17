@@ -299,8 +299,8 @@ The binary data we receive from the API contains 2 pixels of color data in each 
 
 The ImageData structure needed to use the putImageData() method requires the end result to be readable as a Uint8ClampedArray with the color channel bytes in RGBA order. This meant we needed to do another round of “unpacking”, splitting each color into its component channel bytes and putting them into the correct index. Needing to do 4 writes per pixel was also inconvenient, but luckily there was another option.
 
-`ImageData`这种数据结构需要使用`putImageData`方法，最终结果要求是可读的`Uint8ClampedArray`格式并且颜色通道字节要按照 RGBA 这种顺序。这意味着我们要做另一遍“解压”，将每个颜色拆分成颜色通道字节并按顺序排列。每个像素要做 4 次操作也不是很方便，但幸运的是有其他方式。
+`ImageData`这种数据结构需要使用`putImageData`方法，最终结果要求是可读的`Uint8ClampedArray`格式并且颜色通道字节要按照 RGBA 这种顺序。这意味着我们要做另一遍“解压”，将每个颜色拆分成颜色通道字节并按顺序排列。每个像素要做 4 次操作,这不是很方便，但幸运的是有其他方式。
 
 TypedArray objects are essentially array views into ArrayBuffer instances, which actually represent the binary data. One neat thing about them is that multiple TypedArray instances can read and write to the same underlying ArrayBuffer instance. Instead of writing 4 values into an 8-bit array, we could write a single value into a 32-bit array!  Using a Uint32Array to write, we were able to easily update a tile’s color by updating a single array index. The only change required was that we had to store our color palette in reverse-byte order (ABGR) so that the bytes automatically fell in the correct position when read using the Uint8ClampedArray.
 
-`TypeArray`对象本质上是`ArrayBuffer`的数组视图，实际上表示二进制数据。它们
+`TypeArray`对象们本质上是`ArrayBuffer`的数组视图，实际上表示二进制数据。它们共同的一点就是多个`TypeArray`实例可以基于一个`ArrayBuffer`实例进行读写。我们不必将 4 个值写入 8 位的数组，我们可以直接把单个值写入一个 32 位的数组。
