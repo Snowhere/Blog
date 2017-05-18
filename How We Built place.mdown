@@ -484,7 +484,7 @@ For the iOS side we additionally implemented notification support when your next
 
 The delegate method in the app then schedules a notification based on the cooldown timer that was passed in.
 
-应用中的委派方法基于传入的冷却计时器，会随后调度发送一条通知。
+应用中的委派方法根据传入的冷却计时器，会随后调度发送一条通知。
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/place-notif.png?w=720&h=210)
 
@@ -496,7 +496,7 @@ The delegate method in the app then schedules a notification based on the cooldo
 
 Since we had planned everything out perfectly, we knew when we launched, nothing could possibly go wrong. We had load tested the frontend, load tested the backend, there was simply no way we humans could have made any other mistakes.
 
-我们完美计划好了任何事情，我们知道什么时候上线，没有什么可能出错的地方。我们对前端和后端分别进行了负载测试，我们不可能在遇到其他错误。
+我们完美计划好了任何事情，我们知道上线时，没有什么可能出错的地方。我们对前端和后端分别进行了负载测试，我们不可能再遇到其他错误。
 
 Right?
 
@@ -512,7 +512,7 @@ The launch went smoothly. Over the course of the morning, as the popularity of r
 
 No big deal, and exactly what we expected. Strangely enough, we thought we were network-bound on those instances and figured we had a lot more headway. Looking at the CPU of the instances, however, painted a different picture:
 
-并没有惊喜，所有和我们预期的一样。奇怪的是【】
+并没有惊喜，所有和我们预期的一样。奇怪的是，我们怀疑限制了这些实例的网络带宽，因为我们预计会有更大的流量。查看了一下 CPU 的实例情况，却显示出一幅不同的图片：
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/sJdVWLBq2FfZk7dsDOFL9ia2dIflwduA?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=7" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
