@@ -403,10 +403,125 @@ Using CSS to scale up the canvas made it easy to keep the code that handled draw
 
 We needed another way to scale up the canvas for these browsers. I mentioned earlier on that there are generally three ways to go about drawing to a canvas. The first method, drawImage(), supports drawing an existing image or another canvas into a canvas. It also supports scaling that image up or down when drawing it, and though upscaling has the same blurring issue by default that upscaling in CSS has, this can be disabled in a more cross-browser compatible way by turning off the CanvasRenderingContext2D.imageSmoothingEnabled flag.
 
+我们需要在那些浏览器上用其他方式放大 canvas。我之前提到过绘制 canvas 有三种方式。其中第一个是`drawImage()`方法，它可以把一个存在的图像或另一个 canvas 绘制进一个 canvas。它也支持在绘制的时候放大或缩小图像，虽然放大的时候会和在 CSS 中放大一样出现模糊问题，但是可以通过关闭[CanvasRenderingContext2D.imageSmoothingEnabled](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled)标识，这种跨浏览器兼容性的方式来解决。
+
 So the fix for our blurry canvas problem was to add another step to the rendering process. We introduced another <canvas> element, this one sized and positioned to fit across the container element (i.e. the viewable area of the board). After redrawing the canvas, we use drawImage() to draw the visible portion of it into this new display canvas at the proper scale. Since this extra step adds a little overhead to the rendering process, we only did this for browsers that don’t support the CSS image-rendering property.
 
-Camera pan
+所以修复模糊 canvas 问题的答案就是在渲染过程中增加额外一步。我们引入了另一个`<canvas>`元素，它大小位置适应于容器元素（比如画板的可见区域）。每次重新绘制 canvas 后，我们使用`drawImage()`把它的一部分绘制到新的、有合适缩放比例的 canvas。因为额外的步骤给渲染过程带来微小的开销，所以我们只在不支持`image-rendering`CSS 属性的浏览器上这样做。
+
+**Camera pan**
+**视角平移**
 
 The canvas is a fairly big image, especially when zoomed in, so we needed to provide ways of navigating it. To adjust the position of the canvas on the screen, we took a similar approach to what we did with scaling: we wrapped the <canvas> element in another <div> that we applied CSS transform: translate(x, y) to. Using a separate div made it easy to control the order that these transforms were applied to the canvas, which was important for preventing the camera from moving when toggling the zoom level.
 
+canvas 是一个相当大的图像，尤其是放大之后，所以我们需要提供一些方式操作它。为了调整 canvas 在屏幕上的位置，我们采取和解决缩放问题一样的方式：我们将`<canvas>`包裹进另一个`<div>`，并在它上面应用 CSS 属性`transform: translate(x, y)`。使用单独的 div 使得应用在 canvas 上的变换操作更容易控制，这对于防止视角在缩放时产生移动非常重要。
+
 We ended up supporting a variety of ways to adjust the camera position, including:
+
+我们最后支持多种方式调整视角位置，包括：
+
+* Click and drag
+* Click to move
+* Keyboard navigation
+
+* 点击拖拽
+* 点击移动
+* 键盘导航
+
+Each of these methods required a slightly different approach.
+
+每种操作需要一点不同的实现方式。
+
+**Click-and-drag**
+**点击拖拽**
+
+The primary way of navigating was click-and-drag (or touch-and-drag). We stored the x, y position of the mousedown event. On each mousemove event, we found the offset of the mouse position relative to that start position, then added that offset to the existing saved canvas offset. The camera position was updated immediately so that this form of navigation felt really responsive.
+
+最基本的导航方式就是点击拖拽（或触摸拖拽）。我们保存了`mousedown`事件的 x、y 坐标。对于每次`mousemove`事件，我们计算鼠标相对于起点的偏移量，然后把偏移量加到已存在的 canvas 偏移量中。视角位置立刻改变，让人感觉这种到导航方式很灵敏。
+
+**Click-to-move**
+**点击移动**
+
+We also allowed clicking on a tile to center that tile on the screen. To accomplish this, we had to keep track of the distance moved between the mousedown and mouseup events, in order to distinguish “clicks” from “drags”. If the mouse did not move enough to be considered a “drag”, we adjusted the camera position by the difference between the mouse position and the point at the center of the screen. Unlike click-and-drag movement, the camera position was updated with an easing function applied. Instead of setting the new position immediately, we saved it as a “target” position. Inside the animation loop (the same one used to redraw the canvas), we moved the current camera position closer to the target using an easing function. This prevented the camera move from feeling too jarring.
+
+我们也支持点击一个小块，使得小块定位到屏幕中心。为了实现这个功能，我们需要跟踪`mousedown`和`mouseup`事件，为了区别“点击”和“拖动”。如果鼠标移动距离达不到“拖动”的标准，我们会根据鼠标位置和屏幕中心的距离来调整视角位置。和点击拖动不同，视角位置的更新使用了缓动函数（easing function）。我们没有立刻设定新的位置，而是把它保存成“目标”位置。在动画循环中（每次绘制 canvas 的循环），我们使用缓动函数移动当前视角逐渐接近目标。这避免了视角移动太突然。
+
+**Keyboard navigation**
+**键盘导航**
+
+We also supported navigating with the keyboard, using either the WASD keys or the arrow keys. The four direction keys controlled an internal movement vector. This vector defaulted to (0, 0) when no movement keys were down, and each of the direction keys added or subtracted 1 from either the x or y component of the vector when pressed. For example, pressing the “right” and “up” keys would set the movement vector to (1, -1). This movement vector was then used inside the animation loop to move the camera.
+
+我们也支持键盘导航，既可以使用 WASD 键也可以使用方向键。四个键控制内置 **移动向量**。没有按键按下时，向量默认是 (0, 0)，每个按键按下时会增加或减少向量的 x 或 y 轴 1 个单位。举个例子，按下“右”和“上”键会把移动向量设置成 (1,-1)。这个移动向量随后应用在动画循环中，来移动视角。
+
+During the animation loop, a movement speed was calculated based on the current zoom level using the formula:
+
+在动画循环中，移动速度是基于当前缩放级别而计算出来的，公式如下：
+
+`movementSpeed = maxZoom / currentZoom * speedMultiplier`
+
+This made keyboard navigation faster when zoomed out, which felt a lot more natural.
+
+在缩小状态下，键盘导航移动速度更快，这样显得更自然。
+
+The movement vector is then normalized and multiplied by the movement speed, then applied to the current camera position. We normalized the vector to make sure diagonal movement was the same speed as orthogonal movement, which also helped it feel more natural. Finally, we applied the same kind of easing function to changes to the movement vector itself. This smoothed out changes in movement direction and speed, making the camera feel much more fluid and juicy.
+
+移动向量[单位化](http://mathworld.wolfram.com/NormalizedVector.html)并乘以移动速度，然后应用到当前视角位置。我们用单位向量来确保对角线移动和正交移动拥有相同速度，这也显得更自然。最后我们对移动向量自身的变化也使用了缓动函数。这使得移动方向和速度变化的更平滑，视角变得流畅生动。
+
+###Mobile app support
+###移动应用支持
+
+There were a couple of additional challenges to embedding the canvas in the mobile apps for iOS and Android. First, we needed to authenticate the user so they could place tiles. Unlike on the web, where authentication is session based, with the mobile apps we use OAuth. This means that the app needs to provide the webview with an access token for the currently logged in user. The safest way to do this was to inject the oauth authorization headers by making a javascript call from the app to the webview (this would’ve also allowed us to set other headers if needed). It was then a matter of passing the authorization headers along with each api call.
+
+在 iOS 和 Android 的移动应用嵌入 canvas 过程中，我们遇到一些挑战。首先，我们需要认证用户，然后用户才能更改小块。和基于 session 的 web 认证不同，移动应用中我们使用 OAuth。这意味着应用需要为 webview 提供当前登录用户的访问令牌。最安全的方式就是用 JavaScript 在应用调用 webview 时注入 oauth 认证头信息（这也允许我们设置其他需要的头信息）。问题就简化为在每个 api 调用中传递认证头信息了。
+
+`r.place.injectHeaders({‘Authorization’: ‘Bearer <access token>’});`
+
+For the iOS side we additionally implemented notification support when your next tile was ready to be placed on the canvas. Since tile placement occurred completely in the webview we needed to implement a callback to the native app. Fortunately with iOS 8 and higher this is possible with a simple javascript call:
+
+在 iOS 端，当你可以更改 canvas 中的下一个小块时，我们实现了消息提醒功能。因为小块的变更完全在 webview 中，所以我们需要实现向原生应用的回调。辛运的是在 iOS 8 及以上版本中只需要一个简单的 JavaScript 调用：
+
+`webkit.messageHandlers.tilePlacedHandler.postMessage(this.cooldown / 1000);`
+
+The delegate method in the app then schedules a notification based on the cooldown timer that was passed in.
+
+应用中的委派方法基于传入的冷却计时器，会随后调度发送一条通知。
+
+![](https://redditupvoted.files.wordpress.com/2017/04/place-notif.png?w=720&h=210)
+
+##What We Learned
+##我们学到了什么
+
+###You’ll always miss something
+###你总会疏漏一些事
+
+Since we had planned everything out perfectly, we knew when we launched, nothing could possibly go wrong. We had load tested the frontend, load tested the backend, there was simply no way we humans could have made any other mistakes.
+
+我们完美计划好了任何事情，我们知道什么时候上线，没有什么可能出错的地方。我们对前端和后端分别进行了负载测试，我们不可能在遇到其他错误。
+
+Right?
+
+真的吗？
+
+The launch went smoothly. Over the course of the morning, as the popularity of r/place went up, so did the number of connections and traffic to our websockets instances:
+
+上线过程很顺利。经历了一个黎明，r/place 人气迅速上升，我们 websocket 实例的链接数量和通信量也随之增加：
+
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/6ZXkSbIFkCFnnTG3CgUCs5stiQymHurZ?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/seTKGszEp7yUU4U42FjIne7X4Wy6CAK3?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=6" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+No big deal, and exactly what we expected. Strangely enough, we thought we were network-bound on those instances and figured we had a lot more headway. Looking at the CPU of the instances, however, painted a different picture:
+
+并没有惊喜，所有和我们预期的一样。奇怪的是【】
+
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/sJdVWLBq2FfZk7dsDOFL9ia2dIflwduA?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=7" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+Those are 8-core instances, so it was clear they were reaching their limits. Why were these boxes suddenly behaving so differently? We chalked it up to place being a much different workload type than they’d seen before. After all, these were lots of very tiny messages; we typically send out larger messages like live thread updates and notifications. We also usually don’t have that many people all receiving the same message, so a lot of things were different.
+
+实例是 8 核的，所以它们快到上限了。为什么这些盒子突然变得这么奇怪》
+
+Still, no big deal, we figured we’d just scale it and call it a day. The on-call person doubled the number of instances and went to a doctor’s appointment, not a care in the world.
+
+Then, this happened:
+
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/hnp8ED5z4JuSNE3JMltOH6ZsdkbKsHTi?from=1490971996813&amp;to=1491001554923&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
