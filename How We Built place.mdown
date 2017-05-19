@@ -1,6 +1,8 @@
 [How We Built r/Place](https://redditblog.com/2017/04/13/how-we-built-rplace/)
-#How We Built r/Place
-#Reddit 的愚人节项目 r/Place 是怎么做出来的
+# How We Built r/Place
+# Reddit 的愚人节项目 r/Place 是怎么做出来的
+
+![](https://i2.wp.com/redditupvoted.files.wordpress.com/2017/04/place-final.png?crop=0px%2C0px%2C1000px%2C483px&resize=1200%2C580&ssl=1)
 
 Each year for April Fools’, rather than a prank, we like to create a project that explores the way that humans interact at large scales. This year we came up with Place, a collaborative canvas on which a single user could only place a single tile every five minutes. This limitation de-emphasized the importance of the individual and necessitated the collaboration of many users in order to achieve complex creations. Each tile placed was relayed to observers in real-time.
 
@@ -14,8 +16,8 @@ But first, if you want to check out the code for yourself, you can find it here.
 
 且慢。如果你想查看我们的代码，[在这里](http://github.com/reddit/reddit-plugin-place-opensource)。如果你对构建 Place 这一类项目感兴趣，[我们欢迎你](https://about.reddit.com/careers/)
 
-##Requirements
-##需求
+## Requirements
+## 需求
 
 Defining requirements for an April Fools’ project is extremely important because it will launch with zero ramp-up and be available immediately to all of Reddit’s users. If it doesn’t work perfectly out of the gate, it’s unlikely to attract enough users to make for an interesting experience.
 
@@ -37,11 +39,11 @@ Defining requirements for an April Fools’ project is extremely important becau
 * 配置必须有足够弹性，应对意外的瓶颈或故障。这意味着画板的大小和小块的使用间隔可以在运行时调节，以防数据量过大或更新过于频繁。
 * API 必须开放和透明，reddit 社区如果对此有兴趣，可以在此之上构建项目（机器人、扩展、数据收集、外部可视化等等）。
 
-##Backend
-##后端
+## Backend
+## 后端
 
-###Implementation decisions
-###实施决策
+### Implementation decisions
+### 实施决策
 
 The main challenge for the backend was keeping all the clients in sync with the state of the board. Our solution was to initialize the client state by having it listen for real-time tile placements immediately and then make a request for the full board. The full board in the response could be a few seconds stale as long as we also had real-time placements starting from before it was generated. When the client received the full board it replayed all the real-time placements it received while waiting. All subsequent tile placements could be drawn to the board immediately as they were received.
 
@@ -75,10 +77,10 @@ We used our websocket service to publish updates to all the clients. We’ve had
 
 我们使用我们的[websocket 服务](https://github.com/reddit/reddit-service-websockets)向所有客户端推送更新。我们已经成功地在[reddit live](https://www.reddit.com/live)生产环境中应用过它，来处理超过 100000 的并发用户，比如 live PM notifications 功能或其他特性。wesocket 服务也曾是我们过去愚人节项目的基础，比如 [The Button](https://redditblog.com/2015/04/01/the-button/) 和 [Robin](https://redditblog.com/2016/04/01/Robin/) 两个项目。对于 r/place 项目，客户端维护一个 websocket 链接来接收实时的小块变化更新。
 
-###API
-###API
+### API
+### API
 
-Retrieve the full board
+**Retrieve the full board**
 **检索整个画板**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/board-bitmap.png?w=720&h=368)
@@ -103,8 +105,7 @@ When a request did hit the reddit application the read from redis was very fast.
 
 当请求访问 reddit 应用时，redis 的读取操作非常迅速。
 
-Draw a tile
-
+**Draw a tile**
 **绘制一个小块**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/draw.png?w=720&h=533)
@@ -143,8 +144,7 @@ We experienced a maximum tile placement rate of almost 200/s. This was below our
 
 <iframe name="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" id="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
 
-Get details of a single tile
-
+**Get details of a single tile**
 **获取单个小块详情**
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/pixel1.png?w=720&h=251)
@@ -169,8 +169,8 @@ Response times for these requests were pretty fast and stable throughout the pro
 
 在整个项目中，这些请求的响应时间非常迅速稳定。
 
-###Websockets
-###Websockets
+### Websockets
+### Websockets
 
 We don’t have isolated metrics for r/place’s effect on the websocket service, but we can estimate and subtract the baseline use from the values before the project started and after it ended.
 
@@ -196,8 +196,8 @@ At the peak of r/place the websocket service was transmitting over 4 gbps (150 M
 
 高峰期 r/place 的 websocket 服务吞吐量超过 4gbps（24个实例，每个 150 Mbps）
 
-##Frontend: Web and Mobile Clients
-##前端：Web和移动端
+## Frontend: Web and Mobile Clients
+## 前端：Web和移动端
 
 Building the frontend for Place involved many of the challenges for cross-platform app development. We wanted Place to be a seamless experience on all of our major platforms including desktop web, mobile web, iOS and Android.
 
@@ -220,8 +220,8 @@ The main focus of the UI was the canvas, and the Canvas API was a perfect fit fo
 
 UI 的主要焦点集中在了 canvas，并且 [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) 完全能胜任要求。我们使用一个 1000 x 1000 的 `<canvas>` 元素，把每个小块当做一个像素进行绘制。
 
-###Drawing the canvas
-###绘制 canvas
+### Drawing the canvas
+### 绘制 canvas
 
 The canvas needed to represent the state of the board in real time. We needed to draw the state of the entire board when the page loaded, and draw updates to the board state that came in over websockets. There are generally three ways to go about updating a canvas element using the CanvasRenderingContext2D interface:
 
@@ -279,8 +279,8 @@ The binary data we receive from the API contains 2 pixels of color data in each 
 <table>
    <tr>
       <td>API Response</td>
-      <td rowspan="2">0x47</td>
-      <td rowspan="2">0xE9</td>
+      <td colspan="2">0x47</td>
+      <td colspan="2">0xE9</td>
    </tr>
    <tr>
       <td>Unpacked</td>
@@ -308,16 +308,16 @@ TypedArray objects are essentially array views into ArrayBuffer instances, which
 
 <table>
     <tr>
-        <td rowspan="4">0</td>
-        <td rowspan="4">1</td>
-        <td rowspan="4">2</td>
-        <td rowspan="4">3</td>
+        <td colspan="4">0</td>
+        <td colspan="4">1</td>
+        <td colspan="4">2</td>
+        <td colspan="4">3</td>
     </tr>
     <tr>
-        <td rowspan="4">0xFFD1A7FF</td>
-        <td rowspan="4">0xFF426AA0</td>
-        <td rowspan="4">0xFFE46ECF</td>
-        <td rowspan="4">0xFF44E094</td>
+        <td colspan="4">0xFFD1A7FF</td>
+        <td colspan="4">0xFF426AA0</td>
+        <td colspan="4">0xFFE46ECF</td>
+        <td colspan="4">0xFF44E094</td>
     </tr>
     <tr>
         <td>255</td>
@@ -378,8 +378,8 @@ By moving the drawing into an animation loop, we were able to write websocket up
 
 把绘制移到动作循环中，我们可以及时将 websocket 更新写入`ArrayBuffer`，然后延迟绘制。每一帧（大概 16ms）间的 websocket 更新会再一次绘制中批量执行。因为我们使用`requestAnimationFrame`，这意味着每次绘制时间不能太长（不超过 16ms），只有 canvas 的刷新速率受影响（而不是拖慢整个浏览器）。
 
-###Interacting with the Canvas
-###Canvas 的交互
+### Interacting with the Canvas
+### Canvas 的交互
 
 Equally importantly, the canvas needed to facilitate user interaction. The core way that users can interact with the canvas is to place tiles on it. Precisely drawing individual pixels at 100% scale would be extremely painful and error prone, so we also needed to be able to zoom in (a lot!). We also needed to be able to pan around the canvas easily, since it was too large to fit on most screens (especially when zoomed in).
 
@@ -467,8 +467,8 @@ The movement vector is then normalized and multiplied by the movement speed, the
 
 移动向量[单位化](http://mathworld.wolfram.com/NormalizedVector.html)并乘以移动速度，然后应用到当前视角位置。我们用单位向量来确保对角线移动和正交移动拥有相同速度，这也显得更自然。最后我们对移动向量自身的变化也使用了缓动函数。这使得移动方向和速度变化的更平滑，视角变得流畅生动。
 
-###Mobile app support
-###移动应用支持
+### Mobile app support
+### 移动应用支持
 
 There were a couple of additional challenges to embedding the canvas in the mobile apps for iOS and Android. First, we needed to authenticate the user so they could place tiles. Unlike on the web, where authentication is session based, with the mobile apps we use OAuth. This means that the app needs to provide the webview with an access token for the currently logged in user. The safest way to do this was to inject the oauth authorization headers by making a javascript call from the app to the webview (this would’ve also allowed us to set other headers if needed). It was then a matter of passing the authorization headers along with each api call.
 
@@ -488,11 +488,11 @@ The delegate method in the app then schedules a notification based on the cooldo
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/place-notif.png?w=720&h=210)
 
-##What We Learned
-##我们学到了什么
+## What We Learned
+## 我们学到了什么
 
-###You’ll always miss something
-###你总会疏漏一些事
+### You’ll always miss something
+### 你总会疏漏一些事
 
 Since we had planned everything out perfectly, we knew when we launched, nothing could possibly go wrong. We had load tested the frontend, load tested the backend, there was simply no way we humans could have made any other mistakes.
 
@@ -512,16 +512,74 @@ The launch went smoothly. Over the course of the morning, as the popularity of r
 
 No big deal, and exactly what we expected. Strangely enough, we thought we were network-bound on those instances and figured we had a lot more headway. Looking at the CPU of the instances, however, painted a different picture:
 
-并没有惊喜，所有和我们预期的一样。奇怪的是，我们怀疑限制了这些实例的网络带宽，因为我们预计会有更大的流量。查看了一下 CPU 的实例情况，却显示出一幅不同的图片：
+并没有什么惊喜，所有和我们预期的一样。奇怪的是，我们怀疑限制了这些服务器实例的网络带宽，因为我们预计会有更大的流量。查看了一下 CPU 的实例情况，却显示出一幅不同的图片：
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/sJdVWLBq2FfZk7dsDOFL9ia2dIflwduA?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=7" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 Those are 8-core instances, so it was clear they were reaching their limits. Why were these boxes suddenly behaving so differently? We chalked it up to place being a much different workload type than they’d seen before. After all, these were lots of very tiny messages; we typically send out larger messages like live thread updates and notifications. We also usually don’t have that many people all receiving the same message, so a lot of things were different.
 
-实例是 8 核的，所以它们快到上限了。为什么这些盒子突然变得这么奇怪》
+服务器实例是 8 核的，所以很明显它们快到上限了。为什么它们突然表现的如此不同？我们将原因归结于 r/place 的工作负载类型不同于以往项目。毕竟这里有很多微小的消息，我们一般发送大型消息，比如直播帖子的更新和通知。我们也没有处理过大量用户接收相同消息的情况，所以有很多地方都不同。
 
 Still, no big deal, we figured we’d just scale it and call it a day. The on-call person doubled the number of instances and went to a doctor’s appointment, not a care in the world.
 
+这没什么大不了，我们预计只需要调用和测量它一天而已。待命的运维数量是服务器实例的两倍，而且他们两耳不闻窗外事，一心只顾服务器。
+
 Then, this happened:
 
+然后，发生了这个：
+
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/hnp8ED5z4JuSNE3JMltOH6ZsdkbKsHTi?from=1490971996813&amp;to=1491001554923&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
+
+That graph may seem unassuming if it weren’t for the fact that it was for our production Rabbit MQ instance, which handles not only our websockets messages but basically everything that reddit.com relies on. And it wasn’t happy; it wasn’t happy at all.
+
+这幅图看上去可能并没什么，但事实上这是我们生产环境的 Rabbit MQ 实例，不仅处理 websocket 消息，也处理 reddit.com 所有底层的依赖项。这不容乐观，一点都不。
+
+After a lot of investigating, hand-wringing, and instance upgrading, we narrowed down the problem to the management interface. It had always seemed kind of slow, and we realized that the rabbit diamond collector we use for getting our stats was querying it regularly. We believe that the additional exchanges created when launching new websockets instances, combined with the throughput of messages we were receiving on those exchanges, caused rabbit to buckle while trying to do bookkeeping to do queries for the admin interface. So we turned it off, and things got better.
+
+经过了各种调查、束手无策和升级实例，我们把问题锁定在管理接口。它总是有点慢，随后我们意识到，我们为了获取项目状态用[rabbit diamond collector](https://github.com/python-diamond/Diamond/blob/master/src/collectors/rabbitmq/rabbitmq.py)会频繁查询接口。我们认为上线新的 websocket 实例时创建了额外的 exchange （RabbitMq 中管道概念），再加上这些 exchange 的消息吞吐量，导致了管理界面在查询和记录时，rabbit 卡住了。我们把它关掉，情况好多了。
+
+We don’t like being in the dark, so we whipped up an artisanal, hand-crafted monitoring script to get us through the project:
+
+但我们不想在一片黑暗之中（关掉了状态显示程序），所以我们迅速做了一个手工艺术品——监控脚本，帮助我们观察整个项目：
+
+```
+$ cat s****y_diamond.sh
+
+#!/bin/bash
+
+/usr/sbin/rabbitmqctl list_queues | /usr/bin/awk '$2~/[0-9]/{print "servers.foo.bar.rabbit.rabbitmq.queues." $1 ".messages " $2 " " systime()}' | /bin/grep -v 'amq.gen' | /bin/nc 10.1.2.3 2013
+```
+
+If you’re wondering why we kept adjusting the timeouts on placing pixels, there you have it. We were trying to relieve pressure to keep the whole project running. This is also the reason why, during one period, some pixels were taking a long time to show up.
+
+如果你好奇为什么我们不断调整修改像素（小块）的超时时间（冷却时间），那么现在你就知道了。我们试着减轻服务器压力以便整个项目顺利运行。这也是为什么在某个时间段，一些像素的呈现花费较长时间。
+
+So unfortunately, despite what messages like this would have you believe:
+
+所以不幸的是，你当时坚信如下的信息：
+
+[10K upvotes to reduce the cooldown even further! *ADMIN APPROVED*](https://www.reddit.com/r/place/comments/62xms3/10k_upvotes_to_reduce_the_cooldown_even_further/?ref=share&ref_source=embed&utm_content=title&utm_medium=post_embed&utm_name=8f15a84993df435b970ed0f5e2bf05d8&utm_source=embedly&utm_term=62xms3)
+
+The reasons for the adjustments were entirely technical. Although it was cool to watch r/place/new after making the change:
+
+尽管调整完看 r/place/new 版块很有意思，但调整完全是技术原因：
+
+![](https://redditupvoted.files.wordpress.com/2017/04/place-page.png?w=720&h=475)
+
+So maybe that was part of the motivation.
+
+
+
+### Bots Will Be Bots
+### 机器人终归是机器人
+
+We ran into one more slight hiccup at the end of the project. In general, one of our recurring problems is clients with bad retry behavior. A lot of clients, when faced with an error, will simply retry. And retry. And retry. This means whenever there is a hiccup on the site, it can often turn into a retry storm from some clients who have not been programmed to back-off in the case of trouble.
+
+When we turned off place, the endpoints that a lot of bots were hitting started returning non-200s. Code like this wasn’t very nice. Thankfully, this was easy to block at the Fastly layer.
+
+## Creating Something More
+## 创造点其他东西
+
+This project could not have come together so successfully without a tremendous amount of teamwork. We’d like to thank u/gooeyblob, u/egonkasper, u/eggplanticarus, u/spladug, u/thephilthe, u/d3fect and everyone else who contributed to the r/place team, for making this April Fools’ experiment possible.
+
+And as we mentioned before, if you’re interested in creating unique experiences for millions of users, check out our Careers page.
