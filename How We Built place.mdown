@@ -536,7 +536,7 @@ That graph may seem unassuming if it weren’t for the fact that it was for our 
 
 After a lot of investigating, hand-wringing, and instance upgrading, we narrowed down the problem to the management interface. It had always seemed kind of slow, and we realized that the rabbit diamond collector we use for getting our stats was querying it regularly. We believe that the additional exchanges created when launching new websockets instances, combined with the throughput of messages we were receiving on those exchanges, caused rabbit to buckle while trying to do bookkeeping to do queries for the admin interface. So we turned it off, and things got better.
 
-经过了各种调查、束手无策和升级实例，我们把问题锁定在管理接口。它总是有点慢，随后我们意识到，我们为了获取项目状态用[rabbit diamond collector](https://github.com/python-diamond/Diamond/blob/master/src/collectors/rabbitmq/rabbitmq.py)会频繁查询接口。我们认为上线新的 websocket 实例时创建了额外的 exchange （RabbitMq 中管道概念），再加上这些 exchange 的消息吞吐量，导致了管理界面在查询和记录时，rabbit 卡住了。我们把它关掉，情况好多了。
+经过了各种调查、束手无策和升级实例，我们把问题锁定在管理接口。它总是有点慢，随后我们意识到，我们为了获取项目状态用[rabbit diamond collector](https://github.com/python-diamond/Diamond/blob/master/src/collectors/rabbitmq/rabbitmq.py)会频繁查询接口。我们认为创建新的 websocket 实例时创建了额外的 exchange （RabbitMq 中概念），再加上这些 exchange 的消息吞吐量，导致了管理界面在查询和记录时，rabbit 卡住了。我们把它关掉，情况好多了。
 
 We don’t like being in the dark, so we whipped up an artisanal, hand-crafted monitoring script to get us through the project:
 
@@ -568,18 +568,26 @@ The reasons for the adjustments were entirely technical. Although it was cool to
 
 So maybe that was part of the motivation.
 
-
+或许这也是调整的部分动机。
 
 ### Bots Will Be Bots
 ### 机器人终归是机器人
 
 We ran into one more slight hiccup at the end of the project. In general, one of our recurring problems is clients with bad retry behavior. A lot of clients, when faced with an error, will simply retry. And retry. And retry. This means whenever there is a hiccup on the site, it can often turn into a retry storm from some clients who have not been programmed to back-off in the case of trouble.
 
+我们在项目的末期经历了一点小波折。一般来说，我们经常遇到的问题之一便是客户端重试行为。众多客户端在遇到问题时便不停地重试。这意味着站点一旦有点小问题，对于那些没有对故障进行[回退](https://en.wikipedia.org/wiki/Exponential_backoff)编程的一些客户端，很容易引发重试风暴。
+
 When we turned off place, the endpoints that a lot of bots were hitting started returning non-200s. Code like this wasn’t very nice. Thankfully, this was easy to block at the Fastly layer.
+
+当我们关闭 r/place 时，很多机器人端点请求时返回非 200 的响应码。像这样的[代码](https://github.com/PlaceStart/placestart/blob/7d27beacc75dcf84d634ea32a5bf0421bf2c042a/monitor.py#L114-L125)不是十分友好。值得庆幸的是，在 Fastly 层很容易拦截它们。
 
 ## Creating Something More
 ## 创造点其他东西
 
 This project could not have come together so successfully without a tremendous amount of teamwork. We’d like to thank u/gooeyblob, u/egonkasper, u/eggplanticarus, u/spladug, u/thephilthe, u/d3fect and everyone else who contributed to the r/place team, for making this April Fools’ experiment possible.
 
+如果没有庞大团队的协作，项目不会这么成功。我们很感谢 u/gooeyblob、u/egonkasper、u/eggplanticarus、u/spladug、u/thephilthe、u/d3fect 等人对 r/place 团队的贡献，让愚人节的尝试变成现实。
+
 And as we mentioned before, if you’re interested in creating unique experiences for millions of users, check out our Careers page.
+
+正如我们之前提到的，如果你对为百万用户创造特殊经历感兴趣，看一看我们的[招聘页](https://about.reddit.com/careers/)。
