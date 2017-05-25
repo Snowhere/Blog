@@ -6,15 +6,15 @@
 
 Each year for April Fools’, rather than a prank, we like to create a project that explores the way that humans interact at large scales. This year we came up with Place, a collaborative canvas on which a single user could only place a single tile every five minutes. This limitation de-emphasized the importance of the individual and necessitated the collaboration of many users in order to achieve complex creations. Each tile placed was relayed to observers in real-time.
 
-每年的愚人节，我们喜欢创建项目来探索人类大规模的交流互动，而不是做一些恶作剧。今年我们提出了 Place，这是一个协作的画板，每个用户每 5 分钟只能修改一个小块。这一限制弱化了个体的重要性，强化了大量用户协作完成复制创作的必要性。每个小块的变化实时传递给观察者。
+每年的愚人节，我们喜欢创建项目来探索人类大规模的交流互动，而不是做一些恶作剧。今年我们提出了 r/Place，这是一个协作的画板，每个用户每 5 分钟只能修改一个小块。这一限制弱化了个体的重要性，强化了大量用户协作完成复杂创作的必要性。每个小块的变化实时传递给观察者。
 
 Multiple engineering teams (frontend, backend, mobile) worked on the project and most of it was built using existing technology at Reddit. This post details how we approached building Place from a technical perspective.
 
-许多开发团队（前端、后端、移动端）协作开发这个项目，项目大部分基于 Reddit 已有的技术。这篇文章从技术角度详细描述我们如何完成 Place。
+许多开发团队（前端、后端、移动端）协作开发这个项目，项目大部分基于 Reddit 已有的技术。这篇文章从技术角度详细描述我们如何完成 r/Place。
 
 But first, if you want to check out the code for yourself, you can find it here. And if you’re interested in working on projects like Place in the future, we’re hiring!
 
-且慢。如果你想查看我们的代码，[在这里](http://github.com/reddit/reddit-plugin-place-opensource)。如果你对构建 Place 这一类项目感兴趣，[我们欢迎你](https://about.reddit.com/careers/)
+且慢。如果你想查看我们的代码，[在这里](http://github.com/reddit/reddit-plugin-place-opensource)。如果你对构建 r/Place 这一类项目感兴趣，[我们欢迎你](https://about.reddit.com/careers/)
 
 ## Requirements
 ## 需求
@@ -27,7 +27,7 @@ Defining requirements for an April Fools’ project is extremely important becau
 * All clients must be kept in sync with the same view of the current board state, otherwise users with different versions of the board will have difficulty collaborating.
 * We should support at least 100,000 simultaneous users.
 * Users can place one tile every 5 minutes, so we must support an average update rate of 100,000 tiles per 5 minutes (333 updates/s).
-* The project must be designed in such a way that it’s unlikely to affect the rest of the site’s normal function even with very high traffic to r/place.
+* The project must be designed in such a way that it’s unlikely to affect the rest of the site’s normal function even with very high traffic to r/Place.
 * The configuration must be flexible in case there are unexpected bottlenecks or failures. This means that board size and tile cooldown should be adjustable on the fly in case data sizes are too large or update rates are too high.
 * The API should be generally open and transparent so the reddit community can build on it (bots, extensions, data collection, external visualizations, etc) if they choose to do so.
 
@@ -35,7 +35,7 @@ Defining requirements for an April Fools’ project is extremely important becau
 * 所有客户端必须和当前画板状态同步，并显示一致，否则用户基于不同版本的画板难以协作。
 * 我们必须支持至少 100000 的并发同步用户。
 * 用户每 5 分钟可以修改一个小块，所以我们必须支持平均每 5 分钟 100000 个小块的更新（每秒 333 个更新）。
-* 项目的设计必须遵循这一点，即使 r/place 流量巨大，也不能影响站点其他功能。
+* 项目的设计必须遵循这一点，即使 r/Place 流量巨大，也不能影响站点其他功能。
 * 配置必须有足够弹性，应对意外的瓶颈或故障。这意味着画板的大小和小块的使用间隔可以在运行时调节，以防数据量过大或更新过于频繁。
 * API 必须开放和透明，reddit 社区如果对此有兴趣，可以在此之上构建项目（机器人、扩展、数据收集、外部可视化等等）。
 
@@ -47,7 +47,7 @@ Defining requirements for an April Fools’ project is extremely important becau
 
 The main challenge for the backend was keeping all the clients in sync with the state of the board. Our solution was to initialize the client state by having it listen for real-time tile placements immediately and then make a request for the full board. The full board in the response could be a few seconds stale as long as we also had real-time placements starting from before it was generated. When the client received the full board it replayed all the real-time placements it received while waiting. All subsequent tile placements could be drawn to the board immediately as they were received.
 
-后端最大的挑战就是保持所有客户端与画板的状态同步。我们的解决方案是初始化客户端状态时立刻实时监听小块的变化，然后请求整个画板。只要我们在生成画板的时候有实时的小块更改，那么响应返回的整个画板就会有几秒的延迟。当客户端接收到整个画板，把在等待时的小块变化在画板上重演。所有随后的小块变化都将在被接收到时画在画板上。
+后端最大的挑战就是保持所有客户端与画板状态同步。我们的解决方案是初始化客户端状态时立刻实时监听小块的变化，然后请求整个画板状态。只要我们在生成画板的时候有实时的小块更改，那么响应返回的整个画板状态就会有几秒的延迟。当客户端接收到整个画板状态，把在等待请求时的小块变化在画板上重演。之后接收到所有小块变化实时绘制在画板上。
 
 For this scheme to work we needed the request for the full state of the board to be as fast as possible. Our initial approach was to store the full board in a single row in Cassandra and each request for the full board would read that entire row. The format for each column in the row was:
 
@@ -61,7 +61,7 @@ Because the board contained 1 million tiles this meant that we had to read a row
 
 Our next approach was to store the full board in redis. We used a bitfield of 1 million 4 bit integers. Each 4 bit integer was able to encode a 4 bit color, and the x,y coordinates were determined by the offset (offset = x + 1000y) within the bitfield. We could read the entire board state by reading the entire bitfield. We were able to update individual tiles by updating the value of the bitfield at a specific offset (no need for locking or read/modify/write). We still needed to store the full details in Cassandra so that users could inspect individual tiles to see who placed them and when. We also planned on using Cassandra to restore the board in case of a redis failure. Reading the entire board from redis took less than 100ms, which was fast enough.
 
-我们下一个方案使用 redis 储存整个画板。我们使用 bitfield 处理一百万个 4 位的整型。每个 4 位的整型可以编码 4 位的颜色，横纵（x，y）坐标可以在 bitfield 里用偏移量表示（offset = x + 1000y）。我们可以通过读取整个 bitfield 来获取整个画板的状态。我们可以通过在 bitfield 中更新指定偏移量上的值，来更新单独的小块(不在需要加锁或读/改/写)。我们仍然需要在 Cassandra 中储存所有的细节，让用户可以检查单独的小块，看一看何时何人更改了它。我们也计划用 Cassandra 备份整个画板，以防 redis 失效。从 redis 中读取整个画板不超过 100ms，这已经足够快了。
+我们下一个方案使用 redis 储存整个画板。我们使用 bitfield 处理一百万个 4 位的整型。每个 4 位的整型可以编码 4 位的颜色，横纵（x，y）坐标可以在 bitfield 里用偏移量表示（offset = x + 1000y）。我们可以通过读取整个 bitfield 来获取整个画板的状态。我们可以通过在 bitfield 中更新指定偏移量上的值，来更新单独的小块(不再需要加锁或读/改/写)。我们仍然需要在 Cassandra 中储存所有的细节，让用户可以检查单独的小块，看一看何时何人更改了它。我们也计划用 Cassandra 备份整个画板，以防 redis 失效。从 redis 中读取整个画板不超过 100ms，这已经足够快了。
 
 Illustration showing how colors were stored in redis, using a 2×2 board:
 
@@ -71,11 +71,11 @@ Illustration showing how colors were stored in redis, using a 2×2 board:
 
 We were concerned about exceeding maximum read bandwidth on redis. If many clients connected or refreshed at once they would simultaneously request the full state of the board, all triggering reads from redis. Because the board was a shared global state the obvious solution was to use caching. We decided to cache at the CDN (Fastly) layer because it was simple to implement and it meant the cache was as close to clients as possible which would help response speed. Requests for the full state of the board were cached by Fastly with an expiration of 1 second. We also added the stale-while-revalidate cache control header option to prevent more requests from falling through than we wanted when the cached board expired. Fastly maintains around 33 POPs which do independent caching, so we expected to get at most 33 requests per second for the full board.
 
-我们非常关心 redis 读取最大带宽。如果很多客户端同时链接或刷新，它们会同时请求整个画板的状态，全部都触发 redis 的读取操作。因为画板是全局共享状态，显而易见的解决方案是使用缓存。我们决定在 CDN 层（Fastly）使用缓存，因为实现简单，并且缓存离客户端更近可以提高响应速度。对整个画板的请求被 Fastly 缓存下来并设置 1 秒的超时时间。我们也添加了[stale-while-revalidate](https://docs.fastly.com/guides/performance-tuning/serving-stale-content#usage)这个控制缓存的头信息，来应对画板缓存过期导致超过预期的大量请求。[Fastly 维护着大约 33 处独立缓存 POPs（接入点）](https://www.fastly.com/network-map)，所以我们预期每秒最多有 33 个针对整个画板的请求。
+我们非常关心 redis 读取最大带宽。如果很多客户端同时链接或刷新，它们会同时请求整个画板的状态，全部都触发 redis 的读取操作。因为画板是全局共享状态，显而易见的解决方案是使用缓存。我们决定在 CDN 层（Fastly）使用缓存，因为实现简单，并且缓存离客户端更近可以提高响应速度。对整个画板的请求被 Fastly 缓存下来并设置 1 秒的超时时间。我们也添加了 [stale-while-revalidate](https://docs.fastly.com/guides/performance-tuning/serving-stale-content#usage) 这个控制缓存的头信息，来应对画板缓存过期导致超过预期的大量请求。[Fastly 维护着大约 33 处独立缓存 POPs（接入点）](https://www.fastly.com/network-map)，所以我们预期每秒最多有 33 个针对整个画板的请求。
 
-We used our websocket service to publish updates to all the clients. We’ve had success using it in production for reddit live threads with over 100,000 simultaneous viewers, live PM notifications, and other features. The websocket service has also been a cornerstone of our past April Fools projects such as The Button and Robin. For r/place, clients maintained a websocket connection to receive real-time tile placement updates.
+We used our websocket service to publish updates to all the clients. We’ve had success using it in production for reddit live threads with over 100,000 simultaneous viewers, live PM notifications, and other features. The websocket service has also been a cornerstone of our past April Fools projects such as The Button and Robin. For r/Place, clients maintained a websocket connection to receive real-time tile placement updates.
 
-我们使用我们的[websocket 服务](https://github.com/reddit/reddit-service-websockets)向所有客户端推送更新。我们已经成功地在[reddit live](https://www.reddit.com/live)生产环境中应用过它，来处理超过 100000 的并发用户，比如 live PM notifications 功能或其他特性。wesocket 服务也曾是我们过去愚人节项目的基础，比如 [The Button](https://redditblog.com/2015/04/01/the-button/) 和 [Robin](https://redditblog.com/2016/04/01/Robin/) 两个项目。对于 r/place 项目，客户端维护一个 websocket 链接来接收实时的小块变化更新。
+我们使用我们的 [websocket 服务](https://github.com/reddit/reddit-service-websockets) 向所有客户端推送更新。我们已经成功地在 [reddit live](https://www.reddit.com/live) 生产环境中应用过它，来处理超过 100000 的并发用户，比如 live PM notifications 功能或其他特性。wesocket 服务也曾是我们过去愚人节项目的基础，比如 [The Button](https://redditblog.com/2015/04/01/the-button/) 和 [Robin](https://redditblog.com/2016/04/01/Robin/) 两个项目。对于 r/Place 项目，客户端维护一个 websocket 链接来接收实时的小块变化更新。
 
 ### API
 ### API
@@ -99,7 +99,7 @@ Notice that the request rate never exceeds 33/s, meaning that the caching by Fas
 
 注意，请求速率从没超过 33 个/秒，说明 Fastly 缓存非常给力，阻止了大量直接访问 reddit 应用的请求。
 
-<iframe name="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" id="wpcom-iframe-0b2c4adce942ed170612e522db909c6a-59155d496d725" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/7KAucdV4SkPiaF0dAgxYGzB7tGD4diOZ?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=4" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 When a request did hit the reddit application the read from redis was very fast.
 
@@ -136,13 +136,13 @@ Request rate and response time as measured by the reddit application:
 
 reddit 应用测量的请求速率和响应时间：
 
-<iframe name="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" id="wpcom-iframe-d8bfa352ad390d370c76999322d22890-59187944ae18c" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/XzrWkhInRthnOt6HjBIXWCMIozcjdUWP?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=2" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 We experienced a maximum tile placement rate of almost 200/s. This was below our calculated maximum rate of 333/s (average of 100,000 users placing a tile every 5 minutes).
 
 我们经历了更改小块最大速率大概 200/s。这比我们估算的最大速率 333/s 要低（平均每 5 分钟 100000 个用户更改小块）。
 
-<iframe name="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" id="wpcom-iframe-51cafa4aeb7bb8a17be4e89766152e23-59187944ae396" frameborder="0" scrolling="no" width="720" height="320" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="wpcom-protected-iframe "></iframe>
+<iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/ig6Mx5wdEmP8PtpQLADFIf3xzKIxjPNv?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=5" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
 **Get details of a single tile**
 **获取单个小块详情**
@@ -172,9 +172,9 @@ Response times for these requests were pretty fast and stable throughout the pro
 ### Websockets
 ### Websockets
 
-We don’t have isolated metrics for r/place’s effect on the websocket service, but we can estimate and subtract the baseline use from the values before the project started and after it ended.
+We don’t have isolated metrics for r/Place’s effect on the websocket service, but we can estimate and subtract the baseline use from the values before the project started and after it ended.
 
-我们并没有在 websocket 服务中为 r/place 做单独指标，但是我们可以估计并减去项目开始前后的基本使用量。
+我们并没有在 websocket 服务中为 r/Place 做单独指标，但是我们可以估计并减去项目开始前后的基本使用量。
 
 Total connections to the websocket service:
 
@@ -182,9 +182,9 @@ websocket 服务总连接数：
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/sHVdLetjYXpTj6wYEm9MJ7BbIVMT2YLn?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=12" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
-The baseline before r/place began was around 20,000 connections and it peaked at 100,000 connections, so we probably had around 80,000 users connected to r/place at its peak.
+The baseline before r/Place began was around 20,000 connections and it peaked at 100,000 connections, so we probably had around 80,000 users connected to r/Place at its peak.
 
-r/place 开始前的基本使用量大概有 20000 个连接，而峰值 100000 个链接，所以高峰期我们大概有 80000 个用户连接到 r/place。
+r/Place 开始前的基本使用量大概有 20000 个连接，而峰值 100000 个链接，所以高峰期我们大概有 80000 个用户连接到 r/Place。
 
 Websocket service bandwidth:
 
@@ -192,20 +192,20 @@ Websocket 服务带宽：
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/0NqYDPULvSli579TsulcvT3MsTzodgqX?from=1490976000000&amp;to=1491242400000&amp;theme=light&amp;panelId=13" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
-At the peak of r/place the websocket service was transmitting over 4 gbps (150 Mbps per instance and 24 instances).
+At the peak of r/Place the websocket service was transmitting over 4 gbps (150 Mbps per instance and 24 instances).
 
-高峰期 r/place 的 websocket 服务吞吐量超过 4gbps（24个实例，每个 150 Mbps）
+高峰期 r/Place 的 websocket 服务吞吐量超过 4gbps（24个实例，每个 150 Mbps）
 
 ## Frontend: Web and Mobile Clients
 ## 前端：Web和移动端
 
 Building the frontend for Place involved many of the challenges for cross-platform app development. We wanted Place to be a seamless experience on all of our major platforms including desktop web, mobile web, iOS and Android.
 
-构建 r/place 的前端工程涉及到了跨平台开发的众多挑战。我们期望 r/place 在我们所有主流平台上拥有无缝体验，包括桌面web、移动web、iOS 和 Android。
+构建 r/Place 的前端工程涉及到了跨平台开发的众多挑战。我们期望 r/Place 在我们所有主流平台上拥有无缝体验，包括桌面web、移动web、iOS 和 Android。
 
 The UI in place needed to do three important things:
 
-r/place 的 UI 需要做三件很重要的事：
+r/Place 的 UI 需要做三件很重要的事：
 
 1. Display the state of the board in real time
 2. Facilitate user interaction with the board
@@ -216,7 +216,7 @@ r/place 的 UI 需要做三件很重要的事：
 2. 让用户和画板交互方便容易
 3. 在我们所有平台上正常运行，包括移动端 app。
 
-The main focus of the UI was the canvas, and the Canvas API was a perfect fit for it. We used a single 1000 x 1000 <canvas> element, drawing each tile as a single pixel.
+The main focus of the UI was the canvas, and the Canvas API was a perfect fit for it. We used a single 1000 x 1000 `<canvas>` element, drawing each tile as a single pixel.
 
 UI 的主要焦点集中在了 canvas，并且 [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) 完全能胜任要求。我们使用一个 1000 x 1000 的 `<canvas>` 元素，把每个小块当做一个像素进行绘制。
 
@@ -225,15 +225,16 @@ UI 的主要焦点集中在了 canvas，并且 [Canvas API](https://developer.mo
 
 The canvas needed to represent the state of the board in real time. We needed to draw the state of the entire board when the page loaded, and draw updates to the board state that came in over websockets. There are generally three ways to go about updating a canvas element using the CanvasRenderingContext2D interface:
 
-canvas 需要实时展示整个画板的状态。我们需要在页面载入的时候绘制整个画板的状态，然后更新通过 websocket 传输过来的画板状态。通过[CanvasRenderingContext2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D)接口，有三种方式更新 canvas 元素。
+canvas 需要实时展示整个画板的状态。我们需要在页面载入的时候绘制整个画板的状态，然后更新通过 websocket 传输过来的画板状态。通过 [CanvasRenderingContext2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) 接口，有三种方式更新 canvas 元素。
 
 1. Drawing an existing image onto the canvas using drawImage()
 2. Draw shapes with the various shape drawing methods, e.g. using fillRect() to fill a rectangle with a color
-3. Construct an ImageData object and paint it into the canvas using putImageData()
+3. Construct an ImageData object and paint it into the canvas using putImageData() 
 
-1. 用[drawImage()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage)将一个存在的图像绘制进 canvas。
-2. 通过众多图形绘制的方法来绘制各种形状，比如用[fillRect()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect)绘制一个有颜色的矩形。
-3. 构造一个 ImageData 对象，然后用[putImageData()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/putImageData)方法将它绘制进 canvas。
+
+1. 用 [drawImage()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage) 将一个存在的图像绘制进 canvas。
+2. 通过众多图形绘制的方法来绘制各种形状，比如用 [fillRect()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect) 绘制一个有颜色的矩形。
+3. 构造一个 ImageData 对象，然后用 [putImageData()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/putImageData) 方法将它绘制进 canvas。
 
 The first option wouldn’t work for us since since we didn’t already have the board in image form, leaving options 2 and 3. Updating individual tiles using fillRect() was very straightforward: when a websocket update comes in, just draw a 1 x 1 rectangle at the (x, y) position. This worked OK in general, but wasn’t great for drawing the initial state of the board. The putImageData() method was a much better fit for this, since we were able to define the color of each pixel in a single ImageData object and draw the whole canvas at once.
 
@@ -244,7 +245,7 @@ The first option wouldn’t work for us since since we didn’t already have the
 
 Using putImageData() requires defining the board state as a Uint8ClampedArray, where each value is an 8-bit unsigned integer clamped to 0-255. Each value represents a single color channel (red, green, blue, and alpha), and each pixel requires 4 items in the array. A 2 x 2 canvas would require a 16-byte array, with the first 4 bytes representing the top left pixel on the canvas, and the last 4 bytes representing the bottom right pixel.
 
-我们使用`putImageData()`方法，前提需要将画板状态定义成[Uint8ClampedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)形式，每个值用 8 位无符号整型表示 0-255 之间的数字。每一个值表示单个颜色通道（红、绿、蓝、alpha），每个像素需要 4 个值组成的数组。一个 2 x 2 的 canvas 需要一个 16 字节的数组，前 4 字节表示 canvas 左上角的像素，最后 4 字节表示右下角像素。
+我们使用`putImageData()`方法，前提需要将画板状态定义成 [Uint8ClampedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray) 形式，每个值用 8 位无符号整型表示 0-255 之间的数字。每一个值表示单个颜色通道（红、绿、蓝、alpha），每个像素需要 4 个值组成的数组。一个 2 x 2 的 canvas 需要一个 16 字节的数组，前 4 字节表示 canvas 左上角的像素，最后 4 字节表示右下角像素。
 
 Illustration showing how canvas pixels relate to their Uint8ClampedArray representation:
 
@@ -254,7 +255,7 @@ Illustration showing how canvas pixels relate to their Uint8ClampedArray represe
 
 For place’s canvas, the array is 4 million bytes long, or 4MB.
 
-对于 r/place 的 canvas，数组大小是四百万字节，也就是 4MB。
+对于 r/Place 的 canvas，数组大小是四百万字节，也就是 4MB。
 
 On the backend, the board state is stored as a 4-bit bitfield. Each color is represented by a number between 0 and 15, allowing us to pack 2 pixels of color information into each byte. In order to use this on the client, we needed to do 3 things:
 
@@ -270,11 +271,11 @@ On the backend, the board state is stored as a 4-bit bitfield. Each color is rep
 
 To pull down the binary data, we used the Fetch API in browsers that support it. For those that don’t, we fell back to a normal XMLHttpRequest with responseType set to “arraybuffer”.
 
-为了拉取二进制数据，我们在支持[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)的浏览器中使用这个 API。在不支持的浏览器中，我们使用[XMLHttpRequest](https://www.youtube.com/watch?v=Pubd-spHN-0)，并把 responseType 设置为 `“arraybuffer”`。
+为了拉取二进制数据，我们在支持 [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) 的浏览器中使用此 API。在不支持的浏览器中，我们使用 [XMLHttpRequest](https://www.youtube.com/watch?v=Pubd-spHN-0)，并把 responseType 设置为 `“arraybuffer”`。
 
 The binary data we receive from the API contains 2 pixels of color data in each byte. The smallest TypedArray constructors we have allow us to work with binary data in 1-byte units. This is inconvenient for use on the client so the first thing we do is to “unpack” that data so it’s easier to work with. This process is straightforward, we just iterate over the packed data and split out the high and low order bits, copying them into separate bytes of another array. Finally, the 4-bit color values needed to be mapped to useable 32-bit colors.
 
-我们从 API 接收到的二进制数据中，每个字节有 2 像素的颜色数据。[TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)的构造函数允许操作的最小单位是 1 字节。这在客户端上并不方便使用，所以我们做的第一件事就是“解压”，让数据更容易处理。方式很简洁，我们遍历打包的数据并按照高位低位分割比特位，将它们复制到另一个数组的不同字节中。最后，4 位的颜色值映射成可用的 32 位颜色。
+我们从 API 接收到的二进制数据中，每个字节有 2 像素的颜色数据。[TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) 的构造函数允许操作的最小单位是 1 字节。这在客户端上并不方便使用，所以我们做的第一件事就是“解压”，让数据更容易处理。方式很简洁，我们遍历打包的数据并按照高位低位分割比特位，将它们复制到另一个数组的不同字节中。最后，4 位的颜色值映射成可用的 32 位颜色。
 
 <table>
    <tr>
@@ -388,13 +389,13 @@ Equally importantly, the canvas needed to facilitate user interaction. The core 
 **Camera zoom**
 **视角缩放**
 
-Users were only allowed to draw tiles once every 5 minutes, so misplaced tiles would be especially painful. We had to zoom in on the canvas enough that each tile would be a fairly large target for drawing. This was especially important for touch devices. We used a 40x scale for this, giving each tile a 40 x 40 target area. To apply the zoom, we wrapped the <canvas> element in a <div> that we applied a CSS transform: scale(40, 40) to. This worked great for placing tiles, but wasn’t ideal for viewing the board (especially on small screens), so we made this toggleable between two zoom levels: 40x for drawing, 4x for viewing.
+Users were only allowed to draw tiles once every 5 minutes, so misplaced tiles would be especially painful. We had to zoom in on the canvas enough that each tile would be a fairly large target for drawing. This was especially important for touch devices. We used a 40x scale for this, giving each tile a 40 x 40 target area. To apply the zoom, we wrapped the `<canvas>` element in a `<div>` that we applied a CSS transform: scale(40, 40) to. This worked great for placing tiles, but wasn’t ideal for viewing the board (especially on small screens), so we made this toggleable between two zoom levels: 40x for drawing, 4x for viewing.
 
 用户只能每五分钟绘制一次小块，所以选错小块非常令人不爽。我们需要把 canvas 放大到每个小块都成为一个相当大的目标。这在触摸设备上尤其重要。我们使用 40x 的放大比例，给每个小块 40 x 40 的目标区域。为了应用缩放，我们把`<canvas>`元素包裹进一个`<div>`，并给 div 设置 CSS 属性`transform: scale(40, 40)`。这样一来，小块的布置变得非常方便，但整个画板的显示并不理想（尤其是在小屏幕上），所以我们混合使用两种缩放级别：40x 用于绘制，4x 用于显示。
 
 Using CSS to scale up the canvas made it easy to keep the code that handled drawing the board separate from the code that handled scaling, but unfortunately this approach had some issues. When scaling up an image (or canvas), browsers default to algorithms that apply “smoothing” to the image. This works OK in some cases, but it completely ruins pixel art by turning it into a blurry mess. The good news it that there’s another CSS, image-rendering,  which allows us to ask browsers to not do that. The bad news is that not all browsers fully support that property.
 
-使用 CSS 来放大 canvas 使得绘制画板的代码和缩放代码相分离，但不巧这种方式也带来一些问题。当放大一个图片（或 canvas），浏览器默认使用“平滑”算法处理图片。这适用于一些场景，但也彻底毁灭了像素艺术并把它变得混乱模糊。好消息是有另一个 CSS [image-rendering](https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering)允许我们命令浏览器不这么做。坏消息并不是所有浏览器完全支持这个属性。
+使用 CSS 来放大 canvas 使得绘制画板的代码和缩放代码相分离，但不巧这种方式也带来一些问题。当放大一个图片（或 canvas），浏览器默认使用“平滑”算法处理图片。这适用于一些场景，但也彻底毁灭了像素艺术并把它变得混乱模糊。好消息是有另一个 CSS [image-rendering](https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering) 允许我们命令浏览器不这么做。坏消息并不是所有浏览器完全支持这个属性。
 
 *Bad news blurs:*
 *坏消息，变得模糊：*
@@ -403,16 +404,16 @@ Using CSS to scale up the canvas made it easy to keep the code that handled draw
 
 We needed another way to scale up the canvas for these browsers. I mentioned earlier on that there are generally three ways to go about drawing to a canvas. The first method, drawImage(), supports drawing an existing image or another canvas into a canvas. It also supports scaling that image up or down when drawing it, and though upscaling has the same blurring issue by default that upscaling in CSS has, this can be disabled in a more cross-browser compatible way by turning off the CanvasRenderingContext2D.imageSmoothingEnabled flag.
 
-我们需要在那些浏览器上用其他方式放大 canvas。我之前提到过绘制 canvas 有三种方式。其中第一个是`drawImage()`方法，它可以把一个存在的图像或另一个 canvas 绘制进一个 canvas。它也支持在绘制的时候放大或缩小图像，虽然放大的时候会和在 CSS 中放大一样出现模糊问题，但是可以通过关闭[CanvasRenderingContext2D.imageSmoothingEnabled](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled)标识，这种跨浏览器兼容性的方式来解决。
+我们需要在那些浏览器上用其他方式放大 canvas。我之前提到过绘制 canvas 有三种方式。其中第一个是`drawImage()`方法，它可以把一个存在的图像或另一个 canvas 绘制进一个 canvas。它也支持在绘制的时候放大或缩小图像，虽然放大的时候会和在 CSS 中放大一样出现模糊问题，但是可以通过关闭 [CanvasRenderingContext2D.imageSmoothingEnabled](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled) 标识，这种跨浏览器兼容性的方式来解决。
 
-So the fix for our blurry canvas problem was to add another step to the rendering process. We introduced another <canvas> element, this one sized and positioned to fit across the container element (i.e. the viewable area of the board). After redrawing the canvas, we use drawImage() to draw the visible portion of it into this new display canvas at the proper scale. Since this extra step adds a little overhead to the rendering process, we only did this for browsers that don’t support the CSS image-rendering property.
+So the fix for our blurry canvas problem was to add another step to the rendering process. We introduced another `<canvas>` element, this one sized and positioned to fit across the container element (i.e. the viewable area of the board). After redrawing the canvas, we use drawImage() to draw the visible portion of it into this new display canvas at the proper scale. Since this extra step adds a little overhead to the rendering process, we only did this for browsers that don’t support the CSS image-rendering property.
 
 所以修复模糊 canvas 问题的答案就是在渲染过程中增加额外一步。我们引入了另一个`<canvas>`元素，它大小位置适应于容器元素（比如画板的可见区域）。每次重新绘制 canvas 后，我们使用`drawImage()`把它的一部分绘制到新的、有合适缩放比例的 canvas。因为额外的步骤给渲染过程带来微小的开销，所以我们只在不支持`image-rendering`CSS 属性的浏览器上这样做。
 
 **Camera pan**
 **视角平移**
 
-The canvas is a fairly big image, especially when zoomed in, so we needed to provide ways of navigating it. To adjust the position of the canvas on the screen, we took a similar approach to what we did with scaling: we wrapped the <canvas> element in another <div> that we applied CSS transform: translate(x, y) to. Using a separate div made it easy to control the order that these transforms were applied to the canvas, which was important for preventing the camera from moving when toggling the zoom level.
+The canvas is a fairly big image, especially when zoomed in, so we needed to provide ways of navigating it. To adjust the position of the canvas on the screen, we took a similar approach to what we did with scaling: we wrapped the `<canvas>` element in another `<div>` that we applied CSS transform: translate(x, y) to. Using a separate div made it easy to control the order that these transforms were applied to the canvas, which was important for preventing the camera from moving when toggling the zoom level.
 
 canvas 是一个相当大的图像，尤其是放大之后，所以我们需要提供一些方式操作它。为了调整 canvas 在屏幕上的位置，我们采取和解决缩放问题一样的方式：我们将`<canvas>`包裹进另一个`<div>`，并在它上面应用 CSS 属性`transform: translate(x, y)`。使用单独的 div 使得应用在 canvas 上的变换操作更容易控制，这对于防止视角在缩放时产生移动非常重要。
 
@@ -502,9 +503,9 @@ Right?
 
 真的吗？
 
-The launch went smoothly. Over the course of the morning, as the popularity of r/place went up, so did the number of connections and traffic to our websockets instances:
+The launch went smoothly. Over the course of the morning, as the popularity of r/Place went up, so did the number of connections and traffic to our websockets instances:
 
-上线过程很顺利。经历了一个黎明，r/place 人气迅速上升，我们 websocket 实例的链接数量和通信量也随之增加：
+上线过程很顺利。经历了一个黎明，r/Place 人气迅速上升，我们 websocket 实例的链接数量和通信量也随之增加：
 
 <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/6ZXkSbIFkCFnnTG3CgUCs5stiQymHurZ?from=1490971799000&amp;to=1490988601000&amp;theme=light&amp;panelId=1" width="720" height="320" frameborder="0" class="" scrolling="no" allowfullscreen="" resize="0" replace_attributes="1"></iframe>
 
@@ -518,7 +519,7 @@ No big deal, and exactly what we expected. Strangely enough, we thought we were 
 
 Those are 8-core instances, so it was clear they were reaching their limits. Why were these boxes suddenly behaving so differently? We chalked it up to place being a much different workload type than they’d seen before. After all, these were lots of very tiny messages; we typically send out larger messages like live thread updates and notifications. We also usually don’t have that many people all receiving the same message, so a lot of things were different.
 
-服务器实例是 8 核的，所以很明显它们快到上限了。为什么它们突然表现的如此不同？我们将原因归结于 r/place 的工作负载类型不同于以往项目。毕竟这里有很多微小的消息，我们一般发送大型消息，比如直播帖子的更新和通知。我们也没有处理过大量用户接收相同消息的情况，所以有很多地方都不同。
+服务器实例是 8 核的，所以很明显它们快到上限了。为什么它们突然表现的如此不同？我们将原因归结于 r/Place 的工作负载类型不同于以往项目。毕竟这里有很多微小的消息，我们一般发送大型消息，比如直播帖子的更新和通知。我们也没有处理过大量用户接收相同消息的情况，所以有很多地方都不同。
 
 Still, no big deal, we figured we’d just scale it and call it a day. The on-call person doubled the number of instances and went to a doctor’s appointment, not a care in the world.
 
@@ -536,7 +537,7 @@ That graph may seem unassuming if it weren’t for the fact that it was for our 
 
 After a lot of investigating, hand-wringing, and instance upgrading, we narrowed down the problem to the management interface. It had always seemed kind of slow, and we realized that the rabbit diamond collector we use for getting our stats was querying it regularly. We believe that the additional exchanges created when launching new websockets instances, combined with the throughput of messages we were receiving on those exchanges, caused rabbit to buckle while trying to do bookkeeping to do queries for the admin interface. So we turned it off, and things got better.
 
-经过了各种调查、束手无策和升级实例，我们把问题锁定在管理接口。它总是有点慢，随后我们意识到，我们为了获取项目状态用[rabbit diamond collector](https://github.com/python-diamond/Diamond/blob/master/src/collectors/rabbitmq/rabbitmq.py)会频繁查询接口。我们认为创建新的 websocket 实例时创建了额外的 exchange （RabbitMq 中概念），再加上这些 exchange 的消息吞吐量，导致了管理界面在查询和记录时，rabbit 卡住了。我们把它关掉，情况好多了。
+经过了各种调查、束手无策和升级实例，我们把问题锁定在管理接口。它总是有点慢，随后我们意识到，我们为了获取项目状态用 [rabbit diamond collector](https://github.com/python-diamond/Diamond/blob/master/src/collectors/rabbitmq/rabbitmq.py) 会频繁查询接口。我们认为创建新的 websocket 实例时创建了额外的 exchange （RabbitMq 中概念），再加上这些 exchange 的消息吞吐量，导致了管理界面在查询和记录时，rabbit 卡住了。我们把它关掉，情况好多了。
 
 We don’t like being in the dark, so we whipped up an artisanal, hand-crafted monitoring script to get us through the project:
 
@@ -558,11 +559,11 @@ So unfortunately, despite what messages like this would have you believe:
 
 所以不幸的是，你当时坚信如下的信息：
 
-[10K upvotes to reduce the cooldown even further! *ADMIN APPROVED*](https://www.reddit.com/r/place/comments/62xms3/10k_upvotes_to_reduce_the_cooldown_even_further/?ref=share&ref_source=embed&utm_content=title&utm_medium=post_embed&utm_name=8f15a84993df435b970ed0f5e2bf05d8&utm_source=embedly&utm_term=62xms3)
+[10K upvotes to reduce the cooldown even further! *ADMIN APPROVED*](https://www.reddit.com/r/Place/comments/62xms3/10k_upvotes_to_reduce_the_cooldown_even_further/?ref=share&ref_source=embed&utm_content=title&utm_medium=post_embed&utm_name=8f15a84993df435b970ed0f5e2bf05d8&utm_source=embedly&utm_term=62xms3)
 
-The reasons for the adjustments were entirely technical. Although it was cool to watch r/place/new after making the change:
+The reasons for the adjustments were entirely technical. Although it was cool to watch r/Place/new after making the change:
 
-尽管调整完看 r/place/new 版块很有意思，但调整完全是技术原因：
+尽管调整完看 r/Place/new 版块很有意思，但调整完全出于技术原因：
 
 ![](https://redditupvoted.files.wordpress.com/2017/04/place-page.png?w=720&h=475)
 
@@ -579,15 +580,15 @@ We ran into one more slight hiccup at the end of the project. In general, one of
 
 When we turned off place, the endpoints that a lot of bots were hitting started returning non-200s. Code like this wasn’t very nice. Thankfully, this was easy to block at the Fastly layer.
 
-当我们关闭 r/place 时，很多机器人端点请求时返回非 200 的响应码。像这样的[代码](https://github.com/PlaceStart/placestart/blob/7d27beacc75dcf84d634ea32a5bf0421bf2c042a/monitor.py#L114-L125)不是十分友好。值得庆幸的是，在 Fastly 层很容易拦截它们。
+当我们关闭 r/Place 时，很多机器人端点请求时返回非 200 的响应码。像这样的[代码](https://github.com/PlaceStart/placestart/blob/7d27beacc75dcf84d634ea32a5bf0421bf2c042a/monitor.py#L114-L125)不是十分友好。值得庆幸的是，在 Fastly 层很容易拦截它们。
 
 ## Creating Something More
 ## 创造点其他东西
 
-This project could not have come together so successfully without a tremendous amount of teamwork. We’d like to thank u/gooeyblob, u/egonkasper, u/eggplanticarus, u/spladug, u/thephilthe, u/d3fect and everyone else who contributed to the r/place team, for making this April Fools’ experiment possible.
+This project could not have come together so successfully without a tremendous amount of teamwork. We’d like to thank u/gooeyblob, u/egonkasper, u/eggplanticarus, u/spladug, u/thephilthe, u/d3fect and everyone else who contributed to the r/Place team, for making this April Fools’ experiment possible.
 
-如果没有庞大团队的协作，项目不会这么成功。我们很感谢 u/gooeyblob、u/egonkasper、u/eggplanticarus、u/spladug、u/thephilthe、u/d3fect 等人对 r/place 团队的贡献，让愚人节的尝试变成现实。
+如果没有庞大团队的协作，项目不会这么成功。我们很感谢 u/gooeyblob、u/egonkasper、u/eggplanticarus、u/spladug、u/thephilthe、u/d3fect 等人对 r/Place 团队的贡献，让愚人节的尝试变成现实。
 
 And as we mentioned before, if you’re interested in creating unique experiences for millions of users, check out our Careers page.
 
-正如我们之前提到的，如果你对为百万用户创造特殊经历感兴趣，看一看我们的[招聘页](https://about.reddit.com/careers/)。
+正如我们之前提到的，如果你对为百万用户创造特殊体验感兴趣，看一看我们的[招聘页](https://about.reddit.com/careers/)。
