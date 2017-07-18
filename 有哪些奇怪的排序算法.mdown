@@ -1,0 +1,190 @@
+#有哪些奇怪的排序算法
+原文[https://www.quora.com/What-is-the-strangest-sorting-algorithm](https://www.quora.com/What-is-the-strangest-sorting-algorithm#)
+（array和list统一翻译成'数组'了）
+
+## Slowsort 
+## 慢排序
+
+It is a sorting algorithm that is of humorous nature and not useful. It's based on the principle of multiply and surrender, a tongue-in-cheek joke of divide and conquer. It was published in 1986 by Andrei Broder and Jorge Stolfi in their paper Pessimal Algorithms and Simplexity Analysis. Here is the pseudocode:
+
+这是一个非常幽默却没什么用的排序算法。它基于“合而【】”的原则（分而治之的反义词，文字游戏），它由 Andrei Broder 和 Jorge Stolfi 于 1986 年发表在论文《Pessimal Algorithms and Simplexity Analysis（最坏排序和简单性分析）》中，伪代码如下：
+
+```
+function slowSort(array,start,end){
+    if( start >= end ) return; //已经不能再慢了
+    middle = floor( (start+end)/2 );
+    
+    //递归
+    slowSort(array,start,middle);
+    slowSort(array,middle+1,end);
+    
+    //比较得出最大值放在队尾
+    if( array[end] < array[middle] )
+        swap array[end] and array[middle]
+    
+    //去掉最大值之后再排序
+    slowsort(array,start,end-1);
+}
+```
+
+* Sort the first half recursively
+* Sort the second half recursively
+* Find the maximum of the whole array by comparing the middle with the end, placing maximum at the end of the list.
+* Recursively sort the entire list without the maximum.
+
+* 递归排序好前一半
+* 递归排序好后一半
+* 比较中间和队尾的值（前一半的最大值和后一半的最大值），得到整个数组的最大值，将最大值放到队尾。
+* 去掉最大值，递归整个数组
+
+## Sleep sort 
+## 睡眠排序
+
+It is another joke algorithm that that became popular on the 4chan board /prog/ . Created by some anonymous programmer it basically works like this:
+
+另一个搞笑算法流传于 4chan 的 /prog/ 板块。无从查证具体出自哪位程序员，伪代码如下
+ 
+```
+procedure printNumber(n)
+    sleep n seconds
+    print n
+end
+ 
+for arg in args
+    run printNumber(arg) in background
+end
+wait for all processes to finish
+```
+
+The algorithm basically works like this:
+For every element x in an array, start a new program that:
+* Sleeps for x seconds
+* Prints out x
+The clock starts on all the elements at the same time.
+It works for any array that has non-negative numbers.
+
+算法运行如下：
+对于数组中每个元素 x，开启一个新程序：
+* 休眠 x 秒
+* 打印 x
+所有元素同时开始计时。
+只适用于非负数字。
+
+## Stack Sort
+## Stack 排序
+
+It searches for all the posts on StackOverflow with ‘sort a list’ in their title, extracts code snippets from them and then runs these code snippets until the list is sorted, which I think it verifies by actually traversing the list. It was posted on xkcd and an implementation can be found at stacksort .
+
+从 StackOverflow 上搜索标题含有“数组排序”的帖子，复制粘贴并运行其中的代码片段，直到数组排好序。我认为这种排序算法事实上验证了整个数组。它被发表在[xkcd网站](https://xkcd.com/)上，这里有一个在线版的具体实现[stacksort](https://gkoberger.github.io/stacksort/)(译者:佩服.jpg)
+
+## Random Sort
+## 随机排序
+
+It is as follows:
+Create and compile a random program.
+Run the random program on the input array.
+If the program produces sorted output, you are done.
+Else repeat from the beginning.
+
+运行如下：
+创建一个随机程序。
+传入数组并运行随机程序。
+如果程序的输出恰好是排好序的，完成。
+否则重复上面过程。
+
+## Solar Bitflip Sort 
+## 太阳能比特翻转排序
+
+The alpha particles from the sun flip a few bits in the memory once a while, so this algorithm basically hopes that this flipping can cause the elements to be sorted. The way it works is:
+
+太阳发出的阿尔法粒子偶尔能够翻转内存中的比特位，所以这种算法主要基于希望这种翻转能够使元素正确排序。运行方式如下：
+
+>Check if the array is sorted.
+If the array is sorted, return the array.
+If the array is not sorted, wait for 10 seconds and pray for having bit flips caused by solar radiation, just in the correct order then repeat from step 1.
+
+>检查数组是否排好序。
+如果排好序，返回这个数组。
+如果没有，等 10 秒钟并祈祷太阳辐射使得比特位翻转，而且使得数组排好序，重复第一步。
+
+## Spaghetti Sort
+## 意大利面排序
+
+It is a linear time algorithm which sorts a sequence of items requiring O(n) stack space in a stable manner. It requires a parallel processor. For simplicity, assume we are sorting a list of natural numbers. The sorting method is illustrated using uncooked rods of spaghetti.
+
+这是一种线性时间算法，是需要 O(n) 空间的稳定排序。它需要并行处理器。简单来说，假设我们排序一列自然数。排序方法需要使用很多根生的意大利面条。
+
+>Convert the data to positive real values scaled to the length of a piece of spaghetti.
+Write each value onto a piece of spaghetti (a spaghetto) and break the spaghetti to the length equal to the scaled values.
+Hold all resulting spaghetti in a bundle and slam the end on a flat surface.
+Take the spaghetto which sticks out i.e. the longest one, read the value, convert back to the original value and write this down.
+Repeat until all spaghetti are processed.
+
+>将数据按比例转换成表示意大利面条长度的数字。
+在每根面条上写下数字，并将面条折断成数字表示的长度。
+把所有面条攥成一捆并把底部在平面上敲击。
+取出最突出的一根面条，也就是最长的一根，获取上面的数字，转换成原始的数据并记录下来。
+重复这个过程直到处理完所有意大利面。
+
+## Stalin Sort
+## 指鹿为马算法
+
+This works in O(n) time complexity.
+Gather up the comrades and show them the list.
+Ask the comrades to raise their hands if they believe the list is sorted.
+Select any comrade who did not raise his hand, and executes him as a traitor.
+Repeat steps 2 and 3 until everyone agrees that the list is sorted.
+
+这个算法时间复杂度 O(n)。
+聚集一帮人并向他们展示数组。
+询问他们这个数组是否是排序好的。
+干掉其中认为没有排序好的人。
+重复几次，直到所有人同意这个数组是排序好的。
+
+## Bogosort
+## Bogo 排序
+
+ I have absolutely nothing to say about this sort.
+Randomly, shuffle the array.
+Check if it’s in order.
+If it’s not in order then reshuffle. Repeat until the array is in order.
+
+我对这个排序算法无话可说。
+随机打乱数组。
+检查是否排好序。
+如果没有，再次打乱。重复过程直到数组排好序
+
+## Quantum Bogosort 
+## 量子 Bogo 排序
+
+Works in O(N) time. This algorithm relies on the accuracy of the many worlds theory of quantum mechanics. Quantum Bogosort is as follows:
+Randomly shuffle the elements of the list.
+If the list is not sorted, destroy the universe. 
+Any surviving universes will then have the sorted version of the list.
+
+时间复杂度 O(n)。这种算法基于量子力学的平行宇宙理论的可靠性。描述如下：
+随机打乱数组元素。
+如果数组没有排好序，摧毁当前宇宙。
+存活的宇宙会得到排序好的数组。（平行宇宙都会打乱数组，但结果不同）
+
+## Intelligent Design Sort
+## 
+
+Whatever state your list is in, it’s already sorted meaning: The probability of the original input list being in the exact order it’s in is 1/(n!). There is such a small likelihood of this that it’s clearly absurd to say that this happened by chance, so it must have been consciously put in that order my an intelligent sorted. Therefore it’s safe to assume that it’s already optimally sorted in some way that transcends our naive mortal understanding of ‘ascending order’. Any attempt io change that orders to conform to our own preconceptions would actually make it less sorted.
+
+无论你的数组状态时什么样的，它排好序意味着：
+
+## The Internet Sort
+## 互联网排序
+
+It’s just a bubble sort, but perform every comparison by searching the internet. For example, “Which is greater – 0.211 or 0.75?”.
+
+这是一种冒泡排序，但每次比较都依靠互联网的搜索。比如“ 0.211 和 0.75 哪个大？”
+
+## Committee Sort
+## 委员会排序
+
+To sort a list comprised of N natural numbers, start by printing out N copies of the whole list on paper.
+Now form N committees from any poor souls who happen to be milling around the office. The number of people on each committe should correspond to their particular value in the list.
+Each committee is given their sheet of paper and told to, through a meeting or some other means, decide where in the sorted list their number should fall.
+The list will be naturally sorted by the order that the committees return with their resu
