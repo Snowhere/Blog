@@ -1,41 +1,7 @@
 #有哪些奇怪的排序算法
 原文[https://www.quora.com/What-is-the-strangest-sorting-algorithm](https://www.quora.com/What-is-the-strangest-sorting-algorithm#)
-（array和list统一翻译成'数组'了）
 
-## Slowsort 
-## 慢排序
-
-It is a sorting algorithm that is of humorous nature and not useful. It's based on the principle of multiply and surrender, a tongue-in-cheek joke of divide and conquer. It was published in 1986 by Andrei Broder and Jorge Stolfi in their paper Pessimal Algorithms and Simplexity Analysis. Here is the pseudocode:
-
-这是一个非常幽默却没什么用的排序算法。它基于“合而【】”的原则（分而治之的反义词，文字游戏），它由 Andrei Broder 和 Jorge Stolfi 于 1986 年发表在论文《Pessimal Algorithms and Simplexity Analysis（最坏排序和简单性分析）》中，伪代码如下：
-
-```
-function slowSort(array,start,end){
-    if( start >= end ) return; //已经不能再慢了
-    middle = floor( (start+end)/2 );
-    
-    //递归
-    slowSort(array,start,middle);
-    slowSort(array,middle+1,end);
-    
-    //比较得出最大值放在队尾
-    if( array[end] < array[middle] )
-        swap array[end] and array[middle]
-    
-    //去掉最大值之后再排序
-    slowsort(array,start,end-1);
-}
-```
-
-* Sort the first half recursively
-* Sort the second half recursively
-* Find the maximum of the whole array by comparing the middle with the end, placing maximum at the end of the list.
-* Recursively sort the entire list without the maximum.
-
-* 递归排序好前一半
-* 递归排序好后一半
-* 比较中间和队尾的值（前一半的最大值和后一半的最大值），得到整个数组的最大值，将最大值放到队尾。
-* 去掉最大值，递归整个数组
+>下面是[Nipun Ramakrishnan](https://www.quora.com/profile/Nipun-Ramakrishnan)的回答
 
 ## Sleep sort 
 ## 睡眠排序
@@ -70,12 +36,119 @@ It works for any array that has non-negative numbers.
 所有元素同时开始计时。
 只适用于非负数字。
 
+>下面是[Ryan Turner](https://www.quora.com/profile/Ryan-Turner-46)的回答
+
+## Bogosort
+## Bogo 排序（猴子排序）
+
+Bogosort. It even has a strange name! It's literally classified as a Stupid sort.
+Basically, you randomly put each element in a random place.
+If it isn't sorted, you randomly put each element in a random place.
+If it isn't sorted after that… you get the picture. Here's an example:
+4, 7, 9, 6, 5, 5, 2, 1 (unsorted)
+2, 5, 4, 7, 5, 9, 6, 1 (randomly placed)
+1, 4, 5, 6, 9, 7, 5, 2 (randomly placed again)
+1, 2, 4, 5, 5, 6, 7, 9 (wow that was lucky)
+Basically you keep randomly shuffling until you get a sorted array.
+It's easily one of the least efficient sorting algorithms, unless you are really, really lucky, and it has the horrific expected run time of O(n!), but tends to O(∞) the more elements you add.
+
+Bogo 排序，名字很奇怪。它是[愚蠢排序](https://en.m.wikipedia.org/wiki/Stupid_sort)中的一员。
+主要来说，算法就是你把元素随机排列。
+如果没有排好序，再次把元素随机排列。
+如果还没有排好序，你懂的。下面是个例子：
+4, 7, 9, 6, 5, 5, 2, 1 (未排序)
+2, 5, 4, 7, 5, 9, 6, 1 (随机排列)
+1, 4, 5, 6, 9, 7, 5, 2 (再次随机排列)
+1, 2, 4, 5, 5, 6, 7, 9 (天呐，真幸运)
+你不停地随机排序，直到得到一个有序数组。
+毫无疑问这是最低效的排序算法之一，除非你非常非常幸运。它时间复杂度是令人窒息的 O(n!)，而且随着元素数量增加，很有 O(∞) 的趋势。
+
+
+>下面是[Tyler Schroeder](https://www.quora.com/profile/Tyler-Schroeder-11)的回答
+
+## Quantum Bogosort 
+## 量子 Bogo 排序
+
+I'm quite a fan of quantum bogosort, myself:
+
+* Randomly shuffle the elements of the list.
+* If the list is not sorted, destroy the universe (this step is left as an activity for the reader).
+* Any surviving universes will then have the sorted version of the list.
+Works in O(N) time!*
+*note: this figure relies on the accuracy of the many worlds theory of quantum mechanics. if the many worlds theory of quantum mechanics is not accurate, your algorithm is unlikely to work in O(N) time.
+
+我是量子 Bogo 排序的粉丝：
+
+* 随机排列数组中元素。
+* 如果数组没有排好序，摧毁当前宇宙（这一步就拜托你了）
+* 存活的宇宙将会有排好序的数组。
+时间复杂度仅仅 O(n) 
+注意：这种算法依赖于量子力学的平行宇宙理论的可靠性。如果量子力学的平行宇宙理论不准确，这个算法时间复杂度达不到 O(n) 
+
+>下面是[Yi Wang](https://www.quora.com/profile/Yi-Wang-11)的回答
+
+## 打印店页码排序
+
+I didn't invent this. I saw it somewhere.
+A student went to a copy shop to print some materials. He wanted to print 2 copies. Somehow, instead of printing out 2 copies, he printed every pages twice. Let me illustrate.
+Pages he wanted : 1 2 3 4 … N; 1 2 3 4 … N
+Pages he got: 1 1 2 2 3 3 4 4 …. N N
+So when he was trying to sort the pages by picking up one and putting on the left pile and then picking another and putting on the right pile, the owner of the shop took over.
+He first put the first page on left and then picked 2 pages and put on the right, then 2 left, 2 right ……
+Sorting speed doubled……
+
+这并不是我发明的，我从别处看到的。
+一个学生去打印店打印材料。他需要两份，但并没有直接打印两份，而是将每一页打印了两次，像下面这样：
+需要的页码顺序: 1 2 3 4 … N; 1 2 3 4 … N
+手上的页码顺序: 1 1 2 2 3 3 4 4 …. N N
+他开始对打印材料排序，取一页放在左边，然后取一页放在右边。打印店老板看不下去了，直接把材料拿过来。
+老板首先取一页放在左边，然后两页放在右边，再然后两页左边，两页右边......
+排序速度瞬间翻倍 ......
+（网友评论：这是归纳，不是排序）
+
+>下面是其他网友的回答
+
+## Slowsort 
+## 慢排序
+
+It is a sorting algorithm that is of humorous nature and not useful. It's based on the principle of multiply and surrender, a tongue-in-cheek joke of divide and conquer. It was published in 1986 by Andrei Broder and Jorge Stolfi in their paper Pessimal Algorithms and Simplexity Analysis. Here is the pseudocode:
+
+这是一个非常幽默却没什么用的排序算法。它基于“合而不治”的原则（分治算法基本思想“分而治之”的反义词，文字游戏），它由 Andrei Broder 和 Jorge Stolfi 于 1986 年发表在论文《Pessimal Algorithms and Simplexity Analysis（最坏排序和简单性分析）》中，伪代码如下：
+
+```
+function slowSort(array,start,end){
+    if( start >= end ) return; //已经不能再慢了
+    middle = floor( (start+end)/2 );
+    
+    //递归
+    slowSort(array,start,middle);
+    slowSort(array,middle+1,end);
+    
+    //比较得出最大值放在队尾
+    if( array[end] < array[middle] )
+        swap array[end] and array[middle]
+    
+    //去掉最大值之后再排序
+    slowsort(array,start,end-1);
+}
+```
+
+* Sort the first half recursively
+* Sort the second half recursively
+* Find the maximum of the whole array by comparing the middle with the end, placing maximum at the end of the list.
+* Recursively sort the entire list without the maximum.
+
+* 递归排序好前一半
+* 递归排序好后一半
+* 比较中间和队尾的值，得到整个数组的最大值，将最大值放到队尾。
+* 去掉最大值，递归整个数组
+
 ## Stack Sort
 ## Stack 排序
 
 It searches for all the posts on StackOverflow with ‘sort a list’ in their title, extracts code snippets from them and then runs these code snippets until the list is sorted, which I think it verifies by actually traversing the list. It was posted on xkcd and an implementation can be found at stacksort .
 
-从 StackOverflow 上搜索标题含有“数组排序”的帖子，复制粘贴并运行其中的代码片段，直到数组排好序。我认为这种排序算法事实上验证了整个数组。它被发表在[xkcd网站](https://xkcd.com/)上，这里有一个在线版的具体实现[stacksort](https://gkoberger.github.io/stacksort/)(译者:佩服.jpg)
+从 StackOverflow 上搜索标题含有“数组排序”的帖子，复制粘贴并运行其中的代码片段，直到数组排好序。我认为这种排序算法事实上验证了整个数组。它被发表在[xkcd网站](https://xkcd.com/1185/)上，这里有一个在线版的具体实现[stacksort](https://gkoberger.github.io/stacksort/)
 
 ## Random Sort
 ## 随机排序
@@ -99,11 +172,11 @@ The alpha particles from the sun flip a few bits in the memory once a while, so 
 
 太阳发出的阿尔法粒子偶尔能够翻转内存中的比特位，所以这种算法主要基于希望这种翻转能够使元素正确排序。运行方式如下：
 
->Check if the array is sorted.
+Check if the array is sorted.
 If the array is sorted, return the array.
 If the array is not sorted, wait for 10 seconds and pray for having bit flips caused by solar radiation, just in the correct order then repeat from step 1.
 
->检查数组是否排好序。
+检查数组是否排好序。
 如果排好序，返回这个数组。
 如果没有，等 10 秒钟并祈祷太阳辐射使得比特位翻转，而且使得数组排好序，重复第一步。
 
@@ -114,20 +187,20 @@ It is a linear time algorithm which sorts a sequence of items requiring O(n) sta
 
 这是一种线性时间算法，是需要 O(n) 空间的稳定排序。它需要并行处理器。简单来说，假设我们排序一列自然数。排序方法需要使用很多根生的意大利面条。
 
->Convert the data to positive real values scaled to the length of a piece of spaghetti.
+Convert the data to positive real values scaled to the length of a piece of spaghetti.
 Write each value onto a piece of spaghetti (a spaghetto) and break the spaghetti to the length equal to the scaled values.
 Hold all resulting spaghetti in a bundle and slam the end on a flat surface.
 Take the spaghetto which sticks out i.e. the longest one, read the value, convert back to the original value and write this down.
 Repeat until all spaghetti are processed.
 
->将数据按比例转换成表示意大利面条长度的数字。
+将数据按比例转换成表示意大利面条长度的数字。
 在每根面条上写下数字，并将面条折断成数字表示的长度。
 把所有面条攥成一捆并把底部在平面上敲击。
 取出最突出的一根面条，也就是最长的一根，获取上面的数字，转换成原始的数据并记录下来。
 重复这个过程直到处理完所有意大利面。
 
 ## Stalin Sort
-## 指鹿为马算法
+## 指鹿为马排序
 
 This works in O(n) time complexity.
 Gather up the comrades and show them the list.
@@ -141,45 +214,20 @@ Repeat steps 2 and 3 until everyone agrees that the list is sorted.
 干掉其中认为没有排序好的人。
 重复几次，直到所有人同意这个数组是排序好的。
 
-## Bogosort
-## Bogo 排序
-
- I have absolutely nothing to say about this sort.
-Randomly, shuffle the array.
-Check if it’s in order.
-If it’s not in order then reshuffle. Repeat until the array is in order.
-
-我对这个排序算法无话可说。
-随机打乱数组。
-检查是否排好序。
-如果没有，再次打乱。重复过程直到数组排好序
-
-## Quantum Bogosort 
-## 量子 Bogo 排序
-
-Works in O(N) time. This algorithm relies on the accuracy of the many worlds theory of quantum mechanics. Quantum Bogosort is as follows:
-Randomly shuffle the elements of the list.
-If the list is not sorted, destroy the universe. 
-Any surviving universes will then have the sorted version of the list.
-
-时间复杂度 O(n)。这种算法基于量子力学的平行宇宙理论的可靠性。描述如下：
-随机打乱数组元素。
-如果数组没有排好序，摧毁当前宇宙。
-存活的宇宙会得到排序好的数组。（平行宇宙都会打乱数组，但结果不同）
-
 ## Intelligent Design Sort
-## 
+## 智能设计排序
 
 Whatever state your list is in, it’s already sorted meaning: The probability of the original input list being in the exact order it’s in is 1/(n!). There is such a small likelihood of this that it’s clearly absurd to say that this happened by chance, so it must have been consciously put in that order my an intelligent sorted. Therefore it’s safe to assume that it’s already optimally sorted in some way that transcends our naive mortal understanding of ‘ascending order’. Any attempt io change that orders to conform to our own preconceptions would actually make it less sorted.
 
-无论你的数组状态时什么样的，它排好序意味着：
+无论你的数组状态是什么样的，它都算是排好序的。
+解释：原始输入按照某种顺序的概率是 1/(n!)。概率是如此小，（当前的顺序）归结于运气成分显然是荒谬的，所以它是按照“智能设计”排序过的。所以完全可以说数组已经排好序了，只是不是我们传统意义上的“升序”。如果按照我们传统观点对它进行操作，只会让它乱序。（[“智能设计”涉及宗教和哲学，不过多解释](https://zh.wikipedia.org/wiki/%E6%99%BA%E8%83%BD%E8%AE%BE%E8%AE%A1)）
 
 ## The Internet Sort
 ## 互联网排序
 
 It’s just a bubble sort, but perform every comparison by searching the internet. For example, “Which is greater – 0.211 or 0.75?”.
 
-这是一种冒泡排序，但每次比较都依靠互联网的搜索。比如“ 0.211 和 0.75 哪个大？”
+这是一种冒泡排序，但每次比较都依靠互联网的搜索。比如 “0.211 和 0.75 哪个大？”
 
 ## Committee Sort
 ## 委员会排序
@@ -187,4 +235,9 @@ It’s just a bubble sort, but perform every comparison by searching the interne
 To sort a list comprised of N natural numbers, start by printing out N copies of the whole list on paper.
 Now form N committees from any poor souls who happen to be milling around the office. The number of people on each committe should correspond to their particular value in the list.
 Each committee is given their sheet of paper and told to, through a meeting or some other means, decide where in the sorted list their number should fall.
-The list will be naturally sorted by the order that the committees return with their resu
+The list will be naturally sorted by the order that the committees return with their results
+
+排序一个包含 N 个自然数的数组，首先用纸打印出 N 份整个数组。
+然后在办公室周围选择几个恰好路过的倒霉委员。每个委员对应数组中的一个数字。
+给每个委员一份打印的数组，并让他们通过开会或其他手段，来决定自己代表的数字应该在有序数组中的位置。
+当这些委员有结论并答复你时，数组自然排好序了。
