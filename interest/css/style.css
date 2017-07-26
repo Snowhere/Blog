@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.key{
+    width: 1.8cm;
+    height: 1.8cm;
+    background-color:  #CCFFFF;
+    position: absolute;
+}
+
+.key div{
+    width: 1.4cm;
+    height: 1.4cm;
+    margin: 0.2cm;
+    background-color:  #FFFFCC;
+}
