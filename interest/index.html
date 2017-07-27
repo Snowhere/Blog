@@ -3,23 +3,299 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="screen-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="x5-page-mode" content="app">
     <title>Kaer invoker</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .key {
+            z-index:10;
+            width: 1.8cm;
+            height: 1.8cm;
+            background-color: #CCFFFF;
+            position: absolute;
+        }
+        
+        .key div{
+            width: 1.4cm;
+            height: 1.4cm;
+            margin: 0.2cm;
+            background-color: #FFFFCC;
+        }
+        .key div:active {
+            background-color: #DDDDDD;
+        }
+        
+        .show{
+            position: absolute;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            font-size: 16px;
+        }
+        
+        /*random left*/
+        .normal {
+            animation: portrait 5s;
+            -webkit-animation: portrait 5s;
+        }
+        
+        
+        /*random top*/
+        .rotate {
+            transform: rotate(90deg);
+            transform-origin: right top;
+            -ms-transform: rotate(90deg);
+            -ms-transform-origin: right top;;
+            -webkit-transform: rotate(90deg);
+            -webkit-transform-origin: right top;
+        
+            animation: orientation 5s;
+            -webkit-animation: orientation 5s;
+        }
+        /*横*/
+        @keyframes orientation {
+            from{right: 0;opacity: 1;filter: alpha(opacity=1);}
+            to{right: 100%;opacity: 0;filter: alpha(opacity=0);}
+        }
+        @-webkit-keyframes orientation {
+            from {right: 0;opacity: 1;filter: alpha(opacity=1);}
+            to {right: 100%;opacity: 0;filter: alpha(opacity=0);}
+        }
+        
+        /*纵*/
+        @keyframes portrait {
+            0% {top: 0px;opacity: 1;filter: alpha(opacity=1);}
+            100% {top: 100%;opacity: 0;filter: alpha(opacity=0);}
+        }
+        @-webkit-keyframes portrait {
+            from {top:0px;opacity: 1;filter: alpha(opacity=1);}
+            to {top:100%;opacity: 0;filter: alpha(opacity=0);}
+        }
+    </style>
 </head>
 
 <body>
     <div>
-        <div id="q" class="key"><div></div></div>
-        <div id="w" class="key"><div></div></div>
-        <div id="e" class="key"><div></div></div>
-        <div id="r" class="key"><div></div></div>
-        <div id="d" class="key"><div></div></div>
-        <div id="f" class="key"><div></div></div>
+        <div id="q" class="key">
+            <div></div>
+        </div>
+        <div id="w" class="key">
+            <div></div>
+        </div>
+        <div id="e" class="key">
+            <div></div>
+        </div>
+        <div id="r" class="key">
+            <div></div>
+        </div>
+        <div id="d" class="key">
+            <div></div>
+        </div>
+        <div id="f" class="key">
+            <div></div>
+        </div>
     </div>
-    <script type="text/javascript" src="js/qrcode.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript">
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+
+    //每厘米像素
+    var arrDPI = new Array();
+    var tmpNode = document.createElement("DIV");
+    tmpNode.style.cssText = "width:1cm;height:1cm;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+    document.body.appendChild(tmpNode);
+    arrDPI[0] = parseInt(tmpNode.offsetWidth);
+    arrDPI[1] = parseInt(tmpNode.offsetHeight);
+    tmpNode.parentNode.removeChild(tmpNode);
+
+
+    //浏览器尺寸(cm)
+    var lengthWidth = clientWidth / arrDPI[0];
+    var lengthHeight = clientHeight / arrDPI[1];
+
+    console.log('屏幕尺寸(像素)', clientWidth, clientHeight);
+    console.log('屏幕尺寸(厘米)', lengthWidth, lengthHeight);
+
+    var minWidth = 9; //键盘区域
+    var minHeight = 4; //键盘区域
+    var step = 1.9; //间距
+
+    var keys = document.getElementsByClassName('key'); //6 keys
+    var positionLeft;
+    var positionTop;
+
+
+    var rotate;
+
+    if (lengthWidth > lengthHeight) {
+        //舒服的横屏
+        if (lengthWidth < minWidth || lengthHeight < minHeight) {
+            console.log('too small');
+        }
+        positionLeft = (lengthWidth - minWidth) / 2;
+        positionTop = (lengthHeight - minHeight) / 2;
+        for (var i = 0; i < 6; i++) {
+            keys[i].style.left = positionLeft + 'cm';
+            keys[i].style.top = positionTop + 'cm';
+            if (i == 3) {
+                positionLeft -= step * 1.7;
+                positionTop += step;
+            }
+            positionLeft += step;
+            //onclick
+            keys[i].onclick = function() {
+                action(this.getAttribute('id'));
+            }
+        }
+        rotate = false;
+    } else {
+        //竖屏
+        if (lengthHeight < minWidth || lengthWidth < minHeight) {
+            console.log('too small');
+        }
+        positionLeft = lengthWidth / 2;
+        positionTop = (lengthHeight - minWidth) / 2;
+        for (var i = 0; i < 6; i++) {
+            keys[i].style.left = positionLeft + 'cm';
+            keys[i].style.top = positionTop + 'cm';
+            if (i == 3) {
+                positionTop -= step * 1.7;
+                positionLeft -= step;
+            }
+            positionTop += step;
+            //onclick
+            keys[i].onclick = function() {
+                action(this.getAttribute('id'));
+            }
+        }
+        rotate = true;
+    }
+    window.document.onkeydown = function(event) {
+        event = (event) ? event : window.event;
+        switch (event.keyCode) {
+            case 81:
+                action('q');
+                break;
+            case 87:
+                action('w');
+                break;
+            case 69:
+                action('e');
+                break;
+            case 82:
+                action('r');
+                break;
+            case 68:
+                action('d');
+                break;
+            case 70:
+                action('f');
+                break;
+        }
+    };
+
+    var ballList = [];
+    var skillList = [];
+    var skillTable = {};
+
+
+    function Skill(id, key, name, dialogue) {
+        this.id = id;
+        this.key = key;
+        this.name = name;
+        this.dialogue = dialogue;
+    }
+
+    skillTable['qqq'] = new Skill('', 'qqq', '急速冷却', '塞卓昂的无尽战栗');
+    skillTable['qqw'] = new Skill('', 'qqw', '幽灵漫步', '米瑞特之阻碍');
+    skillTable['qqe'] = new Skill('', 'qqe', '寒冰之墙', '科瑞克斯的杀戮之墙');
+    skillTable['www'] = new Skill('', 'www', '电磁脉冲', '恩多利昂的恶之混动');
+    skillTable['wwe'] = new Skill('', 'wwe', '灵动迅捷', '迅猛作战之魔令');
+    skillTable['wwq'] = new Skill('', 'wwq', '强袭飓风', '托纳鲁斯之爪');
+    skillTable['eee'] = new Skill('', 'eee', '阳炎冲击', '哈雷克之火葬魔咒');
+    skillTable['eew'] = new Skill('', 'eew', '混沌陨石', '塔拉克的天坠之火');
+    skillTable['eeq'] = new Skill('', 'eeq', '熔炉精灵', '卡尔文的窒息产物');
+    skillTable['qwe'] = new Skill('', 'qwe', '超震声波', '布鲁冯特之无力声波');
+
+    function action(key) {
+        switch (key) {
+            case 'q':
+                ballList.unshift(key);
+                show('冰');
+                break;
+            case 'w':
+                ballList.unshift(key);
+                show('雷');
+                break;
+            case 'e':
+                ballList.unshift(key);
+                show('火');
+                break;
+            case 'r':
+                var skillKey = ballList[2] + ballList[1] + ballList[0];
+                if (skillList[0] && skillKey == skillList[0].key) {
+                    show('重复');
+                    return;
+                }
+                if (skillTable[skillKey]) {
+                    skillList.unshift(skillTable[skillKey]);
+                    show('合成【' + skillTable[skillKey].name + '】');
+                } else {
+                    show('没有这个技能');
+                }
+                break;
+            case 'd':
+                if (skillList[0]) {
+                    userSkill(skillList[0]);
+                } else {
+                    show('不能释放这个技能');
+                }
+                break;
+            case 'f':
+                if (skillList[1]) {
+                    userSkill(skillList[1]);
+                } else {
+                    show('不能释放这个技能');
+                }
+        }
+    }
+
+    function userSkill(skill) {
+        console.log(skill.name);
+        show('【' + skill.name + '】' + skill.dialogue);
+    }
+
+    function show(msg) {
+        var div = document.createElement('div');
+        var txt = document.createTextNode(msg);
+        div.appendChild(txt);
+        if (rotate) {
+            div.setAttribute('class', 'show rotate');
+        } else {
+            div.setAttribute('class', 'show normal');
+        }
+        //position
+        if (rotate) {
+            //random top
+            div.style.top = Math.random() * (clientHeight - 240) + 240 + 'px';
+        } else {
+            //random left
+            div.style.left = Math.random() * (clientWidth - 240) + 240 + 'px';
+        }
+        document.body.appendChild(div);
+    }
+    </script>
 </body>
 
 </html>
