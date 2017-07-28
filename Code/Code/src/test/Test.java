@@ -1,7 +1,5 @@
 package test;
 
-import java.util.List;
-
 public class Test implements TestInterface{
 	
 	public void test(){
@@ -9,10 +7,8 @@ public class Test implements TestInterface{
 	}
 
 	public static void main(String args[]) {
-		List<String> names;
-		for (String name : names) {
-
-		}
-		System.out.println(true);
-    }
+		int in = 2000000000;
+		int in2 = 2000000000;
+		System.out.println(in+in2<0);
+	}
 }
