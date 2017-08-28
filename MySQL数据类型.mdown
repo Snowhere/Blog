@@ -1,8 +1,7 @@
 #MySQL数据类型
-MySQL数据类型有很多，常用的有3大类：数字、字符和日期，当然还有一些其他类型比如和地理位置有关的GEOMETRY、POINT等等。这里主要描述一下常见的3大类数据类型。
+MySQL数据类型有很多，常用的有3大类：数字、字符和日期，当然还有一些其他类型比如和地理位置有关的GEOMETRY、POINT等等。这里主要描述一下常见的3大类数据类型。(MySQL 5.7版本)
 
 ##数字
-fdsa
 
 |    Type   |  Storage  |  Minimum Value        |   Maximum Value   |
 |           | (Bytes)    | (Signed/Unsigned)      | (Signed/Unsigned)  |
