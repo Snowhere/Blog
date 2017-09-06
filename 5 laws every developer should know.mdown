@@ -79,7 +79,7 @@ And, like with every other performance problem, you should always measure first 
 Ok, I admit this quote from one of Dan North’s talks - Decisions, Decisions - is not (yet!) recognized as a law. 
 But this quote has had such an impact on the way I approach all my decisions I thought I should include it here.
 
-好吧，我承认这是取自从 Dan North 的演讲 [Decisions,Decisions](https://www.youtube.com/watch?v=EauykEv_2iA)，它目前还不是公认的定律。
+好吧，我承认这是取自 Dan North 的演讲 [Decisions,Decisions](https://www.youtube.com/watch?v=EauykEv_2iA)，它目前还不是公认的定律。
 但这条语录影响了我做的每个决定，所以我把它放在这。
 
 In the day to day life of a developer, we make a ton of decisions - whether big or small - every day. From naming a variable to defining the architecture of a platform, through automating (or not) tasks.
@@ -94,7 +94,7 @@ But that’s not the most important.
 The most important is to consciously make a decision and being aware of the other options and why you did not choose them. You should always thrive to make a decision by weighing the pros and cons based on what you know at that moment. 
 
 但这不是最重要的。
-最重要的是理智地做出决定，了解其他选项，清楚你为什么不选择它们。你要一直根据当前你掌握的优缺点来权衡并做出决定。
+最重要的是理智地做出决定，了解其他选项，清楚你为什么不选择它们。你要始终根据当前你掌握的信息来权衡并做出决定。
 
 But it should also be fine to discover later that a decision you took was wrong if you new information comes to you after. The critical thing is to remember why you took the decision, reevaluate the new options and make a new conscious choice.
 
@@ -132,40 +132,66 @@ This law translates well into the software development world and is even reflect
 
 For example, a collocated team of developers will produce a monolithic application with coupled components. On the other hand, multiple distributed teams will produce multiple separated (micro) services with a clearer separation of concern for each. 
 
-举个例子，一个集中式的开发者团队会开发出各组件耦合的整体应用。另一方面，分布式的团队会开发出单独的（微）服务，每一部分关注点分离非常清晰。
+举个例子，一个集中式的开发者团队会开发出各组件耦合的整体应用。另一方面，分布式的团队会开发出单独的（微）服务，每一部分关注点分离清晰。
 
 Neither design is good or bad, but they have both been influenced by the way the team(s) communicate. 
 Open source projects, with multiple individuals around the globe, are often great examples of modularity and reusable libraries.
 
-这些设计没有好坏之分，但它们都是受到团队沟通方式的影响。开源项目在全球有大量独立开发者，通常是模块化和可重用库，这就是很有说服力的例子。
+这些设计没有好坏之分，但它们都是受到团队沟通方式的影响。在全球有大量独立开发者的开源项目，通常是模块化和可重用库，这就是很有说服力的例子。
 
 Nowadays, the current trend is to break monolithic applications into micro-services. This is awesome and it will enable more velocity to deliver projects faster into production. But you should always keep in mind the Conway’s law and work as much on the organization of your company as on the technology choices.
 
+如今，将大的集成应用解耦成微服务已成趋势。这很棒，因为这可以加速交付使用项目。但你也应该牢记 Conway定律，在公司组织构建中投入与技术开发同样多的工作。
 
+![](http://blog.ippon.tech/content/images/2017/08/PreferFunctionalStaffOrganization.png)
 
-Law of triviality (Parkinson's law of triviality)
-“Members of an organization give disproportionate weight to trivial issues.”
+## Law of triviality (Parkinson's law of triviality)
+## 琐碎定律（帕金森琐碎定律）
+
+>“Members of an organization give disproportionate weight to trivial issues.”
+
+>“组织成员投入大量精力到琐碎的事情上。”
 
 The argument of this law is that the time spent on any item of a meeting agenda is in inverse proportion to the sum of money involved. 
 Indeed, people have a tendency to give more attention to a subject they fully understand and have an opinion about than a complex problem.
 
+[这条定律](https://en.wikipedia.org/wiki/Law_of_triviality)论点是在会议中花费的时间与事情的价值成反比。的确是这样，人们更愿意把注意力和观点放在他们熟悉的事物上，而不是复杂的问题上。
+
 Parkinson gives the example of a meeting during which a committee is reviewing two decisions: building a nuclear reactor for the company and building a bikeshed for the employees. Constructing a reactor is a vast and complicated task and people cannot grasp it entirely. Instead, they fully rely on their processes and system experts and quickly accept the project. 
+
+帕金森给出一个例子，一场会议中，成员们讨论两件事：为公司建核反应堆和为员工建车棚。建反应堆是一件巨大而复杂的任务，没有人能完全掌控全局。他们完全信赖流程和系统专家，并很快接受了项目。
+
 On the other hand, building a bikeshed is something that an average person can do and everyone can have an opinion on the color. In fact, every committee member will make sure to voice his opinion and the bikeshed decision will proportionally take way more time than the reactor’s.
+
+另一边，建车棚是一般人都可以做的，每个人都可以对颜色有意见。事实上，每个会议成员都会表达自己的意见，使得建车棚的决议所花费的时间远远超过建反应堆的。
 
 This law has been popularized in the software world - and named after this story as the bike-shed effect.
 
+这条定律在软件行业十分出名，这个故事随后也被称为[车棚效应](https://en.wiktionary.org/wiki/bikeshedding)
+
 Developers, for example, can spend more time discussing the correct indentation or naming of a function than actually discussing the responsibility of a class or the architecture of an application. That’s because, again, everyone can picture the effect of a few characters changes but it takes a bigger cognitive load to project an architecture change.
+
+举个例子，开发者会花费更多时间到讨论正确缩进或函数命名，而不是讨论类的职责或应用架构。这是因为每个人都能认知几个字符的变动，但项目架构的变动则需要巨大的[认知负载](https://en.wikipedia.org/wiki/Cognitive_load)
 
 Another place where you will notice a lot of bikeshed effects are Scrum demos. 
 Don’t get me wrong, I love demos and I think that’s a great opportunity to face the users and get feedback on an application. 
 But often, the discussion during a Scrum demo will slip to cosmetic questions and specific behaviors instead of looking at the bigger picture. These discussions are also important but you have to be careful to balance these with the most important - and complicated - problems.
 
+你能注意到的车棚效应的另一个例子是 Scrum 演示。不要误会我，我喜欢演示，我认为这是一个很好的机会来面对用户并获得对应用程序的反馈。但通常 Scrum 演示过程中的讨论会转向琐碎问题，而不是审视全局。这些讨论也很重要，但你应该注意权衡更重要更复杂的问题。
+
 Once you know the pattern, you will start noticing this behavior in a lot of meetings and people interactions. 
 I am not telling you to cut every discussion about “small” problems, but raising your awareness will help you focus on the real problems and be better prepared for these meetings.
 
+一旦你了解这种规律，你将在会议和交流中发觉这种行为。
+我并不是让你在每次讨论中避免“小”问题，提高你的意识可以帮助你关注真正的问题，并为这些会议做好准备。
 
+![](http://blog.ippon.tech/content/images/2017/08/pink-bikeshed.jpeg)
 
-Conclusion
+## Conclusion
+## 结论
+
 These 5 laws are only a few examples of old lessons learned in our industry. There are many more to learn and discover when gaining more experience in the software development trenches.
-
 Even if some of them may be seen as common-sense now, I strongly believe that knowing these principles will help you recognize patterns and react to them.
+
+这五条定律只是我们行业中总结出的教训中一些例子。随着软件开发经验的增长，我们将会学会更多。
+尽管其中某些定律现在看起来是常识，我始终坚信了解这些原则可以帮助你识别这些模式并做出反应。
