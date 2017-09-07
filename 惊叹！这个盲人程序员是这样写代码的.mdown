@@ -75,14 +75,18 @@ This type of reading makes me do some coding tasks a little bit differently than
 
 You might think that indentation and other code formatting would be totally irrelevant to me since those are primarily visual concerns. This is not true: proper indentation helps me just as much as it does a sighted programmer. Whenever I'm reading code in braille (which, by the way, is a lot more efficient than with speech) it gives me a good visual clue of where I am, just like it does for a sighted programmer. I also get verbal announcements whenever I enter an indented or unindented block of text. This information helps me to paint a map of the code in my head. In fact Python was the first real programming language I picked up (Php doesn't count) and its forced indentation never posed a problem for me. I'm a strong advocate of a clean and consistent coding style for a number of reasons, but mostly because not having one makes my life much more difficult
 
-你或许会认为缩进和其他代码格式和我无关，因为都是基本的视觉问题。并不是这样，正确的缩进对我的帮助和正常开发者一样。当我用盲文
+你或许会认为缩进和其他代码格式和我无关，因为都是基本的视觉问题。并不是这样，正确的缩进对我的帮助和正常开发者一样。当我用盲文（比语音更加高效）读代码时，我像其他正常程序员一样清楚代码结构。当我进入一段有缩进或无缩进的代码时，我也会得到语音提醒。这些信息帮助我在脑中描绘代码结构。事实上我学的第一门语言就是 Python （PHP 不算），它强制使用代码缩进，这对我来说并不是问题。我有众多理由来强烈建议使用整洁统一的代码风格，其中之一就是不要让我的生活变得更加艰难了，好吗。
 
 ## Which editor do you prefer?
 ## 你喜欢哪款编辑器？
 
 Spoiler alert: The answer to this question doesn't start with either V or E. (Granted, I do use Vim for crafting git commit messages and other quick notes on the command line. I consider myself neutral on this particular minefield.) A year ago my answer would have been, of all things, Notepad++. It's a lightweight, well-made text editor that gets the job done. However, a year ago I hadn't worked in a large-scale Java project. When that eventually happened it was time to pick between Notepad++ and my sanity. I ended up clinging to the latter (as long as I can, anyway) and ditching Notepad++ in favour of IntelliJ IDEA. It has been my editor of choice ever since. I have a deeply-rooted aversion towards IDEs since most of them are either inaccessible or inefficient to work with solely on the keyboard. Chances are that I would have switched to using an IDE a lot sooner if I was sighted.
 
+剧透一下：这个答案并不是以 V 或者 E 开头（我虽然通过命令行用 Vim 来写 git commit 信息和其他备注。我认为我在这场圣战中是中立的）（译者注：Vim 和 Emacs 梗）一年前我认为 Notepad++ 最棒，它是轻量级的做工精细的文本编辑器。然而一年前我还没有接触大规模 Java 项目，当我接触这种项目时，意味着我应该在 Notepad++ 和理智之间做个选择。最后我选择理智，抛弃 Notepad++ 转投 IntelliJ IDEA 的怀抱。从那之后 IntelliJ IDEA 便是我首选编辑器。我曾对各种 IDE 有深深怨念，它们大多数在纯键盘流操作下麻烦又低效。如果我视力没问题，我肯定早就跳到 IDE 阵营了。
+
 But why Notepad++, you might ask. There are more advanced lightweight editors out there like Sublime text or Atom. The answer is simple: neither of them is accessible to screen readers. Text-mode editors like Vim aren't an option either, since the screen reader I use has some problems in its support of console applications that prevent those editors from being used for anything longer than a commit message. Sadly, accessibility is the one thing that has the last word on the tools I use. If it's not workable enough that I can use it efficiently, it's out of the question.
+
+但你可能会问，为什么当初选 Notepad++。还有其他很多更先进的轻量级编辑器，比如  Sublime 或 Atom。原因很简单：屏幕阅读器无法访问它们。Vim 一类的文本编辑器也是如此，我使用的屏幕阅读器不支持命令行程序，无法处理多于 commit 信息的文本。很遗憾，可用性决定了我所选择的工具。
 
 ## Do you ever work with frontend code?
 ## 你编写过前端代码吗？
@@ -94,6 +98,8 @@ However, I've had my fair share of Angular and React work too. How's that? Many 
 I've found that libraries like Bootstrap are a godsend for people like me. Because of the grid system I can lay out a rough version of the user interface on my own. Despite this all the interface-related changes I'm doing are going through a pair of eyes before shipping to the customer. So, to sum up: I can do frontend development up to a point, at least while not touching the presentation layer too much.
 
 ## How about all the things you didn't mention?
-## 
+## 有什么其他没有提到的东西？
 
 There are certainly a lot of things I had to leave out of this blog post. As promised I'll be devoting a post to the art of making web pages more accessible, since the lack of proper semantics is one of my pet peeves. However, there's a good chance I won't leave it at that. Stay tuned!
+
+我很想在这篇文章表达更多东西。我上文说过了我会写一篇关于网页制作
