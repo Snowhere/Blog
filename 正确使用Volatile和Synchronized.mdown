@@ -1,2 +1,0 @@
-[On Properly Using Volatile and Synchronized](https://dzone.com/articles/on-properly-using-volatile-and-synchronized-1)
-#正确使用Volatile和Synchronized
