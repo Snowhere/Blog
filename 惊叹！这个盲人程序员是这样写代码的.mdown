@@ -86,16 +86,22 @@ Spoiler alert: The answer to this question doesn't start with either V or E. (Gr
 
 But why Notepad++, you might ask. There are more advanced lightweight editors out there like Sublime text or Atom. The answer is simple: neither of them is accessible to screen readers. Text-mode editors like Vim aren't an option either, since the screen reader I use has some problems in its support of console applications that prevent those editors from being used for anything longer than a commit message. Sadly, accessibility is the one thing that has the last word on the tools I use. If it's not workable enough that I can use it efficiently, it's out of the question.
 
-但你可能会问，为什么当初选 Notepad++。还有其他很多更先进的轻量级编辑器，比如  Sublime 或 Atom。原因很简单：屏幕阅读器无法访问它们。Vim 一类的文本编辑器也是如此，我使用的屏幕阅读器不支持命令行程序，无法处理多于 commit 信息的文本。很遗憾，可用性决定了我所选择的工具。
+但你可能会问，为什么当初选 Notepad++。还有其他很多更先进的轻量级编辑器，比如  Sublime 或 Atom。原因很简单：屏幕阅读器无法访问它们。Vim 一类的文本编辑器也是如此，我使用的屏幕阅读器对命令行程序的支持有问题，在这些编辑器上无法处理多于 commit 信息的文本。很遗憾，可用性决定了我能够使用的工具。即使我不能高效工作，也不是什么大问题。
 
 ## Do you ever work with frontend code?
 ## 你编写过前端代码吗？
 
 You would think that frontend development was so inherently visual that it would be no place for a blind developer, and for the most part that is true. You won't find me doing a basic Proof-of-Concept on my own, since those projects tend to be mostly about getting the looks right and adding the real functionality later.
 
+你应该认为前端开发和视觉有关，注定与盲人程序员无缘。基本上是这样。我从来不自己做概念原型，我做都是有界面，需要随后加入功能的项目。
+
 However, I've had my fair share of Angular and React work too. How's that? Many web apps of today have a lot going on under the hood in the browser. For example, I once worked a couple of weeks adding internationalization support to a somewhat complex Angular app. I didn't need to do any visual changes at all.
 
+然而，我也做过 Angular 和 React 工作任务。怎么会这样？如今很多 APP 基于浏览器。举个例子，我曾花费两周时间为一个 Angular APP 增加国际化支持。我并不需要做任何视觉上的改动。
+
 I've found that libraries like Bootstrap are a godsend for people like me. Because of the grid system I can lay out a rough version of the user interface on my own. Despite this all the interface-related changes I'm doing are going through a pair of eyes before shipping to the customer. So, to sum up: I can do frontend development up to a point, at least while not touching the presentation layer too much.
+
+我发现对于我这类开发者开说，像 Bootstrap 这类的库简直是上天的礼物。正因为栅格系统（Bootstrap的响应式布局解决方案），我可以自己构建一个粗糙的界面。
 
 ## How about all the things you didn't mention?
 ## 有什么其他没有提到的东西？
