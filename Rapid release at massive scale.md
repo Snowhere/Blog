@@ -16,13 +16,15 @@ For many years, we pushed the Facebook front end three times a day using a simpl
 
 This system scaled well, starting with a handful of engineers in 2007 to thousands today. The good news is that as we added more engineers, we got more done — the rate of code delivery scaled with the size of the team. But it took a certain amount of human effort in the form of release engineers, in addition to the tools and automated systems in place, to drive the daily and weekly pushes out the door. We understood that batching up larger and larger chunks of code for delivery would not continue to scale as the team kept growing.
 
-这个系统规模扩展良好，从最初 2007 年时屈指可数的工程师，到现在数千名工程师。好消息是随着工程师的增加，我们完成更多工作 —— 移交代码的速度随团队大小增长。这也使得我们在发布形式上投入大量人力
+这个系统规模扩展良好，从最初 2007 年时屈指可数的工程师，到现在数千名工程师。好消息是随着工程师的增加，我们完成更多工作 —— 移交代码的速度随团队大小增长。这也使得我们为了保持每日和每周的上线，除了工具和自动化系统之外，在发布形式上也投入大量人力。我们知道随着团队扩张，这种批量移交大量代码方式难以继续。
 
 By 2016, we saw that the branch/cherry-pick model was reaching its limit. We were ingesting more than 1,000 diffs a day to the master branch, and the weekly push was sometimes as many as 10,000 diffs. The amount of manual effort needed to coordinate and deliver such a large release every week was not sustainable.
 
-2006年，我们发现 branch/cherry-pick 模型
+2006年，我们发现 branch(分支)/cherry-pick 模型已经山穷水尽了。我们每天在 master 分支中收到超过 1000 个 diff，有时一周能超过 10000 个 diff。每周发布大版本无法让人忍受，并且人力需要协调。
 
 We decided to move facebook.com to a quasi-continuous “push from master” system in April 2016. Over the next year, we gradually rolled it out, first to 50 percent of employees, then from 0.1 percent to 1 percent to 10 percent of production web traffic. Each of these progressions allowed us to test the ability of our tools and processes to handle the increased push frequency and get real-world signal. Our main goal was to make sure that the new system made people’s experience better — or at the very least, didn’t make it worse. After almost exactly a year of planning and development, over the course of three days in April 2017 we enabled 100 percent of our production web servers to run code deployed directly from master.
+
+
 
 Continuous delivery at scale
 While a true continuous push system would deliver every individual change to production soon after it landed, the code velocity at Facebook required us to develop a system that pushes tens to hundreds of diffs every few hours. The changes that get made in this quasi-continuous delivery mode are generally small and incremental, and very few will have a visible effect on the actual user experience. Each release is rolled out to 100 percent of production in a tiered fashion over a few hours, so we can stop the push if we find any problems.
