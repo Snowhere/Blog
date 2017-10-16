@@ -1,4 +1,6 @@
-# 深入学习 Java 线程池[Finally Getting the Most out of the Java Thread Pool](https://stackify.com/java-thread-pools/)
+[Finally Getting the Most out of the Java Thread Pool](https://stackify.com/java-thread-pools/)
+
+# 深入学习 Java 线程池
 
 ![](https://stackify.com/wp-content/uploads/2017/08/The-Challenge-of-Java-Thread-Pools-793x397.png)
 
@@ -12,11 +14,11 @@ First, let’s outline a frame of reference for multithreading and why we may ne
 
 A thread is an execution context that can run a set of instructions within a process – aka a running program. Multithreaded programming refers to using threads to execute multiple tasks concurrently. Of course, this paradigm is well supported on the JVM.
 
-线程是在一个进程中可以执行一系列指令的执行环境，或称运行程序。多线程编程指的是用多个线程并行执行多个任务。当然，JVM 多线程有良好的支持。
+线程是在一个进程中可以执行一系列指令的执行环境，或称运行程序。多线程编程指的是用多个线程并行执行多个任务。当然，JVM 对多线程有良好的支持。
 
 Although this brings several advantages, primarily regarding the performance of a program, the multithreaded programming can also have disadvantages – such as increased complexity of the code, concurrency issues, unexpected results and adding the overhead of thread creation.
 
-尽管这带来了诸多优势，首当其冲的就是程序性能提高，但多线程编程也有缺点 —— 增加了代码复杂度、同步问题、非预期结果和增加创建线程开销。
+尽管这带来了诸多优势，首当其冲的就是程序性能提高，但多线程编程也有缺点 —— 增加了代码复杂度、同步问题、非预期结果和增加创建线程的开销。
 
 In this article, we’re going to take a closer look at how the latter issue can be mitigated by using thread pools in Java.
 
@@ -70,7 +72,7 @@ Essentially, threads are kept in the thread pool until they’re needed, after w
 
 Java provides its own implementations of the thread pool pattern, through objects called executors. These can be used through executor interfaces or directly through thread pool implementations – which does allow for finer-grained control.
 
-Java 通过 executor 对象，来实现自己的线程池模型。可以使用 executor 接口或其他线程池的实现，它们都允许细粒度的控制。
+Java 通过 executor 对象来实现自己的线程池模型。可以使用 executor 接口或其他线程池的实现，它们都允许细粒度的控制。
 
 The java.util.concurrent package contains the following interfaces:
 
@@ -205,7 +207,7 @@ ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
 
 The schedule() method specifies a task to be executed, a delay value and a TimeUnit for the value:
 
-`schedule()` 方法的参数指定执行的方法，延时和 `TimeUnit`
+`schedule()` 方法的参数指定执行的方法、延时和 `TimeUnit`
 
 ```java
 Future<Double> future = executor.schedule(callableTask, 2, TimeUnit.MILLISECONDS);
@@ -249,13 +251,13 @@ In this manner, the thread pool is preconfigured for the most common cases. The 
 * corePoolSize and maximumPoolSize – which represent the bounds of the number of threads
 * keepAliveTime – which determines the time to keep extra threads alive
 
-* `corePoolSize` 和 `maximumPoolSize` —— 表示线程数量的边界
+* `corePoolSize` 和 `maximumPoolSize` —— 表示线程数量的范围
 * `keepAliveTime` —— 决定了额外线程存活时间
 
 
 Digging a bit further, here’s how these parameters are used.
 
-深入一点，这些参数如何使用。
+我们深入了解一下这些参数如何使用。
 
 If a task is submitted and fewer than corePoolSize threads are in execution, then a new thread is created. The same thing happens if there are more than corePoolSize but less than maximumPoolSize threads running, and the task queue is full. If there are more than corePoolSize threads which have been idle for longer than keepAliveTime, they will be terminated.
 
@@ -267,7 +269,7 @@ In the example above, the newFixedThreadPool() method creates a thread pool with
 
 If you use the newCachedThreadPool() method instead, this will create a thread pool with a maximumPoolSize of Integer.MAX_VALUE and a keepAliveTime of 60 seconds:
 
-如果你使用 `newCachedThreadPool()` 作为替代，将创建一个线程池，它的 `maximumPoolSize` 为 `Integer.MAX_VALUE`，并且 `keepAliveTime` 为 60 秒。
+如果你使用 `newCachedThreadPool()` 方法，创建的线程池 `maximumPoolSize` 为 `Integer.MAX_VALUE`，并且 `keepAliveTime` 为 60 秒。
 
 ```java
 ThreadPoolExecutor cachedPoolExecutor 
@@ -296,7 +298,7 @@ ScheduledThreadPoolExecutor executor
 
 This creates a thread pool with a corePoolSize of 5, an unbounded maximumPoolSize and a keepAliveTime of 0 seconds.
 
-上面语句创建了一个线程池，`corePoolSize` 为 5，`maximumPoolSize` 无限，`keepAliveTime` 为 0 秒。
+上面语句创建了一个线程池，`corePoolSize` 为 5，`maximumPoolSize` 无限制，`keepAliveTime` 为 0 秒。
 
 ### The ForkJoinPool
 ### ForkJoinPool
@@ -407,7 +409,7 @@ At first look, it seems that the fork/join framework brings improved performance
 
 When choosing a thread pool, it’s important to also remember there is overhead caused by creating and managing threads and switching execution from one thread to another.
 
-当选择线程池时，非常重要的一点是牢记创建和管理线程，以及线程间切换执行会带来的开销。
+当选择线程池时，非常重要的一点是牢记创建、管理线程以及线程间切换执行会带来的开销。
 
 The ThreadPoolExecutor provides more control over the number of threads and the tasks that are executed by each thread. This makes it more suitable for cases when you have a smaller number of larger tasks that are executed on their own threads.
 
@@ -491,7 +493,7 @@ Also notice how the objects themselves are actually created in the main thread, 
 
 This is actually a great way to explore and understand thread pools at runtime, with the help of a solid logging visualization tool such as Prefix.
 
-通过 [Prefix](https://stackify.com/best-log-viewer-prefix/) 这一类可视化的日志工具，这确实是一个很棒的方式来探索和理解运行时的线程池。
+使用 [Prefix](https://stackify.com/best-log-viewer-prefix/) 这一类可视化的日志工具是一个很棒的方式来探索和理解运行时的线程池。
 
 The core aspect of logging from a thread pool is to make sure the thread name is easily identifiable in the log message; Log4J2 is a great way to do that by making good use of layouts for example.
 
@@ -510,14 +512,19 @@ Although thread pools provide significant advantages, you can also encounter sev
 
 * 用的线程池过大或过小 —— 如果线程池包含太多线程，会明显的影响应用的性能；另一方面，线程池太小并不能带来所期待的性能提升。
 * 正如其他多线程情形一样，死锁也会发生。举个例子，一个任务可能等待另一个任务完成，而后者并没有可用线程处理执行。所以说避免任务之间的依赖是个好习惯。
-* 等待执行时间很长的任务 —— 为了避免长时间的任务阻塞线程，你可以指定最大等待时间，并决定过期任务是拒绝处理还是重新加入队列。
+* 等待执行时间很长的任务 —— 为了避免长时间阻塞线程，你可以指定最大等待时间，并决定过期任务是拒绝处理还是重新加入队列。
 
 To mitigate these risks, you have to choose the thread pool type and parameters carefully, according to the tasks that they will handle. Stress-testing your system is also well-worth it to get some real-world data of how your thread pool behaves under load.
+
+为了降低风险，你必须根据要处理的任务，来谨慎选择线程池的类型和参数。对你的系统进行[压力测试](https://stackify.com/ultimate-guide-performance-testing-and-software-testing/)也是值得的，它可以帮你获取真实环境下的系统行为数据。
 
 ## Conclusion
 ## 结论
 
 Thread pools provide a significant advantage by, simply put, separating the execution of tasks from the creation and management of threads. Additionally, when used right, they can greatly improve the performance of your application.
 
+线程池有很大优势，简单来说就是可以将任务的执行从线程的创建和管理中分离。另外，如果使用得当，它们可以极大提高应用的性能。
+
 And, the great thing about the Java ecosystem is that you have access to some of the most mature and battle-tested implementations of thread-pools out there if you learn to leverage them properly and take full advantage of them.
 
+如果你学会充分利用线程池，Java 生态系统好处便是其中有很多成熟稳定的线程池实现。
