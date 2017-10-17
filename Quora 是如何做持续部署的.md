@@ -1,15 +1,20 @@
-# Quora 是如何做持续部署的？
 [Continuous Deployment at Quora](https://engineering.quora.com/Continuous-Deployment-at-Quora)
+
+# Quora 是如何做持续部署的？
 
 ![](https://qph.ec.quoracdn.net/main-qimg-a8cf38d0593825625742f67b9111af72.webp)
 
 Between 12:00 AM and 11:59 PM on April 25, 2013, Quora released new versions of the site 46 times. This was a normal day for us. We run a very fast continuous-deployment cycle, where changes are pushed live as soon as they are committed. This is made possible by parallelization on several levels. We wanted our push system to be fast, so developers can see their changes in production as soon as possible (currently it takes six to seven minutes on average for a revision to start running in production), but it should also be reliable and flexible, so we can respond to problems quickly.
 
-在2013年4月25日中午12点到晚上11点59分之间，Quora 发布
+在 2013 年 4 月 25 日中午 12 点到晚上 11 点 59 分之间，Quora 站点发布了 46 次新版本。这对于我们来说只是普通的一天。我们执行非常快的持续部署周期，代码变动提交后就直接推送到线上。这使得在各个层面上实现平行化开发。我们希望我们的推送系统足够快，让开发者尽快看到他们对生产环境的改动（目前生产环境修改上线平均要 6、7 分钟），单也要注意可靠性和灵活性，让我们可以迅速响应问题。
 
 From the developer's side, only a single command is required to push code to production: git push
 
+对开发者而言，只需要一个简单的命令来 push 代码到生产环境：`git push`
+
 What goes on behind the scenes is more complicated. Every time a developer pushes commits to our main git repository, a post-receive hook adds the latest revision to the list of release candidates, which is maintained in a MySQL database. (This post-receive hook also adds the commit to Phabricator, which we use for code reviews. For more information on our code review process, see Does Quora engineering use a code review process?) An internal monitor webpage shows the status of each revision that's waiting to be released.
+
+幕后发生的事情要复杂很多。每当一个开发者 push commit 到我们的主 git 仓库，
 
 A backend service watches this list, and when a new revision is committed, it collects the names of all the unit tests in the codebase as of that revision. We have hundreds of test modules containing thousands of individual tests, so this service distributes the tests among several test worker machines to be run in parallel. When the workers are finished running tests, they report the results back to the test service, and it marks the revision's overall result (passed or failed, as well as how many tests failed and what the failures were, if applicable) on the list of release candidates.
 
