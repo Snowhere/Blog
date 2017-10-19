@@ -44,16 +44,25 @@ This system is very resilient. Failures are rare, but as with any complex system
 
 For most revisions, the time between git push and release is about six minutes, limited by the length of the longest task. Currently, unit testing is the longest task; packaging takes 2-3 minutes and integration testing takes just over 3 minutes. Over the following ten minutes (after release), machines will download and run the new code, but in the meantime, later revisions begin testing and packaging. (We don't update all machines at once since that would make Quora unavailable for a few minutes every time we release!) This 10-minute window was chosen mainly for reliability - if we need to respond to an emergency, it can be overridden to deploy code immediately.
 
-对于大多数修订版，git push 到发布大约间隔 6 分钟，这取决于其中执行时间最长的任务。目前，单元测试是时间最长的任务；打包需要 2-3 分钟，集成测试需要 3 分钟多一点。之后 10 分钟（发布之后），机器下载运行新代码，同时后面的修订版开始测试和打包。（我们不会同一时间更新所有机器，这会导致每次我们发布时，Quora 会有几分钟处于不可用状态！）
+对于大多数修订版，git push 到发布大约间隔 6 分钟，这取决于其中执行时间最长的任务。目前，单元测试是时间最长的任务；打包需要 2-3 分钟，集成测试需要 3 分钟多一点。之后 10 分钟（发布之后），机器下载运行新代码，同时后面的修订版开始测试和打包。（我们不会同一时间更新所有机器，这会导致每次我们发布时，Quora 会有几分钟处于不可用状态！）选择 10 分钟的间隔是为了可靠性 —— 如果我们需要响应突发事件，可以立刻覆盖部署代码。
 
 I think we can do even better than 6 minutes for testing + 10 for deployment. There are improvements we can make to the test system's parallelism that will make tests faster in general. In addition, we’ve eliminated some inefficiencies in other services that should allow us to reduce the deployment window from 10 to 5 minutes.
 
+我认为 6 分钟的测试 + 10 分钟的部署还不够好。我们可以改进测试系统，使其并行测试来提高效率。另外，我们去除掉其他服务中无用的东西，这让我们可以将部署时间由 10 分钟缩短为 5 分钟。
+
 This system design was motivated primarily by problems that other companies have faced with deployment. We decided early on in the company's history to use continuous deployment. It was easy to do this when the company, codebase, and infrastructure were small, but we've worked hard to maintain the process over the years because it plays such an important role in our development process and culture:
-It allows us to get product changes into the hands of users as quickly as possible, including everything from bug fixes to major features.
-It allows us to more quickly isolate and fix problems that occur. Bugs happen, but would you rather debug one commit, or one hundred that have been batched together into a monolithic release?
-It decreases the mental overhead of making small improvements to the site. We didn't really appreciate this until we experienced it - it's empowering to see a problem, make a quick fix, push it, and have it running in production in minutes. The longer the push process takes, the more likely your mind pushes back with "do I really have an hour free to sit and track this push for errors?" Worse, if it's staged until tomorrow, "do I really want to think about this again and test it tomorrow?"
-It decreases the development overhead of tracking multiple versions in different release states. There's no question whether something is in production or not, or has been fixed in a release candidate but not pushed yet.
-It forces us into a testing mindset. Tests are important for many reasons, but with the additional pressure of changes going live immediately, there’s no room for thinking “I’ll write the tests later.” We write tests early and often.
-It's more fun! Coding is fun, and our deployment process shouldn't make it less so.
+
+系统的设计主要基于其他公司部署项目时遇到的问题。我们在公司早期就决定采用持续部署方案。在公司规模、代码库、基础架构很小时便于使用这种方案，但我们仍努力多年来维护这一流程，因为持续部署在整个开发流程和开发文化中举足轻重。
+
+* It allows us to get product changes into the hands of users as quickly as possible, including everything from bug fixes to major features.
+* It allows us to more quickly isolate and fix problems that occur. Bugs happen, but would you rather debug one commit, or one hundred that have been batched together into a monolithic release?
+* It decreases the mental overhead of making small improvements to the site. We didn't really appreciate this until we experienced it - it's empowering to see a problem, make a quick fix, push it, and have it running in production in minutes. The longer the push process takes, the more likely your mind pushes back with "do I really have an hour free to sit and track this push for errors?" Worse, if it's staged until tomorrow, "do I really want to think about this again and test it tomorrow?"
+* It decreases the development overhead of tracking multiple versions in different release states. There's no question whether something is in production or not, or has been fixed in a release candidate but not pushed yet.
+* It forces us into a testing mindset. Tests are important for many reasons, but with the additional pressure of changes going live immediately, there’s no room for thinking “I’ll write the tests later.” We write tests early and often.
+* It's more fun! Coding is fun, and our deployment process shouldn't make it less so.
+
+* 持续部署让我们尽可能迅速地将产品的变更展现在用户面前，包括从 bug 的修复到主要特性等一系列东西。
+* 持续部署让我们尽可能迅速隔离并解决出现的问题。当出现 bug，你倾向于在一次提交中 debug，还是从包含一百个提交的整体发版中 debug。
+* 
 
 By decreasing the time spent in processing each revision and emphasizing testing, we increased the number of revisions we can push each day and drastically lowered the barrier to change, which is exactly what a fast-moving startup like Quora wants to do.
