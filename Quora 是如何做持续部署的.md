@@ -6,15 +6,15 @@
 
 Between 12:00 AM and 11:59 PM on April 25, 2013, Quora released new versions of the site 46 times. This was a normal day for us. We run a very fast continuous-deployment cycle, where changes are pushed live as soon as they are committed. This is made possible by parallelization on several levels. We wanted our push system to be fast, so developers can see their changes in production as soon as possible (currently it takes six to seven minutes on average for a revision to start running in production), but it should also be reliable and flexible, so we can respond to problems quickly.
 
-在 2013 年 4 月 25 日中午 12 点到晚上 11 点 59 分之间，Quora 站点发布了 46 次新版本。这对于我们来说只是普通的一天。我们执行非常快的持续部署周期，代码变动提交后就直接推送到线上。这使得在各个层面上实现平行化开发。我们希望我们的推送系统足够快，让开发者尽快看到他们对生产环境的改动（目前生产环境修订版上线平均要 6、7 分钟），单也要注意可靠性和灵活性，让我们可以迅速响应问题。
+在 2013 年 4 月 25 日中午 12 点到晚上 11 点 59 分之间，Quora 站点发布了 46 次新版本。这对于我们来说只是普通的一天。我们执行非常快的持续部署周期，代码变动提交后就直接推送到线上。这使得我们可以在各个层面上实现平行化开发。我们希望推送系统足够快，让开发者尽快看到他们对生产环境的改动（目前生产环境修订版上线平均要 6、7 分钟），同时也要注意可靠性和灵活性，让我们可以迅速响应问题。
 
 From the developer's side, only a single command is required to push code to production: git push
 
-对开发者而言，只需要一个简单的命令来推送代码到生产环境：`git push`
+对开发者而言，只需要一个简单的命令把代码推送到到生产环境：`git push`
 
 What goes on behind the scenes is more complicated. Every time a developer pushes commits to our main git repository, a post-receive hook adds the latest revision to the list of release candidates, which is maintained in a MySQL database. (This post-receive hook also adds the commit to Phabricator, which we use for code reviews. For more information on our code review process, see Does Quora engineering use a code review process?) An internal monitor webpage shows the status of each revision that's waiting to be released.
 
-这背后发生的事情要复杂很多。每当一个开发者把提交推送到我们的主 git 仓库，一个 post-receive 钩子会将最新的修订版加入到发版申请列表，并记录在 MySQL 数据库。（post-receive 钩子也会把提交加到 [Phabricator](https://www.quora.com/topic/Phabricator)，我们用它做代码评审。更多关于我们代码评审的相关信息参阅这个回答 [Does Quora engineering use a code review process?](https://www.quora.com/Does-Quora-engineering-use-a-code-review-process)）一个内部监控网站展示每个等待发布的修订版的状态。
+这背后发生的事情要复杂很多。每当一个开发者把提交推送到我们的主 git 仓库，一个 post-receive 钩子会将最新的修订版加入到发版申请列表，并记录到 MySQL 数据库。（post-receive 钩子也会把提交加到 [Phabricator](https://www.quora.com/topic/Phabricator)，我们用它做代码评审。更多关于我们代码评审的相关信息参阅这个回答 [Does Quora engineering use a code review process?](https://www.quora.com/Does-Quora-engineering-use-a-code-review-process)）一个内部监控网站展示每个等待发布的修订版的状态。
 
 A backend service watches this list, and when a new revision is committed, it collects the names of all the unit tests in the codebase as of that revision. We have hundreds of test modules containing thousands of individual tests, so this service distributes the tests among several test worker machines to be run in parallel. When the workers are finished running tests, they report the results back to the test service, and it marks the revision's overall result (passed or failed, as well as how many tests failed and what the failures were, if applicable) on the list of release candidates.
 
@@ -30,7 +30,7 @@ When packaging is complete for a revision, an integration-testing service pushes
 
 Finally, a fourth service watches the release-candidate list for revisions that are being processed by the other three services, and when a revision has been tested and packaged without any problems, it marks the revision for deployment (release) by uploading a small metadata file containing the revision ID to S3. Web servers and other machines that use the same code periodically check the active revision ID in that metadata file, and when it changes, they begin to download the new package from S3 immediately. Downloading and decompressing the package takes about a minute, then running the new code takes only a few more seconds. This happens independently on every machine that uses this code. We named this system Zerg, since the deployment process is kind of like a zerg rush on all the machines that use our main package.
 
-最后，第四个监控发版申请列表的服务由其他三个服务处理，当修订版的测试和打包没有问题，服务向 S3 上传一个包含版本号的小型元数据文件，来标记修订版的部署（发布）。Web 服务器和其他使用相同代码的机器会周期性检查元数据文件中的版本号，如果有变化，它们会立刻从 S3 上下载最新的包。下载并解压包大概需要一分钟，然后运行新的代码只需要几秒。每台需要代码的机器会独立完成上述操作。我们将这个系统命名为 [Zerg](https://www.quora.com/What-is-StarCraft-1998-game-culture-like-at-Quora)，因为在所有需要包的机器上进行部署过程很像虫族（zerg）的 rush 战术。
+最后，第四个监控发版申请列表的服务由其他三个服务调用，当修订版的测试和打包没有问题，服务向 S3 上传一个包含版本号的小型元数据文件，来标记修订版的部署（发布）。Web 服务器和其他使用相同代码的机器会周期性检查元数据文件中的版本号，如果有变化，它们会立刻从 S3 上下载最新的包。下载并解压包大概需要一分钟，然后运行新的代码只需要几秒。每台需要代码的机器会独立完成上述操作。我们将这个系统命名为 [Zerg](https://www.quora.com/What-is-StarCraft-1998-game-culture-like-at-Quora)，因为在所有需要包的机器上进行部署过程很像虫族（zerg）的 rush 战术。
 
 This diagram summarizes the backend architecture:
 
@@ -44,7 +44,7 @@ This system is very resilient. Failures are rare, but as with any complex system
 
 For most revisions, the time between git push and release is about six minutes, limited by the length of the longest task. Currently, unit testing is the longest task; packaging takes 2-3 minutes and integration testing takes just over 3 minutes. Over the following ten minutes (after release), machines will download and run the new code, but in the meantime, later revisions begin testing and packaging. (We don't update all machines at once since that would make Quora unavailable for a few minutes every time we release!) This 10-minute window was chosen mainly for reliability - if we need to respond to an emergency, it can be overridden to deploy code immediately.
 
-对于大多数修订版，git push 到发布大约间隔 6 分钟，这取决于其中执行时间最长的任务。目前，单元测试是时间最长的任务；打包需要 2-3 分钟，集成测试需要 3 分钟多一点。之后 10 分钟（发布之后），机器下载运行新代码，同时后面的修订版开始测试和打包。（我们不会同一时间更新所有机器，这会导致每次我们发布时，Quora 会有几分钟处于不可用状态！）选择 10 分钟的间隔是为了可靠性 —— 如果我们需要响应突发事件，可以立刻覆盖部署代码。
+对于大多数修订版，`git push` 到发布大约间隔 6 分钟，这取决于其中执行时间最长的任务。目前，单元测试是时间最长的任务；打包需要 2-3 分钟，集成测试需要 3 分钟多一点。之后 10 分钟（发布之后），机器下载运行新代码，同时后面的修订版开始测试和打包。（我们不会同一时间更新所有机器，这会导致每次我们发布时，Quora 会有几分钟处于不可用状态！）选择 10 分钟的间隔是为了可靠性 —— 如果我们需要响应突发事件，可以立刻覆盖部署代码。
 
 I think we can do even better than 6 minutes for testing + 10 for deployment. There are improvements we can make to the test system's parallelism that will make tests faster in general. In addition, we’ve eliminated some inefficiencies in other services that should allow us to reduce the deployment window from 10 to 5 minutes.
 
@@ -52,7 +52,7 @@ I think we can do even better than 6 minutes for testing + 10 for deployment. Th
 
 This system design was motivated primarily by problems that other companies have faced with deployment. We decided early on in the company's history to use continuous deployment. It was easy to do this when the company, codebase, and infrastructure were small, but we've worked hard to maintain the process over the years because it plays such an important role in our development process and culture:
 
-系统的设计主要基于其他公司部署项目时遇到的问题。我们在公司早期就决定采用持续部署方案。在公司规模、代码库、基础架构很小时便于使用这种方案，但我们仍努力多年来维护这一流程，因为持续部署在整个开发流程和开发文化中举足轻重。
+系统的设计主要基于其他公司部署项目时遇到的问题。我们在公司早期就决定采用持续部署方案。在公司规模、代码库、基础架构很小时便于使用这种方案，但我们仍努力多年来维护这一流程，因为持续部署在整个开发流程和开发文化中举足轻重：
 
 * It allows us to get product changes into the hands of users as quickly as possible, including everything from bug fixes to major features.
 * It allows us to more quickly isolate and fix problems that occur. Bugs happen, but would you rather debug one commit, or one hundred that have been batched together into a monolithic release?
@@ -62,7 +62,12 @@ This system design was motivated primarily by problems that other companies have
 * It's more fun! Coding is fun, and our deployment process shouldn't make it less so.
 
 * 持续部署让我们尽可能迅速地将产品的变更展现在用户面前，包括从 bug 的修复到主要特性等一系列东西。
-* 持续部署让我们尽可能迅速隔离并解决出现的问题。当出现 bug，你倾向于在一次提交中 debug，还是从包含一百个提交的整体发版中 debug。
-* 
+* 持续部署让我们尽可能迅速隔离并解决出现的问题。当出现 bug，你倾向于在单个提交中 debug，还是从包含一百个提交的整体发版中 debug？
+* 持续部署让我们在改进网站时不需要投入过多精力。我们直到经历了这些之后才意识到这点 —— 持续部署让我们在几分钟之内完成发现问题、快速修复、推送代码并部署到生产环境。如果这些动作时间过长，开发者可能会想“我难道要花一个小时来坐下跟踪代码的推送吗？”。更糟糕的是，如果隔天部署，开发者会想“我难道要明天再审查一遍然后测试代码吗”
+* 持续部署减少了跟踪不同发布状态的多个版本这一工作上的投入。代码是在生产环境还是在发版列表的未推送状态，都一目了然。
+* 持续部署让我们有测试的习惯。毫无疑问，测试非常重要。伴随着变更需要立刻上线的压力，我们没有之后再写测试的余地。我们总是先写好测试。
+* 持续部署很有趣！写代码很有趣，我们的部署过程也应该同样有趣。
 
 By decreasing the time spent in processing each revision and emphasizing testing, we increased the number of revisions we can push each day and drastically lowered the barrier to change, which is exactly what a fast-moving startup like Quora wants to do.
+
+通过减少每次版本上线需要的时间，并加强测试，我们每天可以上线更多的修订版，并有效减小变更伴随的阻碍。这也是 Quora 这类快速起步的公司需要的东西。

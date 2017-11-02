@@ -9,7 +9,9 @@ public static <K,V> HashMap<K,V> newInstance{
 }
 Map<String,List<String>> m = HashMap.newInstance();
 缺点：类如果不含公有的或者受保护的构造器，就不能被子类化；与其他的静态方法实际上没有任何区别。
+
 2·遇到多个构造器参数时要考虑用构建器
+
 3·用私有构造器或者枚举类型强化Singleton属性：
 公有静态成员
 public class Elvis{
@@ -32,6 +34,7 @@ public enum Elvis{
 
 
 4·通过私有构造器强化不可实例化的能力
+企图通过将类做成抽象类来强制该类不可被实例化，这是行不通的，因为子类可以实例化。
 public class Utility{
 	private Utility(){
 		throw new AssertionError();
@@ -40,6 +43,9 @@ public class Utility{
 
 5·避免创建不必要的对象
 Map接口的keySet方法返回该Map对象的Set视图，其中包含该Map中所有的key。粗看起来，好像每次调用keySet都返回同样的Set实例,但是，对于一个给定的Map对象，实际上每次调用keySet都返回同样的Set实例。
+优先使用基本类型而不是装箱基本类型，当心无意识的自动装箱。
+清空对象引用应该是一种例外，而不是一种规范行为。
+只要类是自己管理内存，程序员就应该警惕内存泄露问题。
 
 6·消除过期的对象引用
 过期引用obsolete reference。这类问题的修复方法很简单：一旦对象引用已经过期，只需清空这些引用即可。比如Stack的pop方法
@@ -48,6 +54,7 @@ public Object pop(){
 	elements[size] = null;
 	return result;
 }
+
 7·避免使用终结方法
 如果子类实现者覆盖了超类的终结方法，但是忘了手工调用超类的终结方法(或者有意选择不调用超类的终结方法)，那么超类的终结方法将永远也不会被调用到。
 
