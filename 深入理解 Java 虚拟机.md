@@ -1,11 +1,11 @@
 深入理解 Java 虚拟机
 
 第2章 Java内存区域与内存溢出异常
-程序计数器（Program Counter Register）是一块较小的内存空间，它可以看作是当前线程做执行的字节码的行号指示器。
-Java虚拟机栈（Java Virtual Machine Stacks）描述的是Java执行的内存模型：每个方法在执行的同时都会创建一个栈帧（Stack Frame）用于存储局部变量表、操作数栈、动态链接、方法出口等信息。局部变量表存放编译器可知的各种数据类型（boolean,byte,char,short,int,long,double,float）、对象引用（reference）和returnAddress类型。两种异常情况：线程请求的栈深度大于虚拟机所允许的深度——StackOverflowError，扩展无法申请到足够内存——OutOfMemoryError。
-本地方法栈（Native Method Stack）与虚拟机栈相似，只是执行Native方法。
-Java堆（Java Heap）是内存最大的一块。线程共享，存放对象实例。（-Xmx和-Xms控制）。
-方法区（Method Area）与堆一样，线程共享的内存区域，储存已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。运行时常量池（Runtime Constant Pool）是方法区的一部分
+* 程序计数器（Program Counter Register）是一块较小的内存空间，它可以看作是当前线程做执行的字节码的行号指示器。
+* Java虚拟机栈（Java Virtual Machine Stacks）描述的是Java执行的内存模型：每个方法在执行的同时都会创建一个栈帧（Stack Frame）用于存储局部变量表、操作数栈、动态链接、方法出口等信息。局部变量表存放编译器可知的各种数据类型（boolean,byte,char,short,int,long,double,float）、对象引用（reference）和returnAddress类型。两种异常情况：线程请求的栈深度大于虚拟机所允许的深度——StackOverflowError，扩展无法申请到足够内存——OutOfMemoryError。
+* 本地方法栈（Native Method Stack）与虚拟机栈相似，只是执行Native方法。
+* Java堆（Java Heap）是内存最大的一块。线程共享，存放对象实例。（-Xmx和-Xms控制）。
+* 方法区（Method Area）与堆一样，线程共享的内存区域，储存已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。运行时常量池（Runtime Constant Pool）是方法区的一部分
 
 第3章 垃圾收集器与内存分配策略
 Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来。
@@ -26,7 +26,7 @@ Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的�
 虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型。
 类型的加载、链接和初始化过程都是在程序运行期间完成的。
 生命周期：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）、卸载（Unloading）。连接（Linking）包括验证、准备、解析阶段
-3中系统提供的类加载器：启动类加载器（Bootstrap ClassLoader）、扩展类加载器（Extension ClassLoader）、应用程序类加载器（Application ClassLoader）。加载器之间的父子关系一般以组合（Composition）关系实现。
+3种系统提供的类加载器：启动类加载器（Bootstrap ClassLoader）、扩展类加载器（Extension ClassLoader）、应用程序类加载器（Application ClassLoader）。加载器之间的父子关系一般以组合（Composition）关系实现。
 双亲委派模型：类加载器收到类加载请求，委托给父类加载器，父类加载器无法完成，子类尝试加载。
 破坏双亲委派模型：向前兼容、JNDI、OSGi
 
