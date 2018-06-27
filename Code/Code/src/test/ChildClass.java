@@ -8,6 +8,10 @@ package test;
  **/
 public class ChildClass extends FatherClass {
 
+    protected String s = "childClass";
 
-
+    @Override
+    protected String getString() {
+        return "child";
+    }
 }

@@ -2,14 +2,12 @@ package test;
 
 
 public class FatherClass {
-    private void test() {
-        System.out.println("father");
+    protected String s = "parent";
+    public void test() {
+        System.out.println(getString());
     }
 
-    private void test2() {
-        test();
-    }
-    public void print() {
-        test2();
+    protected String getString(){
+        return "father";
     }
 }
