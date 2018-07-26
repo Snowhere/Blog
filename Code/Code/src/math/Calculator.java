@@ -11,7 +11,8 @@ import java.util.Stack;
  *
  */
 public class Calculator {
-
+    //表达式有错误抛出异常
+    class ExpressionException extends Exception {}
     private String expression;
     private List<String> infix = new LinkedList<>();
     private List<String> postfix = new LinkedList<>();

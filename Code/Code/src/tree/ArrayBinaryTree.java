@@ -1,4 +1,5 @@
-package algorithm;
+package tree;
+
 
 import java.util.Arrays;
 
@@ -7,7 +8,7 @@ import java.util.Arrays;
  * i的子节点 array[2*i]和array[2*i+1]
  * i的父节点 array[i/2]
  */
-public class BinaryTree<T extends Comparable<T>> implements Tree<T> {
+public class ArrayBinaryTree<T extends Comparable<T>> {
     private Object[] array;
 
     private void exchange(int i, int j) {
@@ -27,7 +28,6 @@ public class BinaryTree<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
-    @Override
     public void addNode(T node) {
         if (array == null) {
             array = new Object[]{node};
@@ -38,7 +38,6 @@ public class BinaryTree<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
-    @Override
     public void printTree() {
         for (Object o : array) {
             System.out.println(o);
@@ -47,7 +46,7 @@ public class BinaryTree<T extends Comparable<T>> implements Tree<T> {
     }
 
     public static void main(String[] args) {
-        BinaryTree<Integer> tree = new BinaryTree<>();
+        ArrayBinaryTree<Integer> tree = new ArrayBinaryTree<>();
         tree.addNode(1);
         tree.addNode(3);
         tree.addNode(4);

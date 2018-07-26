@@ -88,22 +88,58 @@ public class Sort {
                 if (numbers[i] <= pivot) {
                     tail++;
                     exchange(numbers, tail, i);
-                    show(numbers);
                 }
             }
             exchange(numbers, tail + 1, right);
+            show(numbers);//log
             quickSort(numbers, left, tail);
             quickSort(numbers, tail + 2, right);
         }
     }
 
-    // 选择一个值作为中间点，小的放前面，大的放后面。递归操作
+
     public static void main(String[] args) {
         //待排序数组
         int[] numbers = { 4, 3, 1, 3, 2, 5, 2 };
         Sort sort = new Sort();
         sort.show(numbers);
-        sort.quickSort(numbers,0,numbers.length-1);
+        sort.qSort(numbers,0,numbers.length-1);
         sort.show(numbers);
     }
+
+
+
+
+    public  void qSort(int[] numbers, int left, int right) {
+        int p=left-1;
+        int middle = numbers[right];
+        if (left < right) {
+            for (int i = left; i < right; i++) {
+                if (numbers[i] <= middle) {
+                    p++;
+                    exchange(numbers,i,p);
+                }
+            }
+            exchange(numbers, p + 1, right);
+            qSort(numbers, left, p);
+            qSort(numbers,p+2,right);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

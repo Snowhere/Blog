@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import Thread.*;
-
 public class Code {
     private volatile long lastStat = System.currentTimeMillis();
 

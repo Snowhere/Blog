@@ -2,6 +2,9 @@ package util;
 
 import java.util.Iterator;
 
+/**
+ * 实现 for (String var : list)
+ */
 public class MyList implements Iterable<String> {
 
     // 定义一个数组
