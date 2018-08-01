@@ -2,29 +2,30 @@ package util;
 
 public class MyMessageQueue<T> {
 
-    private MyNode currentNode;
+    private MyNode<T> firstNode;
 
     public void put(T t) {
-        MyNode<T> newNode = new MyNode(t);
-        MyNode node = currentNode;
+        MyNode<T> newNode = new MyNode<>(t);
+        //记录起始 node
+        MyNode node = firstNode;
         if (node == null) {
-            currentNode=newNode;
+            firstNode = newNode;
             return;
         }
+        //新 node 添加到队尾
         while (node.getNextNode() != null) {
             node = node.getNextNode();
         }
         node.setNextNode(newNode);
-        return;
     }
 
     public T get() {
-        MyNode<T> node = currentNode;
-        if (node == null) {
+        if (firstNode == null) {
             return null;
         }
-        currentNode = currentNode.getNextNode();
-        return node.getT();
+        T value = firstNode.getT();
+        firstNode = firstNode.getNextNode();
+        return value;
     }
 
     public static void main(String[] args) {

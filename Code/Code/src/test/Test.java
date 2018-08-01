@@ -1,4 +1,8 @@
 package test;
 
-	public static void main(String args[]) {
+class Test {
+    public static void main(String args[]) {
+    }
+}
+
 
