@@ -7,12 +7,12 @@ public class MyMessageQueue<T> {
     public void put(T t) {
         MyNode<T> newNode = new MyNode<>(t);
         //记录起始 node
-        MyNode node = firstNode;
-        if (node == null) {
+        if (firstNode == null) {
             firstNode = newNode;
             return;
         }
         //新 node 添加到队尾
+        MyNode<T> node = firstNode;
         while (node.getNextNode() != null) {
             node = node.getNextNode();
         }

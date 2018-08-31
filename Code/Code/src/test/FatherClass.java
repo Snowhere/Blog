@@ -7,7 +7,7 @@ public class FatherClass {
         System.out.println(getString());
     }
 
-    protected String getString(){
+    protected synchronized String getString(){
         return "father";
     }
 }
