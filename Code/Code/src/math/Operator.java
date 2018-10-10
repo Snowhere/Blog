@@ -16,6 +16,7 @@ public enum Operator {
     }
 
     private static final Map<String, Operator> MAP = new HashMap<>();
+
     static {
         for (Operator c : EnumSet.allOf(Operator.class)) {
             MAP.put(c.getSign(), c);

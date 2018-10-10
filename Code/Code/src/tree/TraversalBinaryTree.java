@@ -41,7 +41,7 @@ public class TraversalBinaryTree {
         if (root != null) {
             queue.offer(root);
         }
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
             System.out.print(node.getValue());
             if (node.getLeftNode() != null) {
@@ -52,6 +52,7 @@ public class TraversalBinaryTree {
             }
         }
     }
+
     public static void main(String[] args) {
         TreeNode<Integer> node1 = new TreeNode(1);
         TreeNode<Integer> node2 = new TreeNode(2);

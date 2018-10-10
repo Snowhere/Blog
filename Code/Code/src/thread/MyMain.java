@@ -13,11 +13,11 @@ public class MyMain {
         Consumer consumer3 = new Consumer(3, queue);
         Consumer consumer4 = new Consumer(4, queue);
         Consumer consumer5 = new Consumer(5, queue);
-        
+
         Producer producer1 = new Producer(1, queue);
         Producer producer2 = new Producer(2, queue);
         Producer producer3 = new Producer(3, queue);
-        
+
         consumer1.start();
         consumer2.start();
         consumer3.start();
@@ -26,6 +26,6 @@ public class MyMain {
         producer1.start();
         producer2.start();
         producer3.start();
-        
+
     }
 }

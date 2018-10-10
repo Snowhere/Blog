@@ -1,14 +1,12 @@
-
-import java.io.IOException;
-import java.security.SecureRandom;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.io.IOException;
+import java.security.SecureRandom;
 
 public class DES {
 
@@ -31,7 +29,8 @@ public class DES {
 
     /**
      * Description 根据键值进行加密
-     * @param data 
+     *
+     * @param data
      * @param key  加密键byte数组
      * @return
      * @throws Exception
@@ -59,6 +58,7 @@ public class DES {
 
     /**
      * Description 根据键值进行解密
+     *
      * @param data
      * @param key  加密键byte数组
      * @return
@@ -66,7 +66,7 @@ public class DES {
      * @throws Exception
      */
     public static String decrypt(String data, String key)
-        throws IOException, Exception {
+            throws IOException, Exception {
         if (data == null)
             return null;
         BASE64Decoder decoder = new BASE64Decoder();
