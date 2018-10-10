@@ -1,40 +1,45 @@
 package util;
 
-/**
- * size固定3
- * @param <K>
- * @param <V>
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+/***
+ * @Description: size 固定为 3 的 map
+ * @author suntenghao
+ * @date 2018-10-10 16:29
  */
 public class MyHashMap<K, V> {
-    private Node[] array;
+    private Node<K, V>[] array;
     private int size = 3;
 
     MyHashMap() {
-        array = new Node[3];
+        array = new Node[size];
     }
 
     public void put(K key, V value) {
         int hashCode = key.hashCode();
-        Node node = array[hashCode % 3];
+        int index = hashCode % size;
+        Node<K, V> node = array[index];
         if (node == null) {
-            array[hashCode % 3] = new Node(key, value);
+            array[index] = new Node<>(key, value, null);
             return;
         }
         if (node.getKey() == key) {
             node.setValue(value);
             return;
         }
-        for (; node.getNextNode() != null; node = node.getNextNode())
+        for (; node.getNextNode() != null; node = node.getNextNode()) {
             if (node.getNextNode().getKey() == key) {
                 node.getNextNode().setValue(value);
                 return;
             }
-        node.setNextNode(new Node(key, value));
+        }
+        node.setNextNode(new Node<>(key, value, null));
     }
 
     public V get(K key) {
         int hashCode = key.hashCode();
-        Node<K, V> node = array[hashCode % 3];
+        Node<K, V> node = array[hashCode % size];
         while (node != null) {
             if (node.getKey() == key) {
                 return node.getValue();
@@ -44,39 +49,12 @@ public class MyHashMap<K, V> {
         return null;
     }
 
-    class Node<K, V> {
+    @Data
+    @AllArgsConstructor
+    private class Node<K, V> {
         private K key;
         private V value;
-        private Node nextNode;
-
-        public Node(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public void setKey(K key) {
-            this.key = key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
-
-        public Node getNextNode() {
-            return nextNode;
-        }
-
-        public void setNextNode(Node nextNode) {
-            this.nextNode = nextNode;
-        }
+        private Node<K, V> nextNode;
     }
 
 

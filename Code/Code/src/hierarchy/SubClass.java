@@ -6,7 +6,7 @@ package hierarchy;
  * @author STH
  * @create 2017-04-05
  **/
-public class Child extends SupClass implements SupInterface {
+public class SubClass extends SupClass implements SupInterface {
     @Override
     public String get() {
         return null;

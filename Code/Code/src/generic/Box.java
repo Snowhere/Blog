@@ -8,7 +8,7 @@ package generic;
  **/
 public class Box {
 
-    public static <K,V> boolean compare(K k, V v) {
+    public static <K, V> boolean compare(K k, V v) {
         return k.equals(v);
     }
 

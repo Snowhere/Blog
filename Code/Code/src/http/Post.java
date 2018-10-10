@@ -30,11 +30,11 @@ public class Post {
 
             //part 1  
             String part1 = "--" + boundary + Enter + "Content-Type: application/octet-stream" + Enter
-                + "Content-Disposition: form-data; filename=\"" + xml.getName() + "\"; name=\"file\"" + Enter + Enter;
+                    + "Content-Disposition: form-data; filename=\"" + xml.getName() + "\"; name=\"file\"" + Enter + Enter;
             //part 2  
             String part2 = Enter + "--" + boundary + Enter + "Content-Type: text/plain" + Enter
-                + "Content-Disposition: form-data; name=\"dataFormat\"" + Enter + Enter + "hk" + Enter + "--" + boundary
-                + "--";
+                    + "Content-Disposition: form-data; name=\"dataFormat\"" + Enter + Enter + "hk" + Enter + "--" + boundary
+                    + "--";
 
             byte[] xmlBytes = new byte[fis.available()];
             fis.read(xmlBytes);

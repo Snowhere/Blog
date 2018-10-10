@@ -5,20 +5,24 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+
 /**
  * 计算器,计算一个完整的表达式
- * @author STH
  *
+ * @author STH
  */
 public class Calculator {
     //表达式有错误抛出异常
-    class ExpressionException extends Exception {}
+    class ExpressionException extends Exception {
+    }
+
     private String expression;
     private List<String> infix = new LinkedList<>();
     private List<String> postfix = new LinkedList<>();
     private Stack<BigDecimal> numberStack = new Stack<>();
     private Stack<Operator> operatorStack = new Stack<>();
-    private BigDecimal result = new BigDecimal(0);;
+    private BigDecimal result = new BigDecimal(0);
+    ;
 
     public Calculator(String expression) {
         this.expression = expression;
@@ -40,7 +44,7 @@ public class Calculator {
 
     /**
      * 第二步，中缀到后缀的转换
-     * 
+     *
      * @throws ExpressionException
      */
     private void transform() throws ExpressionException {
@@ -135,20 +139,20 @@ public class Calculator {
         
         /*Calculator calculator = new Calculator("1 + 2 * 3 + ( 4 / 5 + 6 ) * 7");
         System.out.println(calculator.calculate());*/
-        
-        for(double x=8.5;x<=9.1;x=x+0.01){
-            for(double y=26.0;y<=27.1;y=y+0.01){
-                double  result = 13008*x+3589 *y;
-                String xBigDecimal =new java.text.DecimalFormat("0.00000000").format( 13008*x);
-                String yBigDecimal =new java.text.DecimalFormat("0.00000000").format( 3589 *y);
-               // System.out.println(xBigDecimal+","+yBigDecimal+","+new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)));
-                if (new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)).equals("207414")) {
-                    System.out.println(xBigDecimal+","+yBigDecimal+","+new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)));
+
+        for (double x = 8.5; x <= 9.1; x = x + 0.01) {
+            for (double y = 26.0; y <= 27.1; y = y + 0.01) {
+                double result = 13008 * x + 3589 * y;
+                String xBigDecimal = new java.text.DecimalFormat("0.00000000").format(13008 * x);
+                String yBigDecimal = new java.text.DecimalFormat("0.00000000").format(3589 * y);
+                // System.out.println(xBigDecimal+","+yBigDecimal+","+new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal)+Double.parseDouble(yBigDecimal)));
+                if (new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal) + Double.parseDouble(yBigDecimal)).equals("207414")) {
+                    System.out.println(xBigDecimal + "," + yBigDecimal + "," + new java.text.DecimalFormat("0").format(Double.parseDouble(xBigDecimal) + Double.parseDouble(yBigDecimal)));
                 }
-               /* System.out.println(new java.text.DecimalFormat("0").format(result)); */
-               /* System.out.println(x+","+y+","+result);*/
+                /* System.out.println(new java.text.DecimalFormat("0").format(result)); */
+                /* System.out.println(x+","+y+","+result);*/
             }
-          /* System.out.println(x+","+xMax);*/
+            /* System.out.println(x+","+xMax);*/
         }
     }
 }

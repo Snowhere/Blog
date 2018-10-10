@@ -11,10 +11,10 @@ public class Cer {
         String host;
         int port;
         char[] passphrase;
-            host = "maven.eveoh.nl";
-            port =  443 ;
-            String p = "changeit";
-            passphrase = p.toCharArray();
+        host = "maven.eveoh.nl";
+        port = 443;
+        String p = "changeit";
+        passphrase = p.toCharArray();
 
 
         File file = new File("jssecacerts");

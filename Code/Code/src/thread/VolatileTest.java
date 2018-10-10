@@ -10,6 +10,6 @@ public class VolatileTest {
     private volatile long lastStat = System.currentTimeMillis();
 
     public void test() {
-        System.out.print(lastStat-System.currentTimeMillis());
+        System.out.print(lastStat - System.currentTimeMillis());
     }
 }

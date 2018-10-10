@@ -3,10 +3,13 @@ package tree;
 
 import java.util.Arrays;
 
-/**
- * 一维数组从下标1开始存储
- * i的子节点 array[2*i]和array[2*i+1]
- * i的父节点 array[i/2]
+/***
+ * @Description:
+ *   一维数组从下标1开始存储
+ *   i的子节点 array[2*i]和array[2*i+1]
+ *   i的父节点 array[i/2]
+ * @author suntenghao
+ * @date 2018-10-10 16:41
  */
 public class ArrayBinaryTree<T extends Comparable<T>> {
     private Object[] array;

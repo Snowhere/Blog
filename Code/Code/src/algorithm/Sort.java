@@ -18,8 +18,8 @@ public class Sort {
     }
 
     /**
-     *  插入排序-直接插入排序
-     *  (从前到后)
+     * 插入排序-直接插入排序
+     * (从前到后)
      */
     public void sort1(int[] numbers) {
         int i, j;
@@ -40,8 +40,8 @@ public class Sort {
     }
 
     /**
-     *  选择排序-简单选择排序
-     *  (从前到后)
+     * 选择排序-简单选择排序
+     * (从前到后)
      */
     public void sort2(int[] numbers) {
         int min, i, j;
@@ -75,7 +75,8 @@ public class Sort {
     }
 
     /**
-     *  交换排序-快排序
+     * 交换排序-快排序
+     *
      * @param numbers
      * @param left
      * @param right
@@ -100,46 +101,29 @@ public class Sort {
 
     public static void main(String[] args) {
         //待排序数组
-        int[] numbers = { 4, 3, 1, 3, 2, 5, 2 };
+        int[] numbers = {4, 3, 1, 3, 2, 5, 2};
         Sort sort = new Sort();
         sort.show(numbers);
-        sort.qSort(numbers,0,numbers.length-1);
+        sort.qSort(numbers, 0, numbers.length - 1);
         sort.show(numbers);
     }
 
 
-
-
-    public  void qSort(int[] numbers, int left, int right) {
-        int p=left-1;
+    public void qSort(int[] numbers, int left, int right) {
+        int p = left - 1;
         int middle = numbers[right];
         if (left < right) {
             for (int i = left; i < right; i++) {
                 if (numbers[i] <= middle) {
                     p++;
-                    exchange(numbers,i,p);
+                    exchange(numbers, i, p);
                 }
             }
             exchange(numbers, p + 1, right);
             qSort(numbers, left, p);
-            qSort(numbers,p+2,right);
+            qSort(numbers, p + 2, right);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
