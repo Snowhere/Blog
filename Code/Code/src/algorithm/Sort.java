@@ -92,7 +92,7 @@ public class Sort {
                 }
             }
             exchange(numbers, tail + 1, right);
-            show(numbers);//log
+            //show(numbers);
             quickSort(numbers, left, tail);
             quickSort(numbers, tail + 2, right);
         }
@@ -104,7 +104,7 @@ public class Sort {
         int[] numbers = {4, 3, 1, 3, 2, 5, 2};
         Sort sort = new Sort();
         sort.show(numbers);
-        sort.qSort(numbers, 0, numbers.length - 1);
+        sort.q(numbers, 0, numbers.length - 1);
         sort.show(numbers);
     }
 
@@ -125,5 +125,20 @@ public class Sort {
         }
     }
 
+    public void q(int[] numbers,int left,int right){
+        int index = left-1;
+        int middle = numbers[right];
+        if (left < right) {
+            for (int i = left; i < right; i++) {
+                if(numbers[i]<middle){
+                    index++;
+                    exchange(numbers,i,index);
+                }
+            }
+            exchange(numbers, index + 1, right);
 
+            q(numbers, left, index);
+            q(numbers, index + 2, right);
+        }
+    }
 }
