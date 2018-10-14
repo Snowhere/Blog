@@ -16,7 +16,7 @@
 
 A deadlock is a situation where two or more threads are waiting for resources acquired by each other. For example thread A waits for lock1  locked by thread B, whereas thread B waits for  lock2, locked by thread A. In worst case scenario, the application freezes for an indefinite amount of time. Let me show you a concrete example. Imagine there is a Lumberjack class that holds references to two accessory locks:
 
-死锁是两个或多个线程互相等待对方所拥有的资源的情形。举个例子，线程 A 等待 lock1，lock1 当前由线程 B 锁住，然而线程 B 也在等待由线程 A 锁住的 lock2。最坏情况下，应用程序将无限期冻结。让我给你看个具体例子。假设这里有个 `Lumberjack`（伐木工人） 类，包含了两个装备的锁：
+死锁是两个或多个线程互相等待对方所拥有的资源的情形。举个例子，线程 A 等待 lock1，lock1 当前由线程 B 锁住，然而线程 B 也在等待由线程 A 锁住的 lock2。最坏情况下，应用程序将无限期冻结。让我给你看个具体例子。假设这里有个 `Lumberjack`（伐木工） 类，包含了两个装备的锁：
 
 ```
 import com.google.common.collect.ImmutableList;
@@ -45,7 +45,7 @@ class Lumberjack {
 
 Every Lumberjack needs two accessories: a helmet and a chainsaw. Before he approaches any work, he must hold the exclusive lock to both of these. We create lumberjacks as follows:
 
-每个 `Lumberjack`（伐木工人）需要两件装备：`helmet`（安全帽） 和 `chainsaw`（电锯）。在他开始工作前，他必须拥有全部两件装备。我们通过如下方式创建伐木工人们：
+每个 `Lumberjack`（伐木工）需要两件装备：`helmet`（安全帽） 和 `chainsaw`（电锯）。在他开始工作前，他必须拥有全部两件装备。我们通过如下方式创建伐木工们：
 
 ```
 import lombok.RequiredArgsConstructor;
@@ -67,7 +67,7 @@ class Logging {
 
 As you can see, there are two kinds of lumberjacks: those who first take a helmet and then a chainsaw and vice versa. Careful lumberjacks try to obtain a helmet first and then wait for a chainsaw. A YOLO-type of lumberjack first takes a chainsaw and then looks for a helmet. Let’s generate some Lumberjacks and run them concurrently:
 
-可以看到，有两种伐木工人：先戴好安全帽然后再拿电锯的，另一种则相反。谨慎派（`careful()`）伐木工先戴好安全帽，然后去拿电锯。狂野派伐木工（`yolo()`）先拿电锯，然后找安全帽。让我们并发生成一些伐木工人：
+可以看到，有两种伐木工：先戴好安全帽然后再拿电锯的，另一种则相反。谨慎派（`careful()`）伐木工先戴好安全帽，然后去拿电锯。狂野派伐木工（`yolo()`）先拿电锯，然后找安全帽。让我们并发生成一些伐木工：
 
 ```
 private List<Lumberjack> generate(int count, Supplier<Lumberjack> factory) {
@@ -78,7 +78,9 @@ private List<Lumberjack> generate(int count, Supplier<Lumberjack> factory) {
 }
 ```
 
- generate() is a simple method that creates a collection of lumberjacks of a  given type. Then, we generate a bunch of careful and YOLO:
+generate() is a simple method that creates a collection of lumberjacks of a  given type. Then, we generate a bunch of careful and YOLO:
+
+`generate()`方法可以创建指定类型伐木工的集合。我们来生成一些谨慎派伐木工和狂野派伐木工。
 
 ```
 private final Logging logging;
@@ -89,6 +91,8 @@ lumberjacks.addAll(generate(yoloLumberjacks, logging::yolo));
 ```
 
 Finally, let’s put these Lumberjacks to work:
+
+最后，我们让这些伐木工开始工作：
 
 ```
 IntStream
@@ -103,6 +107,8 @@ IntStream
 ```
 
 This loop takes Lumberjacks — one after another — in a round-robin fashion and asks them to cut a tree. Essentially, we are submitting the howManyTrees number of tasks to a thread pool ( ExecutorService). In order to figure out when the job was done, we use a  CountDownLatch:
+
+这个循环让所有伐木工一个接一个（轮询方式）去砍树。实质上，我们向线程池（`ExecutorService`）提交了和树木数量（`howManyTrees`）相同个数的任务，并使用 `CountDownLatch` 来记录工作是否完成。
 
 ```
 CountDownLatch latch = new CountDownLatch(howManyTrees);
@@ -120,6 +126,8 @@ if (!latch.await(10, TimeUnit.SECONDS)) {
 ```
 
 The idea is simple. We will let a bunch of Lumberjacks compete over a helmet and a chainsaw across multiple threads. The complete source code is as follows:
+
+其实想法很简单。我们让多个伐木工（`Lumberjacks`）通过多线程方式去竞争一个安全帽和一把电锯。完整代码如下：
 
 ```
 import lombok.RequiredArgsConstructor;
@@ -171,19 +179,24 @@ class Forest implements AutoCloseable {
 }
 
 ```
+
 Now, let's take a look at the interesting part. If you only create careful  Lumberjacks , the application completes almost immediately, for example:
+
+现在，让我们来看有趣的部分。如果我们只创建谨慎派伐木工（`careful Lumberjacks`），应用程序几乎瞬间运行完成，举个例子：
 
 ```
 ExecutorService pool = Executors.newFixedThreadPool(10);
 Logging logging = new Logging(new Names());
 try (Forest forest = new Forest(pool, logging)) {
-    forest.cutTrees(10_000, 10, 0);
+    forest.cutTrees(10000, 10, 0);
 } catch (TimeoutException e) {
     log.warn("Working for too long", e);
 }
 ```
 
 However, if you play a bit with the number of Lumberjacks, e.g. 10 careful  and one yolo, the system quite often fails. What happened? Everyone in the careful  team tries to pick up a helmet first. If one of the Lumberjacks picked up a helmet, everyone else just waits. Then, the lucky guy picks up a chainsaw, which must be available. Why? Everyone else is waiting for the helmet before they pick up a chainsaw. So far, so good. But, what if there is one yolo   Lumberjack in the team? While everyone competes for a helmet, he sneakily grabs a chainsaw. But, there’s a problem. One of the careful  Lumberjacks gets his safety helmet. However, he can’t pick up a chainsaw, because it’s already taken by someone else. To make matters worse, the current owner of the chainsaw (the yolo guy) will not release his chainsaw until he gets a helmet. There are no timeouts here. The careful guy waits infinitely with his helmet, unable to get a chainsaw. The yolo guy sits idle forever, because he can not obtain a helmet — a deadlock.
+
+但是，如果你对伐木工（`Lumberjacks`）的数量做些修改，比如，10 个谨慎派（`careful`）伐木工和 1 个狂野派（`yolo`）伐木工，系统就会经常运行失败。怎么回事？谨慎派（`careful`）团队里每个人都首先尝试获取安全帽。如果其中一个伐木工取到了安全帽，其他人会等待。然后那个幸运儿肯定能拿到电锯。原因就是其他人在等待安全帽，还没到获取电锯的阶段。目前为止很完美。但是如果团队里有一个狂野派（`yolo`）伐木工呢？当所有人竞争安全帽时，他偷偷把电锯拿走了。这就出现问题了。某个谨慎派（`careful`）伐木工牢牢握着安全帽，但他拿不到电锯，因为被其他某人拿走了。更糟糕的是电锯所有者（那个狂野派伐木工）在拿到安全帽之前不会放弃电锯。这里并没有一个超时设定。
 
 Now, what would happen if all the Lumberjacks were yolo, i.e., they all tried to pick the chainsaw first? It turns out that the easiest way to avoid deadlocks is to obtain and release locks always in the same order. For example, you can sort your resources based on some arbitrary criteria. If one thread obtains lock A followed by B, whereas the second thread obtains B first, it’s a recipe for a deadlock.
 
