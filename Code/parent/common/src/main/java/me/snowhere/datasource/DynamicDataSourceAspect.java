@@ -2,25 +2,15 @@ package me.snowhere.datasource;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+
 @Slf4j
-@Aspect
-@Component
 public class DynamicDataSourceAspect {
 
-    @Pointcut("execution(* me.snowhere.service.*.*(..))")
-    public void pointCut() {
-    }
-
-    @Before("pointCut()")
     public void before(JoinPoint point) {
+        log.info("before ========= {}",point.getSignature().getName());
         Object target = point.getTarget();
         String methodName = point.getSignature().getName();
         Class<?> serviceImplClazz = target.getClass();
@@ -34,6 +24,7 @@ public class DynamicDataSourceAspect {
             if (method != null && method.isAnnotationPresent(DataSource.class)) {
                 DataSource data = method.getAnnotation(DataSource.class);
                 DynamicDataSourceHolder.putDataSource(data.value());
+                log.info("{} choice database :{}",methodName,data.value().name());
             } else {
                 DynamicDataSourceHolder.putDataSource(DataSourceEnum.WRITE);
             }
@@ -42,7 +33,6 @@ public class DynamicDataSourceAspect {
         }
     }
 
-    @After("pointCut()")
     public void after(JoinPoint point) {
         DynamicDataSourceHolder.clearDataSource();
     }

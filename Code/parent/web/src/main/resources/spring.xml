@@ -32,7 +32,8 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
                 <value>classpath:*.properties</value>
@@ -123,5 +124,13 @@
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
-    <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="dataSourceAspect" class="me.snowhere.datasource.DynamicDataSourceAspect"></bean>
+    <aop:config>
+        <aop:pointcut id="dataSourcePoint" expression="execution(* me.snowhere.service..*.*(..))"/>
+        <aop:aspect id="dataSource" ref="dataSourceAspect">
+            <aop:before pointcut-ref="dataSourcePoint" method="before"/>
+            <aop:after-returning pointcut-ref="dataSourcePoint" method="after"/>
+        </aop:aspect>
+    </aop:config>
 </beans>
