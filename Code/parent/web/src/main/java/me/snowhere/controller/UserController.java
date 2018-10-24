@@ -1,22 +1,21 @@
 package me.snowhere.controller;
 
 import me.snowhere.common.Response;
-import me.snowhere.service.DemoService;
+import me.snowhere.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("demo")
-public class DemoController {
+@RequestMapping("user")
+public class UserController {
     @Autowired
-    private DemoService demoService;
+    private UserService userService;
 
-    @RequestMapping("num")
+    @RequestMapping("all")
     @ResponseBody
-    public Response getNum() {
-        throw new RuntimeException();
-       // return  Response.FAIL;
+    public Response getAllUser() {
+        return Response.ok(userService.getAllUser());
     }
 }

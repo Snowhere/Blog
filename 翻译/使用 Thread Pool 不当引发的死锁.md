@@ -11,7 +11,7 @@
 * Modern libraries like RxJava/Reactor are also susceptible
 
 * 多线程锁定同一资源会造成死锁
-* 线程池中任务使用当前线程池也可能出现死锁
+* 线程池中的任务使用当前线程池也可能出现死锁
 * RxJava 或 Reactor 等现代流行库也可能出现死锁
 
 A deadlock is a situation where two or more threads are waiting for resources acquired by each other. For example thread A waits for lock1  locked by thread B, whereas thread B waits for  lock2, locked by thread A. In worst case scenario, the application freezes for an indefinite amount of time. Let me show you a concrete example. Imagine there is a Lumberjack class that holds references to two accessory locks:
@@ -200,7 +200,7 @@ However, if you play a bit with the number of Lumberjacks, e.g. 10 careful  and 
 
 Now, what would happen if all the Lumberjacks were yolo, i.e., they all tried to pick the chainsaw first? It turns out that the easiest way to avoid deadlocks is to obtain and release locks always in the same order. For example, you can sort your resources based on some arbitrary criteria. If one thread obtains lock A followed by B, whereas the second thread obtains B first, it’s a recipe for a deadlock.
 
-如果所有伐木工都是狂野派（`yolo`）会怎样，也就是说，所有人都首先去尝试拿电锯会怎样？事实证明避免死锁最简单的方式就是以相同的顺序获取和释放各个锁，也就是说，你可以对你的资源按照某个标准来排序排序。如果一个线程先获取 A 锁，然后是 B 锁，但第二个线程先获取 B 锁，会引发死锁。
+如果所有伐木工都是狂野派（`yolo`）会怎样，也就是说，所有人都首先去尝试拿电锯会怎样？事实证明避免死锁最简单的方式就是以相同的顺序获取和释放各个锁，也就是说，你可以对你的资源按照某个标准来排序。如果一个线程先获取 A 锁，然后是 B 锁，但第二个线程先获取 B 锁，会引发死锁。
 
 ## Thread Pool Self-Induced Deadlocks
 ## 线程池自己引发的死锁
@@ -284,7 +284,7 @@ pool.submit(() -> {
 
 Deadlock! Step-by-step:
 
-死锁它lei了！我们来一步一步分析：
+死锁出现了！我们来一步一步分析：
 
 * Task printing "First" is submitted to an idle single-threaded pool
 * This task begins execution and prints "First"
@@ -294,11 +294,24 @@ Deadlock! Step-by-step:
 * get() will wait forever, unable to acquire thread
 * deadlock
 
+* 打印“First”的任务被提交到只有一个线程的线程池
+* 任务开始执行并打印“First”
+* 我们向线程池提交了一个内部任务，来打印“Second”
+* 内部任务进入等待任务队列。没有可用线程因为唯一的线程正在被占用
+* 我们阻塞住并等待内部任务执行结果。不幸的是，我们等待内部任务的同时也在占用着唯一的可用线程
+* `get()` 方法无限等待，无法获取线程
+* 死锁
 
 Does it mean having a single-thread pool is bad? Not really. The same problem could occur with a thread pool of any size. But, in that case, a deadlock may occur only under high load, which is much worse from a maintenance perspective. You could technically have an unbounded thread pool, but that’s even worse.
 
+这是否意味单线程的线程池是不好的？并不是，相同的问题会在任意大小的线程池中出现，只不过是在高负载情况下才会出现，这维护起来更加困难。你在技术层面上可以使用一个无界线程池，但这样太糟糕了。
+
 ## Reactor/RxJava
+## Reactor/RxJava
+
 Notice that this problem can occur with higher-level libraries, like Reactor:
+
+请注意，这类问题也会出现在上层库，比如 `Reactor`：
 
 ```
  Scheduler pool = Schedulers.fromExecutor(Executors.newFixedThreadPool(10));
@@ -315,6 +328,8 @@ Mono
 ```
 
 Once you subscribe, this seems to work, but it is terribly non-idiomatic. The basic problem is the same. Outer Runnable  acquires one thread from a  pool ,  subscribeOn() in the last line, and at the same time, inner Runnable  tries to obtain a thread as well. You need to replace the underlying thread pool with a single-thread pool, and this produces a deadlock. At least with RxJava/Reactor, the cure is simple — just compose asynchronous operations rather than blocking inside each other:
+
+当你部署代码，它似乎可以正常工作，但很不符合编程习惯。根源的问题是相通的，最后一行的 `subscribeOn()` 表示外层任务（`Runnable`）请求了线程池(`pool`)中一个线程，同时，内部任务（`Runnable`）也试图获取一个线程。如果把基础的线程池换成只包含单个线程的线程池，会发生死锁。对于 RxJava/Reactor 来说，解决方案很简单——用异步操作替代阻塞操作。
 
 ```
 Mono
@@ -333,4 +348,8 @@ Mono
 
 There is no 100 percent sure way of preventing deadlocks. One technique is to avoid situations that may lead to deadlocks, like sharing resources or locking exclusively. If that’s not possible (or deadlocks are not obvious, like with thread pools), consider proper code hygiene. Monitor thread pools and avoid blocking indefinitely. I can hardly imagine a situation when you are willing to wait an indefinite amount of time for a completion. And, that’s how get() or block() without timeout are working.
 
+并没有彻底避免死锁的方法。试图解决问题的技术手段往往会带来死锁风险，比如共享资源和排它锁。如果无法根治死锁（或死锁并不明显，比如使用线程池），还是试着保证代码质量、监控线程池和避免无限阻塞。我很难想象你情愿无限等待程序运行完成，如同 `get()` 方法和 `block()` 方法在没有设定超时时间的情况下执行。
+
 Thanks for reading!
+
+感谢阅读！
