@@ -34,14 +34,14 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
             throw new IllegalArgumentException("Property 'writeDataSource' is required");
         }
         setDefaultTargetDataSource(writeDataSource);
-        Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
-        targetDataSources.put(DataSourceEnum.WRITE.name(), writeDataSource);
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        targetDataSources.put(DataSourceEnum.MASTER.name(), writeDataSource);
 
-        if (this.readDataSources == null) {
+        if (readDataSources == null) {
             readDataSourceSize = 0;
         } else {
-            for(int i=0; i<readDataSources.size(); i++) {
-                targetDataSources.put(DataSourceEnum.READ.name() + i, readDataSources.get(i));
+            for (int i = 0; i < readDataSources.size(); i++) {
+                targetDataSources.put(DataSourceEnum.SLAVE.name() + i, readDataSources.get(i));
             }
             readDataSourceSize = readDataSources.size();
         }
@@ -54,21 +54,19 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
         DataSourceEnum dataSourceEnum = DynamicDataSourceHolder.getDataSource();
 
-        if(dataSourceEnum == null
-                || dataSourceEnum == DataSourceEnum.WRITE
-                || readDataSourceSize <= 0) {
-            return DataSourceEnum.WRITE.name();
+        if (dataSourceEnum == null || dataSourceEnum == DataSourceEnum.MASTER || readDataSourceSize <= 0) {
+            return DataSourceEnum.MASTER.name();
         }
 
-        int index = 1;
+        int index = 0;
 
-        if(readDataSourcePollPattern == 1) {
+        if (readDataSourcePollPattern == 1) {
             //轮询方式
             long currValue = counter.incrementAndGet();
-            if((currValue + 1) >= MAX_POOL) {
+            if ((currValue + 1) >= MAX_POOL) {
                 try {
                     lock.lock();
-                    if((currValue + 1) >= MAX_POOL) {
+                    if ((currValue + 1) >= MAX_POOL) {
                         counter.set(0);
                     }
                 } finally {

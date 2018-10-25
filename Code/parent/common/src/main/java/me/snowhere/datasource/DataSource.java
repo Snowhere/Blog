@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface DataSource {
-    DataSourceEnum value() default DataSourceEnum.WRITE;
+    DataSourceEnum value() default DataSourceEnum.MASTER;
 }

@@ -17,7 +17,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
     UserDao demoDao;
 
     @Override
-    @DataSource(DataSourceEnum.READ)
+    @DataSource(DataSourceEnum.SLAVE)
     public List<User> getRemoteUser() {
         return demoDao.getAllUser();
     }

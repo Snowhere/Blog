@@ -1,5 +1,8 @@
 package me.snowhere.service.impl;
 
+import me.snowhere.dao.UserDao;
+import me.snowhere.datasource.DataSource;
+import me.snowhere.datasource.DataSourceEnum;
 import me.snowhere.dmo.User;
 import me.snowhere.service.LocalUserService;
 import me.snowhere.service.UserService;
@@ -18,11 +21,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     RemoteUserServiceImpl remoteUserService;
 
+    @Autowired
+    UserDao userDao;
+
     @Override
+    @DataSource(DataSourceEnum.SLAVE)
     public List<User> getAllUser() {
         List<User> users = new ArrayList<>();
-        users.addAll(localUserService.getLocalUser());
-        users.addAll(remoteUserService.getRemoteUser());
+       /* users.addAll(localUserService.getLocalUser());
+        users.addAll(remoteUserService.getRemoteUser());*/
+        users.addAll(userDao.getAllUser());
+        users.addAll(userDao.getAllUser());
         return users;
     }
 

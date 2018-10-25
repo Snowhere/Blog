@@ -26,7 +26,7 @@ public class DynamicDataSourceAspect {
                 DynamicDataSourceHolder.putDataSource(data.value());
                 log.info("{} choice database :{}",methodName,data.value().name());
             } else {
-                DynamicDataSourceHolder.putDataSource(DataSourceEnum.WRITE);
+                DynamicDataSourceHolder.putDataSource(DataSourceEnum.MASTER);
             }
         } catch (Exception e) {
             log.error(String.format("Choose DataSource error, method:%s, msg:%s", methodName, e.getMessage()));

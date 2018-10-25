@@ -16,7 +16,7 @@ public class LocalUserServiceImpl implements LocalUserService {
     @Autowired
     UserDao demoDao;
 
-    @DataSource(DataSourceEnum.WRITE)
+    @DataSource(DataSourceEnum.MASTER)
     public List<User> getLocalUser() {
         return demoDao.getAllUser();
     }
