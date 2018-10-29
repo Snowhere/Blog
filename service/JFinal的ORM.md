@@ -1,7 +1,0 @@
-JFinal的ORM
-
-JFinal的ORM使用的是ActiveRecord
-我们所做的工程一般都要与数据库交互，用的最多的ORM如Hibernate，Mybatis等。而JFinal是用的是ActiveRecord。ActiveRecord是ORM的一种，将操作与实体封装在一起，方便使用。
-比如Mybatis需要有表的实体，然后定义DAO操作该实体，通过sql语句搭建映射关系。
-而JFinal的ActiveRecord则将这些操作封装在一起，算是对JDBC的一个浅封装。
-来看一段代码
