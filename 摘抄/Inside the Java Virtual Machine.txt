@@ -1,2 +1,0 @@
-Inside the Java Virtual Machine
-深入Java虚拟机
