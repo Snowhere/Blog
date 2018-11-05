@@ -25,7 +25,25 @@ Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的�
 代码编译的结果从本地机器码转变为字节码，是存储格式发展的一小步，却是编程语言发展的一大步。
 虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型。
 类型的加载、链接和初始化过程都是在程序运行期间完成的。
-生命周期：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）、卸载（Unloading）。连接（Linking）包括验证、准备、解析阶段
+生命周期：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）、卸载（Unloading）。连接（Linking）包括验证、准备、解析阶段。
+
+加载
+* 通过一个类的全限定名来获取定义此类的二进制字节流
+* 将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构
+* 在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种数据结构的访问入口。
+
+验证
+* 文件格式验证
+* 元数据验证
+* 字节码验证
+* 符号引用验证
+
+解析
+* 类或接口的解析
+* 字段解析
+* 类方法解析
+* 接口方法解析
+
 3种系统提供的类加载器：启动类加载器（Bootstrap ClassLoader）、扩展类加载器（Extension ClassLoader）、应用程序类加载器（Application ClassLoader）。加载器之间的父子关系一般以组合（Composition）关系实现。
 双亲委派模型：类加载器收到类加载请求，委托给父类加载器，父类加载器无法完成，子类尝试加载。
 破坏双亲委派模型：向前兼容、JNDI、OSGi
