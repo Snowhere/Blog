@@ -1,10 +1,10 @@
 # 使用 IntelliJ 调试 Java Streams
 # Debugging Java Streams with IntelliJ
-![原文链接](https://www.javacodegeeks.com/2018/09/debugging-java-streams-with-intellij.html)
+[原文链接](https://www.javacodegeeks.com/2018/09/debugging-java-streams-with-intellij.html)
 
 Streams are very powerful and can capture the gist of your intended functionality in just a few lines. But, just as smooth as they are when it all works, just as agonizing it can be when they don’t behave as expected. Learn how to use IntelliJ to debug your Java Streams and gain insight into the intermediate operations of a Stream.
 
-Stream 非常强大，并且能够用简单几行代码实现你所期望的功能要点。它们正常运行时非常流畅优雅，但运行不符合预期时却让人苦不堪言。让我们学习一下如何用 IntelliJ 调试你的 Java Streams 代码，并洞察 Stream 的中间操作。
+Streams 非常强大，并且能够用简单几行代码实现你所期望的功能要点。它们正常运行时非常流畅优雅，但运行不符合预期时却让人苦不堪言。让我们学习一下如何用 IntelliJ 调试你的 Java Streams 代码，并洞察 Stream 的中间操作。
 
 In this article, I will use the Sakila sample database and Speedment Stream ORM in my examples.
 
@@ -15,7 +15,7 @@ In this article, I will use the Sakila sample database and Speedment Stream ORM 
 
 Let’s start with a simple Stream that we can use to establish the fundamentals of the Stream debugger in IntelliJ:
 
-让我们从一个简单的 Stream 开始，我们可以在 IntelliJ 为其创建一个基本的 Stream debugger 
+让我们从一个简单的 Stream 开始，我们可以在 IntelliJ 为其创建一个基本的 Stream debugger：
 
 ```
 List<String> strings = Stream.of("C", "A", "B")
@@ -26,7 +26,7 @@ List<String> strings = Stream.of("C", "A", "B")
 The code above first creates an initial Stream consisting of the
 String elements "C", "A", "B". Then, an intermediary operation sorted() is applied to the first Stream, thereby (at least in Java 8-10) creating a new Stream where the elements in the initial stream are sorted according to their natural order. I.e. the second stream will contain the elements "A", "B", "C". Lastly, these elements are collected into a List.
 
-上面的代码创建了一个由字符串 “A”、“B”、“C”组成的 `Stream`。紧接着对这个 `Stream` 进行 `sorted()` 操作，从而创建了一个新的 `Stream`，其中的元素是第一个 `Stream` 的元素按字母排序的结果（至少在 Java 8-10 中是这样）。也就是说，第二个 `Stream` 包含“A”、“B”、“C”三个元素。最后，这些将元素放到一个 `List` 中。
+上面的代码创建了一个由字符串 “A”、“B”、“C”组成的 `Stream`。紧接着对这个 `Stream` 进行 `sorted()` 操作，从而创建了一个新的 `Stream`（至少在 Java 8-10 中是这样），其中的元素是第一个 `Stream` 的元素按字母排序的结果。也就是说，第二个 `Stream` 包含“A”、“B”、“C”三个元素。最后，这些将元素放到一个 `List` 中。
 
 The code above is equivalent to:
 
@@ -40,7 +40,7 @@ List<String> strings = s1.collect(toList());  // [“A”, “B”, “C”]
 
 This is basically how the Stream debugger operates. It breaks up a stream pipeline into smaller segments and progressively invokes the different intermediate operators while retaining the elements for each step analyzed:
 
-这大体上演示了 Stream debugger 如何工作。它将一个流式管道操作分割成多个代码片段，一步一步地调用中间运算操作，从而可以保留每一步操作的元素内容以供分析。
+这大体上演示了 Stream debugger 如何工作。它将一个 stream 管道操作分割成多个代码片段，一步一步地调用中间运算操作，从而可以保留每一步操作的元素内容以供分析。
 
 ```
 Stream.of("C", "B", "A")
@@ -90,11 +90,11 @@ This will pull up the stream debugger as shown previously in the article.
 这样就打开了 stream debugger，和上文所展示的一样。
 
 ## Database Streams
-## 数据库流式操作
+## 数据库 Streams
 
 I will use the stream ORM Speedment that allows databases to be queried using standard Java Streams and thus, these streams can also be debugged with IntelliJ. A Speedment project can be set up using the Speedment initializer.
 
-我将使用 Speedment（流式 ORM），它允许通过标准的 Java Streams 操作来查询数据库，因此也能通过 IntelliJ 来调试操作。可以通过 Speedment initializer 来创建一个 Speedment 项目。
+我将使用 Speedment（stream ORM），它允许通过标准的 Java Streams 操作来查询数据库，因此也能通过 IntelliJ 来调试操作。可以通过 Speedment initializer 来创建一个 Speedment 项目。
 
 The Java application itself can be set up like this:
 
@@ -109,7 +109,7 @@ FilmManager films = app.getOrThrow(FilmManager.class);
 
 Now, we can stream the database table “film”. For example like this:
 
-现在我们可以对数据库“film”表进行流式操作。下面是个例子：
+现在我们可以对数据库“film”表进行 stream 操作。下面是个例子：
 
 ```
 List<Film> map = films.stream()
@@ -155,13 +155,19 @@ Stream debugger 展示如下：
 
 As can be seen, it is possible to interact with the Stream debugger and click on elements whereby their path in the stream pipeline is highlighted. It is also possible to scroll among the elements for individual steps.
 
-我们可以看到
+可以看出，我们可以与 Stream debugger 交互，并在 stream 管道中点击元素来高亮显示，也可以在元素间滚动查看单个操作步骤。
 
 Speedment normally optimizes away intermediary operations in a database Stream and merges these steps into the SQL query. However, when the Stream debugger is used, no such optimization takes place and we are able to see all steps in the stream pipeline.
+
+Speedment 优化了数据库 Stream 中间操作，并将其融合进 SQL 查询。但使用 Stream debugger 时，优化并没有生效，以便让我们可以看到 Stream 管道中的所有操作步骤。
 
 ## Conclusions
 ## 结论
 
 The Stream debugger is a hidden gem that can be of significant help when working with Streams.
 
+Stream debugger 是个隐藏的瑰宝，对于 Streams 工作有很大帮助。
+
 I think the IntelliJ team has come up with a really good feature.
+
+我认为这是 IntelliJ 团队提供的非常棒的特性。
