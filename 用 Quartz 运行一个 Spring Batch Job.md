@@ -180,11 +180,13 @@ Let's dig into this:
 * SchedulerFactoryBean: This is used to create a Quartz scheduler instance and allows for the registration of JobDetails , Calendars , and Triggers, automatically starting the scheduler on initialization and shutting it down on destruction.
 
 * `ApplicationContextFactory`：为任务每次执行创建一个新的 `ApplicationContext`。每个任务最好创建单独的 `applicationContext`。
-* `JobDetailFactoryBean`：创建一个 Quzrtz job detail（任务详情）实例。后面我们会看到它将设置一个任务类。定义并设置任务名称
-* `CronTriggerFactoryBean`: This is used to create a Quartz cron trigger instance. This will set the jobDetail created earlier and then the cron expression when this job will run. You can set the cron expressions as per your need. Cron expressions can be calculated from http://cronmaker.com.
-* `SchedulerFactoryBean`: This is used to create a Quartz scheduler instance and allows for the registration of JobDetails , Calendars , and Triggers, automatically starting the scheduler on initialization and shutting it down on destruction.
-* 
+* `JobDetailFactoryBean`：创建一个 Quzrtz job detail（任务详情）实例。后面我们会看到它将设置一个任务类。它创建了一个 `map` 来定义并设置任务名称和 `joblauncher`（启动器）
+* `CronTriggerFactoryBean`：用于创建一个 Quzrtz `cron` 触发器实例。它设置了前边创建的 `jobDetail` 和一个表示任务何时运行的 `cron` 表达式。你可以根据需要设置 `cron` 表达式，可以在 [http://cronmaker.com](http://cronmaker.com) 生成 `cron` 表达式。
+* `SchedulerFactoryBean`：用来创建一个 Quartz scheduler（调度器）实例，允许注册 `JobDetails`、`Calendars` 和 `Triggers`。类初始化时自动运行调度器，类销毁时自动关闭调度器。
+
 Let's check out the JobLauncherDetails class:
+
+让我们看一下 `JobLauncherDetails` 类：
 
 3. JobLauncherDetails.java:
 ```
@@ -237,6 +239,8 @@ public class JobLauncherDetails extends QuartzJobBean {
 ```
 
 This class has an overridden executeInternal method of the QuartzJobBean class, which takes the jobdetails from the map, which were already set before some of the jobParameters , and then executes the jobLauncher.run() to run the job as seen in the code.
+
+这个类重写了 `QuartzJobBean` 类的 `executeInternal` 方法，从 
 
 Lets visit the ReportsConfig class.
 
