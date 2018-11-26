@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@DataSource(DataSourceEnum.SLAVE)
 public class LocalUserServiceImpl implements LocalUserService {
 
     @Autowired

@@ -11,20 +11,31 @@ public class DynamicDataSourceAspect {
 
     public void before(JoinPoint point) {
         log.info("before ========= {}",point.getSignature().getName());
-        Object target = point.getTarget();
-        String methodName = point.getSignature().getName();
-        Class<?> serviceImplClazz = target.getClass();
-        Class<?>[] serviceClazz = serviceImplClazz.getInterfaces();
-        Class<?>[] parameterTypes = ((MethodSignature) point.getSignature()).getMethod().getParameterTypes();
+        Class<?> clazz = point.getTarget().getClass();
+        Method targetMethod = ((MethodSignature) point.getSignature()).getMethod();
+        String methodName = targetMethod.getName();
+        Class<?>[] parameterTypes =targetMethod.getParameterTypes();
+
         try {
-            Method method = serviceImplClazz.getMethod(methodName, parameterTypes);
-            if (!method.isAnnotationPresent(DataSource.class) && serviceClazz.length > 0) {
-                method = serviceClazz[0].getMethod(methodName, parameterTypes);
+            // method > class > interface method
+            DataSource dataSource = targetMethod.getAnnotation(DataSource.class);
+            if (dataSource == null) {
+                dataSource = clazz.getAnnotation(DataSource.class);
             }
-            if (method != null && method.isAnnotationPresent(DataSource.class)) {
-                DataSource data = method.getAnnotation(DataSource.class);
-                DynamicDataSourceHolder.putDataSource(data.value());
-                log.info("{} choice database :{}",methodName,data.value().name());
+            if (dataSource == null) {
+                for (Class<?> interfaceClazz : clazz.getInterfaces()) {
+                    Method interfaceMethod = interfaceClazz.getMethod(methodName, parameterTypes);
+                    if (interfaceMethod != null) {
+                        dataSource = interfaceMethod.getAnnotation(DataSource.class);
+                        if (dataSource != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (dataSource != null) {
+                DynamicDataSourceHolder.putDataSource(dataSource.value());
+                log.info("{} choice database :{}",methodName,dataSource.value().name());
             } else {
                 DynamicDataSourceHolder.putDataSource(DataSourceEnum.MASTER);
             }

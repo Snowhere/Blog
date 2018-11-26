@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     UserDao userDao;
 
     @Override
-    @DataSource(DataSourceEnum.SLAVE)
+
     public List<User> getAllUser() {
         List<User> users = new ArrayList<>();
        /* users.addAll(localUserService.getLocalUser());
