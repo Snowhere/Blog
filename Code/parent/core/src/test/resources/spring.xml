@@ -1,0 +1,136 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.1.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- scan the package and the sub package -->
+    <context:component-scan base-package="me.snowhere.*"/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- configure the InternalResourceViewResolver -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
+        <!-- 前缀 -->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <!-- 后缀 -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:*.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 配置数据源 -->
+    <bean id="masterDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName">
+            <value>${jdbc_driver}</value>
+        </property>
+        <property name="url">
+            <value>${master_url}</value>
+        </property>
+        <property name="username">
+            <value>${master_username}</value>
+        </property>
+        <property name="password">
+            <value>${master_password}</value>
+        </property>
+        <!-- 连接池启动时创建的初始化连接数量（默认值为0） -->
+        <property name="initialSize" value="1"/>
+        <!-- 连接池中可同时连接的最大的连接数 默认 8-->
+        <property name="maxActive" value="150"/>
+        <!-- 连接池中最小的空闲的连接数，低于这个数量会被创建新的连接 -->
+        <property name="minIdle" value="5"/>
+        <!-- 连接池中最大的空闲的连接数，超过的空闲连接将被释放，如果设置为负数表示不限制 默认8 -->
+        <property name="maxIdle" value="30"/>
+        <!-- 最大等待时间，当没有可用连接时，连接池等待连接释放的最大时间，超过该时间限制会抛出异常，如果设置-1表示无限等待 -->
+        <property name="maxWait" value="60000"/>
+        <!-- 超过removeAbandonedTimeout时间后，是否进 行没用连接（废弃）的回收（默认为false，调整为true)-->
+        <property name="removeAbandoned" value="true"/>
+        <!-- 超过时间限制，回收没有用(废弃)的连接（默认为 300秒，调整为180） -->
+        <property name="removeAbandonedTimeout" value="180"/>
+        <!-- 默认提交 -->
+        <property name="defaultAutoCommit" value="true"/>
+    </bean>
+
+    <bean id="slaveDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName">
+            <value>${jdbc_driver}</value>
+        </property>
+        <property name="url">
+            <value>${slave_url}</value>
+        </property>
+        <property name="username">
+            <value>${slave_username}</value>
+        </property>
+        <property name="password">
+            <value>${slave_password}</value>
+        </property>
+        <!-- 连接池启动时创建的初始化连接数量（默认值为0） -->
+        <property name="initialSize" value="1"/>
+        <!-- 连接池中可同时连接的最大的连接数 默认 8-->
+        <property name="maxActive" value="150"/>
+        <!-- 连接池中最小的空闲的连接数，低于这个数量会被创建新的连接 -->
+        <property name="minIdle" value="5"/>
+        <!-- 连接池中最大的空闲的连接数，超过的空闲连接将被释放，如果设置为负数表示不限制 默认8 -->
+        <property name="maxIdle" value="30"/>
+        <!-- 最大等待时间，当没有可用连接时，连接池等待连接释放的最大时间，超过该时间限制会抛出异常，如果设置-1表示无限等待 -->
+        <property name="maxWait" value="60000"/>
+    </bean>
+
+    <bean id="dataSource" class="me.snowhere.datasource.DynamicDataSource">
+        <property name="writeDataSource" ref="masterDataSource"/>
+        <property name="readDataSources">
+            <list>
+                <ref bean="slaveDataSource"/>
+            </list>
+        </property>
+        <!--轮询方式-->
+        <property name="readDataSourcePollPattern" value="1"/>
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="me.snowhere.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="dataSourceAspect" class="me.snowhere.datasource.DynamicDataSourceAspect"></bean>
+    <aop:config>
+        <aop:pointcut id="dataSourcePoint" expression="execution(* me.snowhere.service..*.*(..))"/>
+        <aop:aspect id="dataSource" ref="dataSourceAspect">
+            <aop:before pointcut-ref="dataSourcePoint" method="before"/>
+            <aop:after-returning pointcut-ref="dataSourcePoint" method="after"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
