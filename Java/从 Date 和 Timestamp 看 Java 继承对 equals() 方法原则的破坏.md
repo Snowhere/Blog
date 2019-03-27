@@ -46,14 +46,13 @@ public class Timestamp extends Date {
     }
     public boolean equals(Object ts) {
         if (ts instanceof Timestamp) {
-            if (super.equals((Timestamp)ts)) {
-                if  (nanos == ((Timestamp)ts).nanos) {
+            if (super.equals(ts)) {
+                if  (nanos == ts.nanos) {
                     return true;
                 } 
             } 
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 }
 ```
