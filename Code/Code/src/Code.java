@@ -1,17 +1,18 @@
 import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.tools.ant.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Code {
 
     public static void main(String args[]) {
-        strIter();
+        sort();
     }
 
 
@@ -100,5 +101,62 @@ public class Code {
 
         System.out.println(packageIds);
         System.out.println(newStr);
+    }
+
+    @Getter
+    @Setter
+    static class TestDTO{
+        String name;
+        Integer sequence;
+    }
+
+    public static void lambda() {
+        List<TestDTO> dtos = new ArrayList<>();
+
+
+        List<String> nameList = dtos.stream().map(TestDTO::getName).collect(Collectors.toList());
+    }
+
+    public static void array() {
+        int[][] dp = new int[10][10];
+        System.out.println(dp[0][0]);
+    }
+
+    public static int ex() {
+        try {
+            System.out.println("start");
+            //throw new RuntimeException("exception");
+            //System.out.println("before try return");
+            return 1;
+            //System.out.println("after try return");
+        } catch (Exception e) {
+            System.out.println("before catch throw");
+            //throw e;
+            //System.out.println("after catch throw");
+            return 2;
+            //System.out.println("after catch return");
+        }finally {
+            System.out.println("before finally return");
+            //return 3;
+            //System.out.println("after finally return");
+        }
+    }
+
+    public static void sort() {
+        List<TestDTO> dtos = new ArrayList<>();
+        TestDTO dto1 = new TestDTO();
+        dto1.setSequence(1);
+        TestDTO dto2 = new TestDTO();
+        dto2.setSequence(2);
+        dtos.add(dto1);
+        dtos.add(dto2);
+        Collections.sort(dtos, new Comparator<TestDTO>() {
+            @Override
+            public int compare(TestDTO o1, TestDTO o2) {
+                return o2.getSequence()-o1.getSequence();
+            }
+        });
+
+        System.out.println(dtos.get(0).getSequence());
     }
 }

@@ -1,30 +1,30 @@
 Java知识点
 
 基础
-    编程语言
-        Java是静态弱类型语言
     数据类型
-
     抽象，封装，继承，多态
         
 源代码
     String,StringBuffer
     HashMap
     equals,hashCode
-多线程并发
+多线程并发、
+    自旋锁/偏向锁/轻量级锁
 I/O
     字符流Reader/Writer
     字节流Stream
 垃圾回收
+    G1和CMS的区别
     标记、清除、复制、压缩、分代
 设计模式
     单例模式
         懒汉模式延迟加载，饿汉模式占用资源
 框架
     Spring
-    Hibernate
-    Struts
-
+中间件
+    MQ
+    Netty
+    缓存
 工具
     maven
     git
