@@ -18,6 +18,9 @@ public interface UserDao {
     @Options(useGeneratedKeys=true, keyProperty="user.id", keyColumn="id")
     int addUser(@Param("user")User user);
 
+    @Insert("insert into user (id,name) values(#{user.id},#{user.name})")
+    int insertUser(@Param("user")User user);
+
     @Insert({"<script>insert into user (name) values ",
             "<foreach collection =\"users\" item=\"user\" separator =\",\">",
             "     ( #{user.name})",
