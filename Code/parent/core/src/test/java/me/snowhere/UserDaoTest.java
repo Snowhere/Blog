@@ -5,6 +5,7 @@ import me.snowhere.dmo.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -29,5 +30,22 @@ public class UserDaoTest {
         userDao.addUserList(list);
         System.out.println(list.get(0));
         System.out.println(list.get(1));
+    }
+
+    @Test
+    public void testInsert() {
+        User user = new User();
+        user.setId(1);
+        user.setName("test1");
+        try {
+            userDao.insertUser(user);
+        } catch (Exception e) {
+            if (e instanceof DuplicateKeyException) {
+                System.out.println("主键重复");
+            } else {
+                System.out.println("其他异常");
+            }
+        }
+
     }
 }

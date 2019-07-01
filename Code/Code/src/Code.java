@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
-        sort();
+        remove();
     }
 
 
@@ -158,5 +158,16 @@ public class Code {
         });
 
         System.out.println(dtos.get(0).getSequence());
+    }
+
+    public static void remove(){
+        List<String> strings = new ArrayList<>();
+        strings.add("1");
+        strings.add("2");
+        for (String string : strings) {
+            if ("2".equalsIgnoreCase(string)) {
+                strings.remove(string);
+            }
+        }
     }
 }
