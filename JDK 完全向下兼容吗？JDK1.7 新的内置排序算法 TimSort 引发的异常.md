@@ -35,12 +35,12 @@ The implementor must also ensure that the relation is transitive: ((compare(x, y
 Finally, the implementor must ensure that compare(x, y)==0 implies that sgn(compare(x, z))==sgn(compare(y, z)) for all z.
 It is generally the case, but not strictly required that (compare(x, y)==0) == (x.equals(y)). Generally speaking, any comparator that violates this condition should clearly indicate this fact. The recommended language is "Note: this comparator imposes orderings that are inconsistent with equals."
 
-简单总结一下就是要保证以下几点： 
+简单总结一下就是实现这个方法要保证以下几点： 
 * compare(x,y) 和 compare(y,x) 的正负相反；
 * 如果 compare(x,y)>0，并且 compare(y,z)>0，那么 compare(x,z)>0；
 * 如果 compare(x,y)==0，那么 compare(x,z) 和 compare(y,z) 正负相同
 
-我们上面代码实现的 compare 方法中，如果传入的两个对象相等，compare(x,y) 和 compare(y,x) 都会返回 -1，没有保证上面说的第一点。其实一般的排序算法并不需要严格保证 compare 方法，只需要两个对象简单比较一下。比如 JDK1.6 内置排序算法在元素个数小于 7 时会使用简单的冒泡排序（默认算法是归并排序）：
+我们上面代码实现的 compare 方法中，如果传入的两个对象相等，compare(x,y) 和 compare(y,x) 都会返回 -1，没有保证上面说的第一点。其实一般的排序算法并不需要严格保证 compare 方法，只需要两个对象简单比较一下。比如 JDK1.6 内置排序算法 `Collections.sort()` 使用的是归并排序（JDK1.7 保留了这个算法），并在元素个数小于 `INSERTIONSORT_THRESHOLD`（默认值 7） 时优化为使用简单的冒泡排序：
 ```
 if (length < INSERTIONSORT_THRESHOLD) {
     for (int i=low; i<high; i++)
@@ -49,17 +49,17 @@ if (length < INSERTIONSORT_THRESHOLD) {
     return;
 }
 ```
-我们实现的 compare 在这种插入排序中完全适用，但 JDK1.7 中默认排序算法改为了 TimeSort，就让我们来深入了解一下这种排序算法。
+我们实现的 compare 在这些排序中完全适用，但 JDK1.7 中默认排序算法改为了 TimeSort，就让我们来深入了解一下这种排序算法。
 
 ## TimSort
 
 TimSort 的起源和历史我就不多说了，最早应用在 [python 的内置排序中](http://svn.python.org/projects/python/trunk/Objects/listsort.txt)。TimSort 的核心就是 归并排序+二分查找插入排序，并进行大量优化，主要思路如下：
-1. 对原序列分块（称之为 run）
-2. 每个 run 排好序
+1. 划分 run（对原序列分块，每个块称之为 run）
+2. 排序 run
 3. 合并 run
-我们来看一下 JDK1.7 中具体实现
+网络上有关介绍这种算法的文章很多，我就不多赘述了，我们来看一下 JDK1.7 中的具体实现
 
-### 前置代码
+### 代码总览
 首先进入排序逻辑会先判断一个 jvm 参数变量，选择使用旧的归并排序（元素个数小于 7 时用冒泡排序），还是使用 TimeSort 进行排序。默认为使用 TimSort。
 ```
 if (LegacyMergeSort.userRequested)
@@ -68,7 +68,7 @@ else
     TimSort.sort(a, c);
 ```
 
-进入 TimSort 代码后会进行一些校验和判断，比如判断元素个数少于 32 则会通过一个迷你 TimSort 进行排序。
+进入 TimSort 代码后会进行一些校验和判断，比如判断元素个数少于 `MIN_MERGE`（默认值 32） 则会通过一个“迷你-TimSort” 进行排序。这是将整个序列看做一个 run，省略了划分 run 和合并 run 两个步骤，直接进行排序 run。
 ```
 // If array is small, do a "mini-TimSort" with no merges
 if (nRemaining < MIN_MERGE) {
@@ -77,10 +77,50 @@ if (nRemaining < MIN_MERGE) {
     return;
 }
 ```
-`countRunAndMakeAscending()` 方法寻找原始元素数组 `a` 中从 `lo` 位置开始的最长单调递增或递减序列（递减序列会被反转）。这样，最前面这部分元素相当于排好序了。随后用 `binarySort()` 方法将后面的元素一个个通过二分查找插入到前面排序好的数组中，从而实现整个数组排好序。
+
+我们来看一下核心的算法流程代码，后面会详细讲解每个步骤：
+```
+//栈结构，用于保存以及合并 run
+TimSort<T> ts = new TimSort<>(a, c);
+//确定每个 run 的最小长度
+int minRun = minRunLength(nRemaining);
+do {
+    //划分、排序 run
+    // Identify next run
+    int runLen = countRunAndMakeAscending(a, lo, hi, c);
+    
+    // If run is short, extend to min(minRun, nRemaining)
+    if (runLen < minRun) {
+        int force = nRemaining <= minRun ? nRemaining : minRun;
+        binarySort(a, lo, lo + force, lo + runLen, c);
+        runLen = force;
+    }
+
+    //保存、合并 run
+    // Push run onto pending-run stack, and maybe merge
+    ts.pushRun(lo, runLen);
+    ts.mergeCollapse();
+
+    // Advance to find next run
+    lo += runLen;
+    nRemaining -= runLen;
+} while (nRemaining != 0);
+
+// Merge all remaining runs to complete sort
+assert lo == hi;
+ts.mergeForceCollapse();
+assert ts.stackSize == 1;
+```
 
 ### 1.划分 run
+划分 run 和排序 run 密不可分，TimSort 算法优化的点之一就是尽可能利用原序列的单调子序列。`countRunAndMakeAscending()` 方法寻找原始元素数组 `a` 中从 `lo` 位置开始的最长单调递增或递减序列（递减序列会被反转）。这样，这部分元素相当于排好序了，我们可以直接把它当做一个排序好的 run。但问题随之而来，如果这样的序列很短，会产生很多 run，后续归并的代价就很大，所以我们要控制 run 的长度。
 
+
+
+### 2.排序 run
+随后用 `binarySort()` 方法将后面的元素一个个通过二分查找插入到前面找出的递增数组中，从而实现整个 run 排好序。
+
+### 3.合并 run
 
 结论
 我们只能确定低版本编译的代码可以运行在高版本的 Java，但却无法保证运行的行为和结果与低版本一致。
