@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
-        remove();
+        stringObject();
     }
 
 
@@ -169,5 +169,13 @@ public class Code {
                 strings.remove(string);
             }
         }
+    }
+
+    public static void stringObject() {
+        String s1="abc";
+        String s2="abc";
+        String s3 = new String("abc");
+        System.out.println(s1 == s2);
+        System.out.println(s1 == s3);
     }
 }

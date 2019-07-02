@@ -19,5 +19,6 @@ public class TimSort {
                 return o1 > o2 ? 1 : -1;
             }
         });
+        System.out.println(list);
     }
 }
