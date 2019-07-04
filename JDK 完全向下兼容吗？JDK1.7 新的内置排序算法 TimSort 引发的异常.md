@@ -113,14 +113,101 @@ assert ts.stackSize == 1;
 ```
 
 ### 1.划分 run
-划分 run 和排序 run 密不可分，TimSort 算法优化的点之一就是尽可能利用原序列的单调子序列。`countRunAndMakeAscending()` 方法寻找原始元素数组 `a` 中从 `lo` 位置开始的最长单调递增或递减序列（递减序列会被反转）。这样，这部分元素相当于排好序了，我们可以直接把它当做一个排序好的 run。但问题随之而来，如果这样的序列很短，会产生很多 run，后续归并的代价就很大，所以我们要控制 run 的长度。
-
-
+划分 run 和排序 run 密不可分，TimSort 算法优化的点之一就是尽可能利用原序列的单调子序列。`countRunAndMakeAscending()` 方法寻找原始元素数组 `a` 中从 `lo` 位置开始的最长单调递增或递减序列（递减序列会被反转）。这样，这部分元素相当于排好序了，我们可以直接把它当做一个排序好的 run。但问题随之而来，如果这样的序列很短，会产生很多 run，后续归并的代价就很大，所以我们要控制 run 的长度。下面这段代码规定 run 的最小长度：
+```
+private static int minRunLength(int n) {
+    assert n >= 0;
+    int r = 0;      // Becomes 1 if any 1 bits are shifted off
+    while (n >= MIN_MERGE) {
+        r |= (n & 1);
+        n >>= 1;
+    }
+    return n + r;
+}
+```
+`n` 为整个序列的长度，TimSort 算法优化点之一是通过控制 run 的长度，使 run 的数量保持在 2 的 n 次方，这样在归并的时候，就像二叉树一样进行归并，不会到最后出现非常大的 run 与非常小的 run 归并。代码中 `MIN_MERGE` 为 32，最后计算出的最小 run 长度介于 16 和 32 之间。
 
 ### 2.排序 run
-随后用 `binarySort()` 方法将后面的元素一个个通过二分查找插入到前面找出的递增数组中，从而实现整个 run 排好序。
+```
+// Identify next run
+int runLen = countRunAndMakeAscending(a, lo, hi, c);
+// If run is short, extend to min(minRun, nRemaining)
+if (runLen < minRun) {
+    int force = nRemaining <= minRun ? nRemaining : minRun;
+    binarySort(a, lo, lo + force, lo + runLen, c);
+    runLen = force;
+}
+```
+随后在循环中根据计算出的最短 run 长度和剩余序列单调子序列来划分 run，先取出剩余序列开头的单调子序列，如果长度不够规定的最短长度，则用 `binarySort()` 方法将其后的元素一个个通过二分查找插入到这个找出的单调递增数组中，直到长度达到规定的最短长度（或到剩余序列结尾），从而将整个序列划分多个 run，并确保每个 run 都是排好序的。
+```
+private static <T> void binarySort(T[] a, int lo, int hi, int start,
+                                   Comparator<? super T> c) {
+    assert lo <= start && start <= hi;
+    if (start == lo)
+        start++;
+    for ( ; start < hi; start++) {
+        T pivot = a[start];
+        // Set left (and right) to the index where a[start] (pivot) belongs
+        int left = lo;
+        int right = start;
+        assert left <= right;
+        /*
+         * Invariants:
+         *   pivot >= all in [lo, left).
+         *   pivot <  all in [right, start).
+         */
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (c.compare(pivot, a[mid]) < 0)
+                right = mid;
+            else
+                left = mid + 1;
+        }
+        assert left == right;
+        /*
+         * The invariants still hold: pivot >= all in [lo, left) and
+         * pivot < all in [left, start), so pivot belongs at left.  Note
+         * that if there are elements equal to pivot, left points to the
+         * first slot after them -- that's why this sort is stable.
+         * Slide elements over to make room for pivot.
+         */
+        int n = start - left;  // The number of elements to move
+        // Switch is just an optimization for arraycopy in default case
+        switch (n) {
+            case 2:  a[left + 2] = a[left + 1];
+            case 1:  a[left + 1] = a[left];
+                     break;
+            default: System.arraycopy(a, left, a, left + 1, n);
+        }
+        a[left] = pivot;
+    }
+}
+```
+上面代码首先二分查找出插入点 `assert left == right`，插入点及其后元素后移，通过 ` a[left] = pivot`，将目标元素插入。可以看到，这里也有很多优化，比如计算需要后移的元素个数，如果是 1，则直接交换目标元素和插入点元素即可（目标元素本来在数组最后一格）。
 
 ### 3.合并 run
+```
+// Push run onto pending-run stack, and maybe merge
+ts.pushRun(lo, runLen);
+ts.mergeCollapse();
+```
+
+
+之后便是在循环中寻找下一个 run：
+```
+// Advance to find next run
+lo += runLen;
+nRemaining -= runLen;
+```
+
+在循环结束后，会尝试最后的合并，确保栈里只剩一个 run，即排序好的整个序列。
+```
+// Merge all remaining runs to complete sort
+assert lo == hi;
+ts.mergeForceCollapse();
+assert ts.stackSize == 1;
+```
+
 
 结论
 我们只能确定低版本编译的代码可以运行在高版本的 Java，但却无法保证运行的行为和结果与低版本一致。
