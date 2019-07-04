@@ -20,5 +20,6 @@ public class TimSort {
             }
         });
         System.out.println(list);
+
     }
 }
