@@ -186,19 +186,66 @@ private static <T> void binarySort(T[] a, int lo, int hi, int start,
 上面代码首先二分查找出插入点 `assert left == right`，插入点及其后元素后移，通过 ` a[left] = pivot`，将目标元素插入。可以看到，这里也有很多优化，比如计算需要后移的元素个数，如果是 1，则直接交换目标元素和插入点元素即可（目标元素本来在数组最后一格）。
 
 ### 3.合并 run
+将 run 压入栈，执行合并，之后便是在循环中寻找下一个 run，入栈的时候会记录当前 run 的起点在整个序列的位置（所有 run 都在原数组里，不占用额外空间）以及 run 长度：
 ```
 // Push run onto pending-run stack, and maybe merge
 ts.pushRun(lo, runLen);
 ts.mergeCollapse();
-```
 
-
-之后便是在循环中寻找下一个 run：
-```
 // Advance to find next run
 lo += runLen;
 nRemaining -= runLen;
 ```
+
+我们来看一下具体合并流程，首先是合并的条件，我们要保证所有的 run 类似二叉树方式进行合并，防止出现非常大的 run 与非常小的 run 进行合并，每个 run 入栈时都会调动这个方法，假设栈顶位置为 i，那么我们要保证栈里的 run 符合以下条件 `stack[i-2].length > stack[i-1].length + stack[i].length`，并且 `stack[i-1].length > stack[i].length`。如果不符合，则需要合并。
+```
+private void mergeCollapse() {
+    while (stackSize > 1) {
+        int n = stackSize - 2;
+        if (n > 0 && runLen[n-1] <= runLen[n] + runLen[n+1]) {
+            if (runLen[n - 1] < runLen[n + 1])
+                n--;
+            mergeAt(n);
+        } else if (runLen[n] <= runLen[n + 1]) {
+            mergeAt(n);
+        } else {
+            break; // Invariant is established
+        }
+    }
+}
+```
+
+因为我们的 run 都在原数组中，通过记录起点坐标和长度来划分，没有占用额外空间，所以我们合并的时候合并相邻两个 run，排序完成后，修改记录的起点坐标和长度来实现合并。在合并时也有优化，run1 和 run2 相邻，run1 在前，run2 在后。那么 run1 中比 run2 最小（第一个）元素小的那些元素其实相当于已经在正确的位置了，不需要考虑，同理 run2 中比 run1 最大的元素大的那些元素也是这样。举个例子：`[1,2,3,4][3,4,4,4,5,6] -> [1,2,[3,4][3,4,4],5,6] -> [1,2,3,3,4,4,4,5,6]`，数组 9 个连续位置，两个相邻 run，其中 `[1,2,-,-,-,-,-,5,6]` 相当于排好序了，只需要合并剩余的 `[3,4][3,4,4]`，代码如下：
+```
+/*
+ * Find where the first element of run2 goes in run1. Prior elements
+ * in run1 can be ignored (because they're already in place).
+ */
+int k = gallopRight(a[base2], a, base1, len1, 0, c);
+assert k >= 0;
+base1 += k;
+len1 -= k;
+if (len1 == 0)
+    return;
+
+/*
+ * Find where the last element of run1 goes in run2. Subsequent elements
+ * in run2 can be ignored (because they're already in place).
+ */
+len2 = gallopLeft(a[base1 + len1 - 1], a, base2, len2, len2 - 1, c);
+assert len2 >= 0;
+if (len2 == 0)
+    return;
+
+// Merge remaining runs, using tmp array with min(len1, len2) elements
+if (len1 <= len2)
+    mergeLo(base1, len1, base2, len2);
+else
+    mergeHi(base1, len1, base2, len2);
+```
+
+可以看到，即使合并剩余部分，依然通过判断两者长度来进行算法优化。
+
 
 在循环结束后，会尝试最后的合并，确保栈里只剩一个 run，即排序好的整个序列。
 ```
