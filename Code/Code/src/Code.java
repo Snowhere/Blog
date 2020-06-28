@@ -1,10 +1,16 @@
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.tools.ant.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -12,7 +18,64 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
-        stringObject();
+        isValid("{[]}");
+    }
+
+    static public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)) {
+                case '(':
+                    stack.push('(');
+                    break;
+                case '[':
+                    stack.push('[');
+                    break;
+                case '{':
+                    stack.push('{');
+                    break;
+                case ')':
+                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '(')) {
+                        return false;
+                    }
+                    break;
+                case ']':
+                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '[')) {
+                        return false;
+                    }
+                case '}':
+                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '{')) {
+                        return false;
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
+
+
+    private static void charStr() {
+        BigDecimal bigDecimal = new BigDecimal(3);
+        System.out.println(bigDecimal.divide(new BigDecimal(2)));
+    }
+
+    private static void executor() {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(100, 100, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadPoolExecutor.CallerRunsPolicy());
+        for (int i = 0; i < 100; i++) {
+            String index = String.format("%02d", i % 10);
+            executor.execute(()->{
+                synchronized (index.intern()) {
+                    try {
+
+                        Thread.sleep(3000);
+                        System.out.println(Thread.currentThread().getName() + "-----" + index);
+                    } catch (InterruptedException e) {
+                        System.out.println("Exception");
+                    }
+                }
+            });
+        }
     }
 
 
@@ -177,5 +240,13 @@ public class Code {
         String s3 = new String("abc");
         System.out.println(s1 == s2);
         System.out.println(s1 == s3);
+    }
+
+    public static void testInt() {
+        double shouldNum = (double) 5 / 2;
+        System.out.println(shouldNum);
+        int num = (int) Math.ceil(shouldNum);
+        System.out.println(Math.ceil(shouldNum));
+        System.out.println(num );
     }
 }
