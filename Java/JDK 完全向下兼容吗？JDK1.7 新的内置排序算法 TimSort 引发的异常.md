@@ -27,8 +27,7 @@ public static void main(String[] args) {
 ## Comparator
 
 我们先来看一下源代码中 Comparator 接口下 compare() 方法的注释：
->
-Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
+>Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
 In the foregoing description, the notation sgn(expression) designates the mathematical signum function, which is defined to return one of -1, 0, or 1 according to whether the value of expression is negative, zero or positive.
 The implementor must ensure that sgn(compare(x, y)) == -sgn(compare(y, x)) for all x and y. (This implies that compare(x, y) must throw an exception if and only if compare(y, x) throws an exception.)
 The implementor must also ensure that the relation is transitive: ((compare(x, y)>0) && (compare(y, z)>0)) implies compare(x, z)>0.
@@ -57,10 +56,12 @@ TimSort 的起源和历史我就不多说了，最早应用在 [python 的内置
 1. 划分 run（对原序列分块，每个块称之为 run）
 2. 排序 run
 3. 合并 run
+
 网络上有关介绍这种算法的文章很多，我就不多赘述了，我们来看一下 JDK1.7 中的具体实现
 
 ### 代码总览
-首先进入排序逻辑会先判断一个 jvm 参数变量，选择使用旧的归并排序（元素个数小于 7 时用冒泡排序），还是使用 TimeSort 进行排序。默认为使用 TimSort。
+
+首先进入排序逻辑会先判断一个 jvm 启动参数，选择使用旧的归并排序（元素个数小于 7 时用冒泡排序），还是使用 TimeSort 进行排序。默认为使用 TimSort。
 ```
 if (LegacyMergeSort.userRequested)
     legacyMergeSort(a, c);
@@ -113,6 +114,7 @@ assert ts.stackSize == 1;
 ```
 
 ### 1.划分 run
+
 划分 run 和排序 run 密不可分，TimSort 算法优化的点之一就是尽可能利用原序列的单调子序列。`countRunAndMakeAscending()` 方法寻找原始元素数组 `a` 中从 `lo` 位置开始的最长单调递增或递减序列（递减序列会被反转）。这样，这部分元素相当于排好序了，我们可以直接把它当做一个排序好的 run。但问题随之而来，如果这样的序列很短，会产生很多 run，后续归并的代价就很大，所以我们要控制 run 的长度。下面这段代码规定 run 的最小长度：
 ```
 private static int minRunLength(int n) {
@@ -128,6 +130,7 @@ private static int minRunLength(int n) {
 `n` 为整个序列的长度，TimSort 算法优化点之一是通过控制 run 的长度，使 run 的数量保持在 2 的 n 次方，这样在归并的时候，就像二叉树一样进行归并，不会到最后出现非常大的 run 与非常小的 run 归并。代码中 `MIN_MERGE` 为 32，最后计算出的最小 run 长度介于 16 和 32 之间。
 
 ### 2.排序 run
+
 ```
 // Identify next run
 int runLen = countRunAndMakeAscending(a, lo, hi, c);
@@ -186,6 +189,7 @@ private static <T> void binarySort(T[] a, int lo, int hi, int start,
 上面代码首先二分查找出插入点 `assert left == right`，插入点及其后元素后移，通过 ` a[left] = pivot`，将目标元素插入。可以看到，这里也有很多优化，比如计算需要后移的元素个数，如果是 1，则直接交换目标元素和插入点元素即可（目标元素本来在数组最后一格）。
 
 ### 3.合并 run
+
 将 run 压入栈，执行合并，之后便是在循环中寻找下一个 run，入栈的时候会记录当前 run 的起点在整个序列的位置（所有 run 都在原数组里，不占用额外空间）以及 run 长度：
 ```
 // Push run onto pending-run stack, and maybe merge
@@ -243,9 +247,7 @@ if (len1 <= len2)
 else
     mergeHi(base1, len1, base2, len2);
 ```
-
 可以看到，即使合并剩余部分，依然通过判断两者长度来进行算法优化。
-
 
 在循环结束后，会尝试最后的合并，确保栈里只剩一个 run，即排序好的整个序列。
 ```
@@ -255,6 +257,24 @@ ts.mergeForceCollapse();
 assert ts.stackSize == 1;
 ```
 
+具体合并算法非常复杂，我看的也是一知半解，总之在合并过程中，遇到一些特殊情况，会抛出一个异常，提醒开发者所实现的 `compare()` 并不符合规约。
+```
+if (len1 == 1) {
+    assert len2 > 0;
+    System.arraycopy(a, cursor2, a, dest, len2);
+    a[dest + len2] = tmp[cursor1]; //  Last elt of run 1 to end of merge
+} else if (len1 == 0) {
+    throw new IllegalArgumentException(
+        "Comparison method violates its general contract!");
+} else {
+    assert len2 == 0;
+    assert len1 > 1;
+    System.arraycopy(tmp, cursor1, a, dest, len1);
+}
+```
 
-结论
+## 结论
+
 我们只能确定低版本编译的代码可以运行在高版本的 Java，但却无法保证运行的行为和结果与低版本一致。
+
+我们看到代码入口会通过一个启动参数来判断选择内置排序算法，所以我们可以通过添加 jvm 启动参数 `-Djava.util.Arrays.useLegacyMergeSort=true`，来使用传统归并排序，保证两个版本的排序行为一致。
