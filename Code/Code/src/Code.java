@@ -18,42 +18,7 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
-        isValid("{[]}");
     }
-
-    static public boolean isValid(String s) {
-        Stack<Character> stack = new Stack<>();
-        for (int i = 0; i < s.length(); i++) {
-            switch (s.charAt(i)) {
-                case '(':
-                    stack.push('(');
-                    break;
-                case '[':
-                    stack.push('[');
-                    break;
-                case '{':
-                    stack.push('{');
-                    break;
-                case ')':
-                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '(')) {
-                        return false;
-                    }
-                    break;
-                case ']':
-                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '[')) {
-                        return false;
-                    }
-                case '}':
-                    if (stack.isEmpty() ||!Objects.equals(stack.pop(), '{')) {
-                        return false;
-                    }
-                    break;
-            }
-        }
-        return true;
-    }
-
-
 
     private static void charStr() {
         BigDecimal bigDecimal = new BigDecimal(3);

@@ -65,7 +65,7 @@ public class No15 {
     }
 
     public static void main(String[] args) {
-        int[] ints = new int[]{-1, 0, 1, 2, -1, -4};
+        int[] ints = {-1, 0, 1, 2, -1, -4};
         No15 no15 = new No15();
         List<List<Integer>> lists = no15.threeSum(ints);
         System.out.println(lists);
