@@ -19,23 +19,25 @@ package leetcode;
  */
 public class No112 {
 
-      public class TreeNode {
-     int val;
-      TreeNode left;
-      TreeNode right;
-    TreeNode(int x) { val = x; }
- }
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
 
     public boolean hasPathSum(TreeNode root, int sum) {
         if (root == null) {
             return false;
         }
         if (root.left == null && root.right == null) {
-            return sum==root.val;
-        }else {
+            return sum == root.val;
+        } else {
             return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
         }
-
     }
 
     public static void main(String[] args) {
@@ -44,21 +46,21 @@ public class No112 {
         TreeNode treeNode4 = no112.new TreeNode(4);
         TreeNode treeNode8 = no112.new TreeNode(8);
         TreeNode treeNode11 = no112.new TreeNode(11);
-        TreeNode treeNode13= no112.new TreeNode(13);
-        TreeNode treeNode44= no112.new TreeNode(4);
+        TreeNode treeNode13 = no112.new TreeNode(13);
+        TreeNode treeNode44 = no112.new TreeNode(4);
         TreeNode treeNode7 = no112.new TreeNode(7);
         TreeNode treeNode2 = no112.new TreeNode(2);
         TreeNode treeNode1 = no112.new TreeNode(1);
 
-        treeNode5.left=treeNode4;
-        treeNode5.right=treeNode8;
-        treeNode4.left=treeNode11;
-        treeNode8.left=treeNode13;
-        treeNode8.right=treeNode44;
-        treeNode11.left=treeNode7;
-        treeNode11.right=treeNode2;
-        treeNode4.right=treeNode1;
+        treeNode5.left = treeNode4;
+        treeNode5.right = treeNode8;
+        treeNode4.left = treeNode11;
+        treeNode8.left = treeNode13;
+        treeNode8.right = treeNode44;
+        treeNode11.left = treeNode7;
+        treeNode11.right = treeNode2;
+        treeNode4.right = treeNode1;
 
-        System.out.println(no112.hasPathSum(treeNode5,22));
+        System.out.println(no112.hasPathSum(treeNode5, 22));
     }
 }
