@@ -36,6 +36,10 @@ public class Queue<T> {
         }
     }
 
+    public boolean isEmpty() {
+        return first==null;
+    }
+
     public static void main(String[] args) {
         Queue<String> queue = new Queue<>();
         queue.put("1");

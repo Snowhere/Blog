@@ -93,6 +93,45 @@ public class No239 {
         return result;
     }
 
+    /**
+     * 分割滑动窗口，最大值=max(左边最大值，右边最大值)
+     * 分割线间距为k
+     * 左数组存左起点i到分割线间最大值，右数组存右终点j到分割线间最大值
+     * result=max(left[i],right[j])
+     */
+    public int[] maxSlidingWindow3(int[] nums, int k) {
+        int[] result = new int[nums.length - k + 1];
+        if (nums.length == 0 || k == 0) {
+            return new int[0];
+        }
+        if (k == 1) {
+            return nums;
+        }
+        int[] left = new int[nums.length];
+        int[] right = new int[nums.length];
+        int max = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (i % k == 0) {
+                max = nums[i];
+            } else {
+                max = Math.max(nums[i], max);
+            }
+            left[i] = max;
+        }
+        for (int i = nums.length - 1; i >= 0; i++) {
+            if (i % k == k - 1) {
+                max = nums[i];
+            } else {
+                max = Math.max(nums[i], max);
+            }
+            right[i] = max;
+        }
+        for (int i = 0; i < nums.length - k + 1; i++) {
+            result[i] = Math.max(left[i], right[i + k - 1]);
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         int[] nums = {7, 2, 4};
         No239 no239 = new No239();

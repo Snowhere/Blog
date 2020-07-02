@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
+        String str = "a  b     c  d e f      g";
+        String [] arr = str.split("\\s+");
+        for(String ss : arr){
+            System.out.println(ss);
+        }
     }
 
     private static void charStr() {
