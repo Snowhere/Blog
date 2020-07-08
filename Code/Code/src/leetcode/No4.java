@@ -27,30 +27,17 @@ public class No4 {
     /**
      * 简单的思路是同时遍历两个数组，元素由小到大排列，扫描至一半元素时，就可取到中位数，但时间复杂度不达标
      * log的复杂度一般为递归求解子问题，比如二分查找
-     * 中位数特点：会出现在两个数组的中位数之间
+     * 我们依旧是找到中位数，即第 总长度/2 位置的数字
+     * 通过递归二分查找每次排除一半的元素
+     * TODO
      *
      */
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-
+        return 0;
     }
 
 
-    double media(int[] nums1,int[]nums2, int left1, int right1,int left2,int right2) {
-        if(){
 
-        }else {
-            double media1 = media(nums1, left1, right1);
-            double media2= media(nums2, left2, right2);
-            if(media1)
-        }
-
-    }
-
-
-    double media(int[] nums, int left, int right) {
-        int length = right - left;
-        return ((double) nums[left + length / 2] + nums[left + (length + 1) / 2]) / 2;
-    }
 
     public static void main(String[] args) {
         No4 no4 = new No4();
