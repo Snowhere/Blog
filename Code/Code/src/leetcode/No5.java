@@ -69,14 +69,38 @@ public class No5 {
         if (s == null || s.equals("")) {
             return s;
         }
-        int max = 1;
+        int max = 0;
         int left = 0;
         int right = 0;
-        int length = 0;
         for (int i = 0; i < s.length(); i++) {
-
+            int i1 = maxLength(s, i, i);
+            int i2 = maxLength(s, i, i + 1);
+            if (i1 > i2 && i1 > max) {
+                max = i1;
+                left = i - i1 / 2;
+                right = i + i1 / 2;
+            }
+            if (i2 > i1 && i2 > max) {
+                max = i2;
+                left = i - i2 / 2 + 1;
+                right = i + i2 / 2;
+            }
         }
         return s.substring(left, right + 1);
+    }
+
+    int maxLength(String s, int i, int j) {
+        int length = 0;
+        while (i >= 0 && j < s.length()) {
+            if (s.charAt(i) == s.charAt(j)) {
+                length = j - i + 1;
+            } else {
+                break;
+            }
+            i--;
+            j++;
+        }
+        return length;
     }
 
     /**
@@ -101,9 +125,10 @@ public class No5 {
 
     public static void main(String[] args) {
         No5 no5 = new No5();
-        System.out.println(no5.longestPalindrome("babad"));
-        System.out.println(no5.longestPalindrome("cbbd"));
-        System.out.println(no5.longestPalindrome("aaabaaaa"));
-        System.out.println(no5.longestPalindrome("abc"));
+        System.out.println(no5.longestPalindrome2("babad"));
+        System.out.println(no5.longestPalindrome2("cbbd"));
+        System.out.println(no5.longestPalindrome2("aaabaaaa"));
+        System.out.println(no5.longestPalindrome2("abc"));
+        System.out.println(no5.longestPalindrome2("abbd"));
     }
 }
