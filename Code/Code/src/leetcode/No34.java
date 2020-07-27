@@ -18,9 +18,40 @@ package leetcode;
  */
 public class No34 {
 
-    //TODO
+    /**
+     * 网友答案：
+     * 二分查找变种，用于找到大于等于target的第一个数字
+     * 我们找两次，第一次找target，第二次找target+1
+     */
     public int[] searchRange(int[] nums, int target) {
-        return null;
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+        int begin = search(nums, target);
+        int end = search(nums, target + 1);
+        //没有target
+        if (nums[begin] != target) {
+            return new int[]{-1, -1};
+        }
+        //没有大于等于target+1的
+        if (end == nums.length - 1 && nums[end] == target) {
+            end++;
+        }
+        return new int[]{begin, end - 1};
+    }
+
+    public int search(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int middle = (left + right) / 2;
+            if (nums[middle] >= target) {
+                right = middle;
+            } else {
+                left = middle + 1;
+            }
+        }
+        return left;
     }
 
     public static void main(String[] args) {
@@ -29,7 +60,7 @@ public class No34 {
         for (int anInt : ints) {
             System.out.println(anInt);
         }
-        int[] ints2 = no34.searchRange(new int[]{5, 7, 7, 8, 8, 10}, 6);
+        int[] ints2 = no34.searchRange(new int[]{5, 7, 7, 8, 8, 10}, 10);
         for (int anInt : ints2) {
             System.out.println(anInt);
         }
