@@ -8,17 +8,35 @@
 public static Map<currentThreadId,Map<key,value>>
 ```
 
-我们优化一下这种方式，维护最外层这个全局线程安全的 map 是昂贵而且不必要的，因为每个线程都有一个对应的 Thread 对象，我们可以直接针对每个 Thread 对象，维护一个 map。
+我们优化一下这种方式，维护最外层这个全局线程安全的 map 是昂贵而且不必要的，因为每个线程都有一个对应的 Thread 对象，我们可以直接针对每个 Thread 对象，维护一个储存数据的 map。进一步，每个业务只关心自己的数据，对其他数据并不关心，因此我们针对每一个业务，生成唯一的 key，用户不需要关心 key 的值，我们抽象出一个数据结构 Data<value>,只提供最简单的 get 和 set 操作，内部实现是 map，但屏蔽 key 的存在，让用户使用起来简单方便。
+
+```
+//一个全局的 Map 保存所有线程变量，每个线程的变量也是 Map 结构
+map = Map<currentThreadId,Map<key,value>>
+
+//优化为每个线程一个 Map 保存变量
+currentThreadId1 = Map<key,value>
+currentThreadId2 = Map<key,value>
+currentThreadId3 = Map<key,value>
+...
+
+//优化为每个线程每个 key 为一个数据结构
+currentThreadId1&key11 = value
+currentThreadId1&key12 = value
+currentThreadId2&key21 = value
+currentThreadId2&key22 = value
+currentThreadId3&key31 = value
+currentThreadId3&key32 = value
+...
+
+```
+
+最后我们得到的结构就是 ThreadLocal<T>，其中有一个内部类 ThreadLocalMap，而 ThreadLocalMap 绑定到 Thread 类上，使得每个线程都有这个
 
 ```
 public class ThreadLocal<T> {
     static class ThreadLocalMap {
         static class Entry extends WeakReference<ThreadLocal<?>> {
-            Object value;
-            Entry(ThreadLocal<?> k, Object v) {
-                super(k);
-                value = v;
-            }
         }
     }
 }
@@ -45,6 +63,8 @@ public class ThreadLocal<T> {
 ```
 
 
+1.ThreadLocalMap 在 ThreadLocal 中定义，在 Thread 中引用
+2.ThreadLocalMap 使用弱引用
 
 
 

@@ -1,5 +1,6 @@
 package leetcode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,11 +29,20 @@ import java.util.List;
 public class No54 {
 
     public List<Integer> spiralOrder(int[][] matrix) {
-        return null;
+        List<Integer> list = new ArrayList<>();
+        order(matrix, 0, matrix[0].length, 0, matrix.length, list);
+        return list;
     }
 
     public void order(int[][] matrix, int left, int right, int top, int bottom, List<Integer> list) {
+        if (right >= left) {
+            left++;
+            right--;
+        }
 
+        top++;
+        bottom--;
+        order(matrix,left,right,top,bottom,list);
     }
 
     public static void main(String[] args) {
