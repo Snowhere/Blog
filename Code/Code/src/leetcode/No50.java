@@ -24,31 +24,38 @@ package leetcode;
 public class No50 {
 
     /**
-     * 常规思路会超时，采取分治递归
+     * 常规迭代思路会超时，采取分治递归 n^4=(n^2)^2
+     * 区分n的奇偶
      */
     public double myPow(double x, int n) {
-        if (x == 1) {
+        boolean pos = n >= 0;
+        //int 转 long 预防绝对值越界
+        long n1 = n;
+        n1 = Math.abs(n1);
+        return pos ? pow(x, n1) : 1 / pow(x, n1);
+    }
+
+    public double pow(double x, long n) {
+        if (n == 0) {
             return 1;
         }
-        if (x == 0) {
-            return 0;
-        }
 
-        double result=1;
-        boolean pos = n>=0;
-
-        for (int i = 0; i < Math.abs(n); i++) {
-            result=result*x;
+        double result;
+        double v = pow(x, n / 2);
+        if (n % 2 == 0) {
+            result = v * v;
+        } else {
+            result = v * v * x;
         }
-        return pos?result:1/result;
+        return result;
     }
 
     public static void main(String[] args) {
         No50 no50 = new No50();
         System.out.println(no50.myPow(2, -2));
-        System.out.println(no50.myPow(2,10));
-        System.out.println(no50.myPow(2,-2147483648));
-        System.out.println(Math.pow(2,-2147483648));
+        System.out.println(no50.myPow(2, 10));
+        System.out.println(no50.myPow(2, -2147483648));
+        System.out.println(Math.pow(2, -2147483648));
         System.out.println(Integer.MIN_VALUE);
     }
 
