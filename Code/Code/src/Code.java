@@ -18,11 +18,9 @@ import java.util.stream.Collectors;
 public class Code {
 
     public static void main(String args[]) {
-        int[] a = new int[]{0,1,2,3,4,5,6,7,8,9};
-        int[] ints = Arrays.copyOfRange(a, 2, 2);
-        for (int anInt : ints) {
-            System.out.println(anInt);
-        }
+        String lecturerId = "fdsaf";
+        Long lecturerIdNum = org.apache.commons.lang3.StringUtils.isNumeric(lecturerId)?Long.parseLong(lecturerId):null;
+        System.out.println(lecturerIdNum);
     }
 
     private static void charStr() {
