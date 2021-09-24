@@ -1,26 +1,83 @@
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.tools.ant.util.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Code {
 
-    public static void main(String args[]) {
-        String lecturerId = "fdsaf";
-        Long lecturerIdNum = org.apache.commons.lang3.StringUtils.isNumeric(lecturerId)?Long.parseLong(lecturerId):null;
-        System.out.println(lecturerIdNum);
+    public static void main(String args[]) throws Exception {
+
+        List<String> list = getList("1,23", String::valueOf);
+        System.out.println(list);
+
+    }
+
+    private static <T> List<T> getList(String str, Function<String,T> function) {
+        if (StringUtils.isNotBlank(str)) {
+            return Arrays.stream(str.split(",")).map(function).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+
+    @Data
+    static class Demo{
+        private int a;
+        private int b;
+    }
+
+    public static void js() throws Exception {
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("javascript");
+        String script = "var s={\"a\":2,\"b\":true};JSON.stringify(s)";
+        Object value = getValue(engine.eval(script));
+        System.out.println(value);
+        System.out.println(value.getClass());
+            }
+
+    public static Object getValue(Object o) {
+        if (o instanceof ScriptObjectMirror) {
+            ScriptObjectMirror mirror = (ScriptObjectMirror) o;
+            if (mirror.isFunction()) {
+                return o.toString();
+            } else if (mirror.isArray()) {
+                return mirror.values().stream().map(Code::getValue).collect(Collectors.toList());
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                for (Entry<String, Object> entry : mirror.entrySet()) {
+                    map.put(entry.getKey(), getValue(entry.getValue()));
+                }
+                return map;
+            }
+        }
+        return o;
+    }
+
+    public static <T> T getResult(Object result, Class<T> clazz) {
+            return (T) result;
     }
 
     private static void charStr() {
